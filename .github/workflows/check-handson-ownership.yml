@@ -35,7 +35,7 @@ jobs:
         id: files
         run: |
           BASE=${{ github.event.pull_request.base.ref }}
-          git fetch origin $BASE --depth=1
+          git fetch origin pull/${{ github.event.pull_request.number }}/merge:pr-merge
           CHANGED_FILES=$(git diff --name-only --diff-filter=ACMRT origin/$BASE..pr-merge)
           echo "$CHANGED_FILES"
           {
