@@ -47,7 +47,13 @@ jobs:
       - name: Validate changes
         run: |
           INVALID=()
-          for f in ${{ steps.files.outputs.files }}; do
+
+          # Esta es la forma correcta de iterar sobre una variable
+          # que contiene múltiples líneas (una por archivo)
+          while read -r f; do
+            # Omitir líneas vacías que puedan colarse
+            [ -z "$f" ] && continue
+
             # Only check files under HandsOn/GroupXX/
             if [[ "$f" =~ ^HandsOn/Group[0-9]{2}/ ]]; then
               ROOT_DIR=$(echo "$f" | cut -d'/' -f1-2)
@@ -64,7 +70,7 @@ jobs:
                 INVALID+=("$f")
               fi
             fi
-          done
+          done <<< "$CHANGED_FILES" # <<< pasa la variable al bucle
 
           if [ ${#INVALID[@]} -gt 0 ]; then
             echo "Unauthorized or invalid file changes detected:"
