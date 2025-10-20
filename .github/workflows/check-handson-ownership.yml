@@ -35,7 +35,7 @@ jobs:
         id: files
         run: |
           BASE=${{ github.event.pull_request.base.ref }}
-          git fetch origin pull/${{ github.event.pull_request.number }}/merge:pr-merge
+          git fetch origin $BASE --depth=1
           CHANGED_FILES=$(git diff --name-only --diff-filter=ACMRT origin/$BASE..pr-merge)
           echo "$CHANGED_FILES"
           {
@@ -47,13 +47,7 @@ jobs:
       - name: Validate changes
         run: |
           INVALID=()
-
-          # Esta es la forma correcta de iterar sobre una variable
-          # que contiene múltiples líneas (una por archivo)
-          while read -r f; do
-            # Omitir líneas vacías que puedan colarse
-            [ -z "$f" ] && continue
-
+          for f in ${{ steps.files.outputs.files }}; do
             # Only check files under HandsOn/GroupXX/
             if [[ "$f" =~ ^HandsOn/Group[0-9]{2}/ ]]; then
               ROOT_DIR=$(echo "$f" | cut -d'/' -f1-2)
@@ -70,7 +64,7 @@ jobs:
                 INVALID+=("$f")
               fi
             fi
-          done <<< "$CHANGED_FILES" # <<< pasa la variable al bucle
+          done
 
           if [ ${#INVALID[@]} -gt 0 ]; then
             echo "Unauthorized or invalid file changes detected:"
