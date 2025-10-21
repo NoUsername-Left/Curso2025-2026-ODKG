@@ -269,32 +269,6 @@
         rr:objectMap [
             rml:reference "area_code"
         ]
-    ] ;
-    
-    # area_lat
-    rr:predicateObjectMap [
-        rr:predicate geo:lat ;
-        rr:objectMap [
-            rml:reference "area_lat" ;
-            rr:datatype xsd:float
-        ]
-    ] ;
-    
-    # area_lon
-    rr:predicateObjectMap [
-        rr:predicate geo:long ;
-        rr:objectMap [
-            rml:reference "area_lon" ;
-            rr:datatype xsd:float
-        ]
-    ] ;
-    
-    # description
-    rr:predicateObjectMap [
-        rr:predicate rdfs:comment ;
-        rr:objectMap [
-            rml:reference "description"
-        ]
     ] .
 
 #################################################################
