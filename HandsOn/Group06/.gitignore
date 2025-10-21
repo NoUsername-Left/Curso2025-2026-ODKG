@@ -1,0 +1,11 @@
+data/
+
+ontology/ontology.rdf
+madrid-bus-data.nt
+
+__pycache__/
+
+morph-kgc/README.md
+rdf/madrid-bus-data-STATS.txt
+rdf/madrid-bus-data.nt
+rdf/query_runner.py
