@@ -12,12 +12,12 @@
 
 #################################################################
 # TRIPLES MAP 1: BUS ROUTES
-# Source: gtfs_merged_for_rdf-updated.csv (routes data)
+# Source: df_final-updated.csv (routes data)
 #################################################################
 
 <#BusRouteMap>
     rml:logicalSource [
-        rml:source "../data-processed/df_final-updated.csv" ;
+        rml:source "../data/processed/df_final-updated.csv" ;
         rml:referenceFormulation ql:CSV
     ] ;
     
@@ -61,12 +61,12 @@
 
 #################################################################
 # TRIPLES MAP 2: BUS STOPS
-# Source: gtfs_merged_for_rdf-updated.csv (stops data)
+# Source: df_final-updated.csv (stops data)
 #################################################################
 
 <#BusStopMap>
     rml:logicalSource [
-        rml:source "../data-processed/df_final-updated.csv" ;
+        rml:source "../data/processed/df_final-updated.csv" ;
         rml:referenceFormulation ql:CSV
     ] ;
     
@@ -112,12 +112,12 @@
 
 #################################################################
 # TRIPLES MAP 3: TRIPS
-# Source: gtfs_merged_for_rdf-updated.csv (trips data)
+# Source: df_final-updated.csv (trips data)
 #################################################################
 
 <#TripMap>
     rml:logicalSource [
-        rml:source "../data-processed/df_final-updated.csv" ;
+        rml:source "../data/processed/df_final-updated.csv" ;
         rml:referenceFormulation ql:CSV
     ] ;
     
@@ -180,12 +180,12 @@
 
 #################################################################
 # TRIPLES MAP 4: STOP TIMES
-# Source: gtfs_merged_for_rdf-updated.csv (stop_times data)
+# Source: df_final-updated.csv (stop_times data)
 #################################################################
 
 <#StopTimeMap>
     rml:logicalSource [
-        rml:source "../data-processed/df_final-updated.csv" ;
+        rml:source "../data/processed/df_final-updated.csv" ;
         rml:referenceFormulation ql:CSV
     ] ;
     
@@ -246,7 +246,7 @@
 
 <#LocalAreaMap>
     rml:logicalSource [
-        rml:source "../data-processed/local_areas-updated.csv" ;
+        rml:source "../data/processed/local_areas-updated.csv" ;
         rml:referenceFormulation ql:CSV
     ] ;
     
@@ -304,7 +304,7 @@
 
 <#ServiceMap>
     rml:logicalSource [
-        rml:source "../data-processed/calendar-updated.csv" ;
+        rml:source "../data/processed/calendar-updated.csv" ;
         rml:referenceFormulation ql:CSV
     ] ;
     
@@ -324,7 +324,7 @@
 
 <#CalendarRuleMap>
     rml:logicalSource [
-        rml:source "../data-processed/calendar-updated.csv" ;
+        rml:source "../data/processed/calendar-updated.csv" ;
         rml:referenceFormulation ql:CSV
     ] ;
     
@@ -415,7 +415,7 @@
 
 <#CalendarDateMap>
     rml:logicalSource [
-        rml:source "../data-processed/calendar_dates-updated.csv" ;
+        rml:source "../data/processed/calendar_dates-updated.csv" ;
         rml:referenceFormulation ql:CSV
     ] ;
     
@@ -458,7 +458,7 @@
 
 <#ShapeMap>
     rml:logicalSource [
-        rml:source "../data-processed/shapes-updated.csv" ;
+        rml:source "../data/processed/shapes-updated.csv" ;
         rml:referenceFormulation ql:CSV
     ] ;
     
@@ -469,7 +469,7 @@
 
 <#ShapePointMap>
     rml:logicalSource [
-        rml:source "../data-processed/shapes-updated.csv" ;
+        rml:source "../data/processed/shapes-updated.csv" ;
         rml:referenceFormulation ql:CSV
     ] ;
     
