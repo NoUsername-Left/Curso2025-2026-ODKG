@@ -210,85 +210,24 @@ def process_shapes(input_dir, output_dir):
 
 def create_local_areas_template(df_merged, output_dir):
     """
-    Create local_areas.csv template for ex:LocalArea class
+    Create an empty local_areas.csv template for ex:LocalArea class
 
-    Minimal design linking stops to local areas:
-    - stop_id: Links to main CSV (foreign key to df_final)
-    - area_code: Short code for the area (e.g., "ARJ", "PIN") → maps to ex:areaCode property
-
-    Strategy:
-    - Create template with sample stop-to-area mappings
-    - Can be populated/extended during RDF transformation or app runtime
-    - Satisfies self-assessment: area_code property has corresponding column
-    - Links directly to existing stops in main dataset
+    Columns: area_id, area_name, area_code
     """
     print("\n" + "=" * 70)
     print("5. CREATING: local_areas.csv (ex:LocalArea class)")
     print("=" * 70)
 
-    # Get unique stops for reference
-    unique_stops = df_merged[["stop_id", "stop_name"]].drop_duplicates()
-    print(f"   Total unique stops in dataset: {len(unique_stops):,}")
+    # Create empty DataFrame with correct columns
+    df_areas = pd.DataFrame(columns=["area_id", "area_name", "area_code"])
 
-    # Create sample local areas based on stop names
-    # We'll use geographic/neighborhood patterns in stop names
-    sample_areas = [
-        {
-            "area_id": "area_aranjuez",
-            "area_name": "Aranjuez",
-            "area_code": "ARJ",
-            "dbpedia_uri": "http://dbpedia.org/resource/Aranjuez",
-            "area_lat": 40.0333,  # Approximate center
-            "area_lon": -3.6030,
-            "description": "Historic town south of Madrid, UNESCO World Heritage Site",
-        },
-        {
-            "area_id": "area_pinto",
-            "area_name": "Pinto",
-            "area_code": "PIN",
-            "dbpedia_uri": "http://dbpedia.org/resource/Pinto,_Madrid",
-            "area_lat": 40.2431,
-            "area_lon": -3.6996,
-            "description": "Municipality in the Community of Madrid",
-        },
-        {
-            "area_id": "area_valdemoro",
-            "area_name": "Valdemoro",
-            "area_code": "VAL",
-            "dbpedia_uri": "http://dbpedia.org/resource/Valdemoro",
-            "area_lat": 40.1919,
-            "area_lon": -3.6739,
-            "description": "Town in the southern area of the Community of Madrid",
-        },
-        {
-            "area_id": "area_leganes",
-            "area_name": "Leganés",
-            "area_code": "LEG",
-            "dbpedia_uri": "http://dbpedia.org/resource/Legan%C3%A9s",
-            "area_lat": 40.3267,
-            "area_lon": -3.7636,
-            "description": "City in the Community of Madrid",
-        },
-        {
-            "area_id": "area_getafe",
-            "area_name": "Getafe",
-            "area_code": "GET",
-            "dbpedia_uri": "http://dbpedia.org/resource/Getafe",
-            "area_lat": 40.3057,
-            "area_lon": -3.7327,
-            "description": "City in the south of the Community of Madrid",
-        },
-    ]
-
-    df_areas = pd.DataFrame(sample_areas)
-
-    # Save full dataset
+    # Save empty template
     output_file = output_dir / "local_areas-updated.csv"
     df_areas.to_csv(output_file, index=False)
-    print(f"   ✓ Created local_areas.csv with {len(df_areas)} sample areas")
+    print(
+        f"   ✓ Created empty local_areas.csv template with columns: area_id, area_name, area_code"
+    )
     print(f"   ✓ Saved: {output_file}")
-    print(f"   ✓ This satisfies ex:LocalArea class requirement")
-    print(f"   ℹ️  Note: Stop-to-area mapping will be done during RDF transformation")
 
     return df_areas
 
