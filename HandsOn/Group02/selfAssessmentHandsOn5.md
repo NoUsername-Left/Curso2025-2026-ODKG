@@ -4,22 +4,22 @@
 
 **Every RDF file:**
 
-- [X] Has at least one owl:sameAs property that links to another dataset
+- [x] Has at least one owl:sameAs property that links to another dataset
 
 **Every owl:sameAs property:**
 
-- [X] Links a resource in the dataset with another resource in an external dataset
+- [x] Links a resource in the dataset with another resource in an external dataset
 
 **The SPARQL file:**
 
-- [X] includes at least 1 query
-- [X] Contains queries that retrieve the data that would be needed in the application
+- [x] includes at least 1 query
+- [x] Contains queries that retrieve the data that would be needed in the application
 
 **Every SPARQL query:**
 
-- [X] Makes use of the ontology
-- [X] Returns a non-empty result
-- [X] Makes use of the owl:sameAs links
+- [x] Makes use of the ontology
+- [x] Returns a non-empty result
+- [x] Makes use of the owl:sameAs links
 
 ## Comments on the self-assessment
 _(If required)_
