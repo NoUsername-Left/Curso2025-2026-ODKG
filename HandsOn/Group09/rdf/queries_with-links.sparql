@@ -1,0 +1,84 @@
+query2 = """
+SELECT ?location ?lat ?long ?cityEntity
+WHERE {
+    ?location a us:Location ;
+              us:inAdministrativeArea ?cityEntity ;
+              wgs84_pos:lat ?lat ;
+              wgs84_pos:long ?long .
+
+    # Encuentra la entidad ciudad que es 'sameAs' Melbourne en Wikidata
+    ?cityEntity owl:sameAs wd:Q3141 .
+    # Se ha eliminado temporalmente -> rdfs:label ?cityName .
+}
+LIMIT 10
+"""
+
+-----------------------------------------------------
+Location: https://smartcity.linkeddata.es/lcc/resource/location/143, City Entity: https://smartcity.linkeddata.es/lcc/resource/city/Melbourne, Lat: -37.821728, Long: 144.95557015
+Location: https://smartcity.linkeddata.es/lcc/resource/location/117, City Entity: https://smartcity.linkeddata.es/lcc/resource/city/Melbourne, Lat: -37.81629332, Long: 144.97090877
+Location: https://smartcity.linkeddata.es/lcc/resource/location/107, City Entity: https://smartcity.linkeddata.es/lcc/resource/city/Melbourne, Lat: -37.81246271, Long: 144.95690188
+Location: https://smartcity.linkeddata.es/lcc/resource/location/6, City Entity: https://smartcity.linkeddata.es/lcc/resource/city/Melbourne, Lat: -37.81911705, Long: 144.96558255
+Location: https://smartcity.linkeddata.es/lcc/resource/location/49, City Entity: https://smartcity.linkeddata.es/lcc/resource/city/Melbourne, Lat: -37.80730068, Long: 144.95956055
+Location: https://smartcity.linkeddata.es/lcc/resource/location/20, City Entity: https://smartcity.linkeddata.es/lcc/resource/city/Melbourne, Lat: -37.81172914, Long: 144.9682466
+Location: https://smartcity.linkeddata.es/lcc/resource/location/132, City Entity: https://smartcity.linkeddata.es/lcc/resource/city/Melbourne, Lat: -37.81267639, Long: 144.95386444
+Location: https://smartcity.linkeddata.es/lcc/resource/location/5, City Entity: https://smartcity.linkeddata.es/lcc/resource/city/Melbourne, Lat: -37.81874249, Long: 144.96787656
+Location: https://smartcity.linkeddata.es/lcc/resource/location/69, City Entity: https://smartcity.linkeddata.es/lcc/resource/city/Melbourne, Lat: -37.81687226, Long: 144.96559144
+Location: https://smartcity.linkeddata.es/lcc/resource/location/142, City Entity: https://smartcity.linkeddata.es/lcc/resource/city/Melbourne, Lat: -37.81970749, Long: 144.96795734
+------------------------------------------------------------
+
+query3 = """
+SELECT ?location ?lat ?long ?streetName ?wikidataStreet ?cityName ?wikidataCity
+WHERE {
+    # Localización y coordenadas
+    ?location a us:Location ;
+              wgs84_pos:lat ?lat ;
+              wgs84_pos:long ?long ;
+              # Enlace a la entidad calle
+              us:hasAddress ?streetEntity ;
+              # Enlace a la entidad ciudad
+              us:inAdministrativeArea ?cityEntity .
+
+    # Detalles de la calle y su enlace Wikidata
+    ?streetEntity a schema:PostalAddress ;
+                  schema:streetAddress ?streetName ;
+                  owl:sameAs ?wikidataStreet .
+
+    # Detalles de la ciudad y su enlace Wikidata
+    ?cityEntity a schema:City ; # O schema:AdministrativeArea si es más general
+                rdfs:label ?cityName ;
+                owl:sameAs ?wikidataCity .
+
+    # Filtros para asegurar que los enlaces son de Wikidata
+    FILTER(STRSTARTS(STR(?wikidataStreet), "http://wikidata.org/entity/"))
+    FILTER(STRSTARTS(STR(?wikidataCity), "http://wikidata.org/entity/"))
+}
+LIMIT 5 # Reducido el límite para que la salida sea más manejable
+"""
+
+--------------------------------------------------------------
+Location: https://smartcity.linkeddata.es/lcc/resource/location/87
+  Coords: (-37.80454949, 144.94921863)
+  Street: Errol St/Victoria St (Melbourne City) (http://wikidata.org/entity/Q112824311)
+  City: North Melbourne (http://wikidata.org/entity/Q7056074)
+
+Location: https://smartcity.linkeddata.es/lcc/resource/location/117
+  Coords: (-37.81629332, 144.97090877)
+  Street: Flinders Street (http://wikidata.org/entity/Q3442521)
+  City: Melbourne (http://wikidata.org/entity/Q3141)
+
+Location: https://smartcity.linkeddata.es/lcc/resource/location/107
+  Coords: (-37.81246271, 144.95690188)
+  Street: William Street (http://wikidata.org/entity/Q2287373)
+  City: Melbourne (http://wikidata.org/entity/Q3141)
+
+Location: https://smartcity.linkeddata.es/lcc/resource/location/6
+  Coords: (-37.81911705, 144.96558255)
+  Street: Flinders Street (http://wikidata.org/entity/Q3442521)
+  City: Melbourne (http://wikidata.org/entity/Q3141)
+
+Location: https://smartcity.linkeddata.es/lcc/resource/location/5
+  Coords: (-37.81874249, 144.96787656)
+  Street: Flinders Street (http://wikidata.org/entity/Q3442521)
+  City: Melbourne (http://wikidata.org/entity/Q3141)
+
+------------------------------------------------------------
