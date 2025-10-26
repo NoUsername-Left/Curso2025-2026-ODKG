@@ -1,0 +1,94 @@
+[
+  {
+    "op": "core/column-addition",
+    "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+    },
+    "baseColumnName": "distrito",
+    "expression": "grel:value",
+    "onError": "set-to-blank",
+    "newColumnName": "distrio_nombre",
+    "columnInsertIndex": 3,
+    "description": "Create column distrio_nombre at index 3 based on column distrito using expression grel:value"
+  },
+  {
+    "op": "core/text-transform",
+    "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+    },
+    "columnName": "distrio_nombre",
+    "expression": "grel:// Expression to ADD a new column named \"distrito_nombre\" based on the numeric \"distrito\" column\n{\n  \"1\":\"Centro\",\"2\":\"Arganzuela\",\"3\":\"Retiro\",\"4\":\"Salamanca\",\"5\":\"Chamartín\",\n  \"6\":\"Tetuán\",\"7\":\"Chamberí\",\"8\":\"Fuencarral - El Pardo\",\"9\":\"Moncloa - Aravaca\",\n  \"10\":\"Latina\",\"11\":\"Carabanchel\",\"12\":\"Usera\",\"13\":\"Puente de Vallecas\",\n  \"14\":\"Moratalaz\",\"15\":\"Ciudad Lineal\",\"16\":\"Hortaleza\",\"17\":\"Villaverde\",\n  \"18\":\"Villa de Vallecas\",\"19\":\"Vicálvaro\",\"20\":\"San Blas - Canillejas\",\"21\":\"Barajas\"\n}[toString(cells[\"distrito\"].value)]",
+    "onError": "keep-original",
+    "repeat": false,
+    "repeatCount": 10,
+    "description": "Text transform on cells in column distrio_nombre using expression grel:// Expression to ADD a new column named \"distrito_nombre\" based on the numeric \"distrito\" column\n{\n  \"1\":\"Centro\",\"2\":\"Arganzuela\",\"3\":\"Retiro\",\"4\":\"Salamanca\",\"5\":\"Chamartín\",\n  \"6\":\"Tetuán\",\"7\":\"Chamberí\",\"8\":\"Fuencarral - El Pardo\",\"9\":\"Moncloa - Aravaca\",\n  \"10\":\"Latina\",\"11\":\"Carabanchel\",\"12\":\"Usera\",\"13\":\"Puente de Vallecas\",\n  \"14\":\"Moratalaz\",\"15\":\"Ciudad Lineal\",\"16\":\"Hortaleza\",\"17\":\"Villaverde\",\n  \"18\":\"Villa de Vallecas\",\"19\":\"Vicálvaro\",\"20\":\"San Blas - Canillejas\",\"21\":\"Barajas\"\n}[toString(cells[\"distrito\"].value)]"
+  },
+  {
+    "op": "core/column-addition",
+    "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+    },
+    "baseColumnName": "distrito",
+    "expression": "grel:// Expression to ADD a new column named \"distrito_nombre\" based on the numeric \"distrito\" column\n{\n  \"1\":\"Centro\",\"2\":\"Arganzuela\",\"3\":\"Retiro\",\"4\":\"Salamanca\",\"5\":\"Chamartín\",\n  \"6\":\"Tetuán\",\"7\":\"Chamberí\",\"8\":\"Fuencarral - El Pardo\",\"9\":\"Moncloa - Aravaca\",\n  \"10\":\"Latina\",\"11\":\"Carabanchel\",\"12\":\"Usera\",\"13\":\"Puente de Vallecas\",\n  \"14\":\"Moratalaz\",\"15\":\"Ciudad Lineal\",\"16\":\"Hortaleza\",\"17\":\"Villaverde\",\n  \"18\":\"Villa de Vallecas\",\"19\":\"Vicálvaro\",\"20\":\"San Blas - Canillejas\",\"21\":\"Barajas\"\n}[toString(cells[\"distrito\"].value)]",
+    "onError": "set-to-blank",
+    "newColumnName": "distrio_name",
+    "columnInsertIndex": 3,
+    "description": "Create column distrio_name at index 3 based on column distrito using expression grel:// Expression to ADD a new column named \"distrito_nombre\" based on the numeric \"distrito\" column\n{\n  \"1\":\"Centro\",\"2\":\"Arganzuela\",\"3\":\"Retiro\",\"4\":\"Salamanca\",\"5\":\"Chamartín\",\n  \"6\":\"Tetuán\",\"7\":\"Chamberí\",\"8\":\"Fuencarral - El Pardo\",\"9\":\"Moncloa - Aravaca\",\n  \"10\":\"Latina\",\"11\":\"Carabanchel\",\"12\":\"Usera\",\"13\":\"Puente de Vallecas\",\n  \"14\":\"Moratalaz\",\"15\":\"Ciudad Lineal\",\"16\":\"Hortaleza\",\"17\":\"Villaverde\",\n  \"18\":\"Villa de Vallecas\",\"19\":\"Vicálvaro\",\"20\":\"San Blas - Canillejas\",\"21\":\"Barajas\"\n}[toString(cells[\"distrito\"].value)]"
+  },
+  {
+    "op": "core/text-transform",
+    "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+    },
+    "columnName": "distrio_nombre",
+    "expression": "grel:if(value == \"1\", \"Centro\",\nif(value == \"2\", \"Arganzuela\",\nif(value == \"3\", \"Retiro\",\nif(value == \"4\", \"Salamanca\",\nif(value == \"5\", \"Chamartín\",\nif(value == \"6\", \"Tetuán\",\nif(value == \"7\", \"Chamberí\",\nif(value == \"8\", \"Fuencarral - El Pardo\",\nif(value == \"9\", \"Moncloa - Aravaca\",\nif(value == \"10\", \"Latina\",\nif(value == \"11\", \"Carabanchel\",\nif(value == \"12\", \"Usera\",\nif(value == \"13\", \"Puente de Vallecas\",\nif(value == \"14\", \"Moratalaz\",\nif(value == \"15\", \"Ciudad Lineal\",\nif(value == \"16\", \"Hortaleza\",\nif(value == \"17\", \"Villaverde\",\nif(value == \"18\", \"Villa de Vallecas\",\nif(value == \"19\", \"Vicálvaro\",\nif(value == \"20\", \"San Blas - Canillejas\",\nif(value == \"21\", \"Barajas\",\nvalue)))))))))))))))))))))",
+    "onError": "keep-original",
+    "repeat": false,
+    "repeatCount": 10,
+    "description": "Text transform on cells in column distrio_nombre using expression grel:if(value == \"1\", \"Centro\",\nif(value == \"2\", \"Arganzuela\",\nif(value == \"3\", \"Retiro\",\nif(value == \"4\", \"Salamanca\",\nif(value == \"5\", \"Chamartín\",\nif(value == \"6\", \"Tetuán\",\nif(value == \"7\", \"Chamberí\",\nif(value == \"8\", \"Fuencarral - El Pardo\",\nif(value == \"9\", \"Moncloa - Aravaca\",\nif(value == \"10\", \"Latina\",\nif(value == \"11\", \"Carabanchel\",\nif(value == \"12\", \"Usera\",\nif(value == \"13\", \"Puente de Vallecas\",\nif(value == \"14\", \"Moratalaz\",\nif(value == \"15\", \"Ciudad Lineal\",\nif(value == \"16\", \"Hortaleza\",\nif(value == \"17\", \"Villaverde\",\nif(value == \"18\", \"Villa de Vallecas\",\nif(value == \"19\", \"Vicálvaro\",\nif(value == \"20\", \"San Blas - Canillejas\",\nif(value == \"21\", \"Barajas\",\nvalue)))))))))))))))))))))"
+  },
+  {
+    "op": "core/column-removal",
+    "columnName": "distrio_name",
+    "description": "Remove column distrio_name"
+  },
+  {
+    "op": "core/recon",
+    "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+    },
+    "columnName": "distrio_nombre",
+    "config": {
+      "mode": "standard-service",
+      "service": "https://wikidata.reconci.link/en/api",
+      "identifierSpace": "http://www.wikidata.org/entity/",
+      "schemaSpace": "http://www.wikidata.org/prop/direct/",
+      "type": {
+        "id": "Q3032114",
+        "name": "district of Madrid"
+      },
+      "autoMatch": true,
+      "columnDetails": [],
+      "limit": 0
+    },
+    "description": "Reconcile cells in column distrio_nombre to type Q3032114"
+  },
+  {
+    "op": "core/column-addition",
+    "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+    },
+    "baseColumnName": "distrio_nombre",
+    "expression": "grel:\"https://wikidata.org/entity/\"+cell.recon.match.id",
+    "onError": "set-to-blank",
+    "newColumnName": "same_as_wikidata_distrito",
+    "columnInsertIndex": 4,
+    "description": "Create column same_as_wikidata_distrito at index 4 based on column distrio_nombre using expression grel:\"https://wikidata.org/entity/\"+cell.recon.match.id"
+  }
+]
