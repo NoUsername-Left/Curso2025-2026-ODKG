@@ -1,0 +1,820 @@
+[
+    {
+        "op": "core/recon",
+        "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+        },
+        "columnName": "Sensor_Description",
+        "config": {
+            "mode": "standard-service",
+            "service": "https://wikidata.reconci.link/en/api",
+            "identifierSpace": "http://www.wikidata.org/entity/",
+            "schemaSpace": "http://www.wikidata.org/prop/direct/",
+            "autoMatch": true,
+            "batchSize": 10,
+            "columnDetails": [],
+            "limit": 0
+        },
+        "description": "Reconcile cells in column Sensor_Description to type null"
+    },
+    {
+        "op": "core/recon",
+        "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+        },
+        "columnName": "Sensor_Description",
+        "config": {
+            "mode": "standard-service",
+            "service": "https://wikidata.reconci.link/en/api",
+            "identifierSpace": "http://www.wikidata.org/entity/",
+            "schemaSpace": "http://www.wikidata.org/prop/direct/",
+            "type": {
+                "id": "Q2175765",
+                "name": "tram stop"
+            },
+            "autoMatch": true,
+            "batchSize": 10,
+            "columnDetails": [],
+            "limit": 0
+        },
+        "description": "Reconcile cells in column Sensor_Description to type Q2175765"
+    },
+    {
+        "op": "core/recon",
+        "engineConfig": {
+            "facets": [
+                {
+                    "type": "range",
+                    "name": "Sensor_Description: best candidate's score",
+                    "expression": "cell.recon.best.score",
+                    "columnName": "Sensor_Description",
+                    "from": 100,
+                    "to": 66,
+                    "selectNumeric": true,
+                    "selectNonNumeric": true,
+                    "selectBlank": true,
+                    "selectError": true
+                }
+            ],
+            "mode": "row-based"
+        },
+        "columnName": "Sensor_Description",
+        "config": {
+            "mode": "standard-service",
+            "service": "https://wikidata.reconci.link/en/api",
+            "identifierSpace": "http://www.wikidata.org/entity/",
+            "schemaSpace": "http://www.wikidata.org/prop/direct/",
+            "autoMatch": true,
+            "batchSize": 10,
+            "columnDetails": [],
+            "limit": 0
+        },
+        "description": "Reconcile cells in column Sensor_Description to type null"
+    },
+    {
+        "op": "core/recon-judge-similar-cells",
+        "engineConfig": {
+            "facets": [
+                {
+                    "type": "range",
+                    "name": "Sensor_Description: best candidate's score",
+                    "expression": "cell.recon.best.score",
+                    "columnName": "Sensor_Description",
+                    "from": 100,
+                    "to": 66,
+                    "selectNumeric": true,
+                    "selectNonNumeric": true,
+                    "selectBlank": true,
+                    "selectError": true
+                }
+            ],
+            "mode": "row-based"
+        },
+        "columnName": "Sensor_Description",
+        "similarValue": "Tram Stop 7B - Melbourne Tennis Centre Precinct - Rod Laver Arena",
+        "judgment": "matched",
+        "match": {
+            "id": "Q112825082",
+            "name": "Rod Laver Arena/MCG Gates 1",
+            "types": [
+                ""
+            ],
+            "score": 100
+        },
+        "shareNewTopics": false,
+        "description": "Match item Rod Laver Arena/MCG Gates 1 (Q112825082) for cells containing \"Tram Stop 7B - Melbourne Tennis Centre Precinct - Rod Laver Arena\" in column Sensor_Description"
+    },
+    {
+        "op": "core/recon-judge-similar-cells",
+        "engineConfig": {
+            "facets": [
+                {
+                    "type": "range",
+                    "name": "Sensor_Description: best candidate's score",
+                    "expression": "cell.recon.best.score",
+                    "columnName": "Sensor_Description",
+                    "from": 100,
+                    "to": 66,
+                    "selectNumeric": true,
+                    "selectNonNumeric": true,
+                    "selectBlank": true,
+                    "selectError": true
+                }
+            ],
+            "mode": "row-based"
+        },
+        "columnName": "Sensor_Description",
+        "similarValue": "Enterprize Park - Pole ID: COM1667",
+        "judgment": "matched",
+        "match": {
+            "id": "Q125439164",
+            "name": "Enterprize Park",
+            "types": [
+                ""
+            ],
+            "score": 100
+        },
+        "shareNewTopics": false,
+        "description": "Match item Enterprize Park (Q125439164) for cells containing \"Enterprize Park - Pole ID: COM1667\" in column Sensor_Description"
+    },
+    {
+        "op": "core/recon-judge-similar-cells",
+        "engineConfig": {
+            "facets": [
+                {
+                    "type": "range",
+                    "name": "Sensor_Description: best candidate's score",
+                    "expression": "cell.recon.best.score",
+                    "columnName": "Sensor_Description",
+                    "from": 100,
+                    "to": 66,
+                    "selectNumeric": true,
+                    "selectNonNumeric": true,
+                    "selectBlank": true,
+                    "selectError": true
+                }
+            ],
+            "mode": "row-based"
+        },
+        "columnName": "Sensor_Description",
+        "similarValue": "Swanston St - Tram Stop 13 adjacent Federation Sq & Flinders St Station",
+        "judgment": "matched",
+        "match": {
+            "id": "Q112824337",
+            "name": "Federation Square/Swanston St (Melbourne City)",
+            "types": [
+                ""
+            ],
+            "score": 100
+        },
+        "shareNewTopics": false,
+        "description": "Match item Federation Square/Swanston St (Melbourne City) (Q112824337) for cells containing \"Swanston St - Tram Stop 13 adjacent Federation Sq & Flinders St Station\" in column Sensor_Description"
+    },
+    {
+        "op": "core/recon-judge-similar-cells",
+        "engineConfig": {
+            "facets": [
+                {
+                    "type": "range",
+                    "name": "Sensor_Description: best candidate's score",
+                    "expression": "cell.recon.best.score",
+                    "columnName": "Sensor_Description",
+                    "from": 100,
+                    "to": 66,
+                    "selectNumeric": true,
+                    "selectNonNumeric": true,
+                    "selectBlank": true,
+                    "selectError": true
+                }
+            ],
+            "mode": "row-based"
+        },
+        "columnName": "Sensor_Description",
+        "similarValue": "Royal Park Asset ID: COM2707",
+        "judgment": "matched",
+        "match": {
+            "id": "Q7374687",
+            "name": "Royal Park",
+            "types": [
+                ""
+            ],
+            "score": 100
+        },
+        "shareNewTopics": false,
+        "description": "Match item Royal Park (Q7374687) for cells containing \"Royal Park Asset ID: COM2707\" in column Sensor_Description"
+    },
+    {
+        "op": "core/recon-judge-similar-cells",
+        "engineConfig": {
+            "facets": [
+                {
+                    "type": "range",
+                    "name": "Sensor_Description: best candidate's score",
+                    "expression": "cell.recon.best.score",
+                    "columnName": "Sensor_Description",
+                    "from": 100,
+                    "to": 66,
+                    "selectNumeric": true,
+                    "selectNonNumeric": true,
+                    "selectBlank": true,
+                    "selectError": true
+                }
+            ],
+            "mode": "row-based"
+        },
+        "columnName": "Sensor_Description",
+        "similarValue": "101 Collins St L11 Rooftop",
+        "judgment": "matched",
+        "match": {
+            "id": "Q112824330",
+            "name": "Exhibition St/Collins St (Melbourne City)",
+            "types": [
+                ""
+            ],
+            "score": 100
+        },
+        "shareNewTopics": false,
+        "description": "Match item Exhibition St/Collins St (Melbourne City) (Q112824330) for cells containing \"101 Collins St L11 Rooftop\" in column Sensor_Description"
+    },
+    {
+        "op": "core/recon-judge-similar-cells",
+        "engineConfig": {
+            "facets": [
+                {
+                    "type": "range",
+                    "name": "Sensor_Description: best candidate's score",
+                    "expression": "cell.recon.best.score",
+                    "columnName": "Sensor_Description",
+                    "from": 100,
+                    "to": 66,
+                    "selectNumeric": true,
+                    "selectNonNumeric": true,
+                    "selectBlank": true,
+                    "selectError": true
+                }
+            ],
+            "mode": "row-based"
+        },
+        "columnName": "Sensor_Description",
+        "similarValue": "CH1 rooftop",
+        "judgment": "matched",
+        "match": {
+            "id": "Q5195641",
+            "name": "Curtin House",
+            "types": [
+                ""
+            ],
+            "score": 100
+        },
+        "shareNewTopics": false,
+        "description": "Match item Curtin House (Q5195641) for cells containing \"CH1 rooftop\" in column Sensor_Description"
+    },
+    {
+        "op": "core/recon-judge-similar-cells",
+        "engineConfig": {
+            "facets": [
+                {
+                    "type": "range",
+                    "name": "Sensor_Description: best candidate's score",
+                    "expression": "cell.recon.best.score",
+                    "columnName": "Sensor_Description",
+                    "from": 100,
+                    "to": 66,
+                    "selectNumeric": true,
+                    "selectNonNumeric": true,
+                    "selectBlank": true,
+                    "selectError": true
+                }
+            ],
+            "mode": "row-based"
+        },
+        "columnName": "Sensor_Description",
+        "similarValue": "SkyFarm (Jeff's Shed). Rooftop - Melbourne Conference & Exhibition Centre (MCEC)",
+        "judgment": "matched",
+        "match": {
+            "id": "Q3304958",
+            "name": "Melbourne Convention and Exhibition Centre",
+            "types": [
+                ""
+            ],
+            "score": 100
+        },
+        "shareNewTopics": false,
+        "description": "Match item Melbourne Convention and Exhibition Centre (Q3304958) for cells containing \"SkyFarm (Jeff's Shed). Rooftop - Melbourne Conference & Exhibition Centre (MCEC)\" in column Sensor_Description"
+    },
+    {
+        "op": "core/recon-judge-similar-cells",
+        "engineConfig": {
+            "facets": [
+                {
+                    "type": "range",
+                    "name": "Sensor_Description: best candidate's score",
+                    "expression": "cell.recon.best.score",
+                    "columnName": "Sensor_Description",
+                    "from": 100,
+                    "to": 66,
+                    "selectNumeric": true,
+                    "selectNonNumeric": true,
+                    "selectBlank": true,
+                    "selectError": true
+                }
+            ],
+            "mode": "row-based"
+        },
+        "columnName": "Sensor_Description",
+        "similarValue": "Tram Stop 7C - Melbourne Tennis Centre Precinct - Rod Laver Arena",
+        "judgment": "matched",
+        "match": {
+            "id": "Q112825082",
+            "name": "Rod Laver Arena/MCG Gates 1",
+            "types": [
+                ""
+            ],
+            "score": 100
+        },
+        "shareNewTopics": false,
+        "description": "Match item Rod Laver Arena/MCG Gates 1 (Q112825082) for cells containing \"Tram Stop 7C - Melbourne Tennis Centre Precinct - Rod Laver Arena\" in column Sensor_Description"
+    },
+    {
+        "op": "core/column-addition",
+        "engineConfig": {
+            "facets": [
+                {
+                    "type": "range",
+                    "name": "Sensor_Description: best candidate's score",
+                    "expression": "cell.recon.best.score",
+                    "columnName": "Sensor_Description",
+                    "from": 100,
+                    "to": 66,
+                    "selectNumeric": true,
+                    "selectNonNumeric": true,
+                    "selectBlank": true,
+                    "selectError": true
+                }
+            ],
+            "mode": "row-based"
+        },
+        "baseColumnName": "Sensor_Description",
+        "expression": "grel:if(isNonBlank(cell.recon.match.id),\n \"http://www.wikidata.org/entity/\" + cell.recon.match.id,\n \"\"\n)",
+        "onError": "set-to-blank",
+        "newColumnName": "RC_Sensor_Description",
+        "columnInsertIndex": 4,
+        "description": "Create column RC_Sensor_Description at index 4 based on column Sensor_Description using expression grel:if(isNonBlank(cell.recon.match.id),\n \"http://www.wikidata.org/entity/\" + cell.recon.match.id,\n \"\"\n)"
+    },
+    {
+        "op": "core/recon",
+        "engineConfig": {
+            "facets": [
+                {
+                    "type": "range",
+                    "name": "Sensor_Description: best candidate's score",
+                    "expression": "cell.recon.best.score",
+                    "columnName": "Sensor_Description",
+                    "from": 100,
+                    "to": 66,
+                    "selectNumeric": true,
+                    "selectNonNumeric": true,
+                    "selectBlank": true,
+                    "selectError": true
+                }
+            ],
+            "mode": "row-based"
+        },
+        "columnName": "Street",
+        "config": {
+            "mode": "standard-service",
+            "service": "https://wikidata.reconci.link/en/api",
+            "identifierSpace": "http://www.wikidata.org/entity/",
+            "schemaSpace": "http://www.wikidata.org/prop/direct/",
+            "type": {
+                "id": "Q79007",
+                "name": "street"
+            },
+            "autoMatch": true,
+            "batchSize": 10,
+            "columnDetails": [],
+            "limit": 0
+        },
+        "description": "Reconcile cells in column Street to type Q79007"
+    },
+    {
+        "op": "core/recon-judge-similar-cells",
+        "engineConfig": {
+            "facets": [
+                {
+                    "type": "range",
+                    "name": "Sensor_Description: best candidate's score",
+                    "expression": "cell.recon.best.score",
+                    "columnName": "Sensor_Description",
+                    "from": 100,
+                    "to": 66,
+                    "selectNumeric": true,
+                    "selectNonNumeric": true,
+                    "selectBlank": true,
+                    "selectError": true
+                }
+            ],
+            "mode": "row-based"
+        },
+        "columnName": "Street",
+        "similarValue": "Little Collins Street",
+        "judgment": "matched",
+        "match": {
+            "id": "Q114636721",
+            "name": "Central Hall, Little Collins Street",
+            "types": [
+                ""
+            ],
+            "score": 38
+        },
+        "shareNewTopics": false,
+        "description": "Match item Central Hall, Little Collins Street (Q114636721) for cells containing \"Little Collins Street\" in column Street"
+    },
+    {
+        "op": "core/recon-judge-similar-cells",
+        "engineConfig": {
+            "facets": [
+                {
+                    "type": "range",
+                    "name": "Sensor_Description: best candidate's score",
+                    "expression": "cell.recon.best.score",
+                    "columnName": "Sensor_Description",
+                    "from": 100,
+                    "to": 66,
+                    "selectNumeric": true,
+                    "selectNonNumeric": true,
+                    "selectBlank": true,
+                    "selectError": true
+                }
+            ],
+            "mode": "row-based"
+        },
+        "columnName": "Street",
+        "similarValue": "Gatehouse Street",
+        "judgment": "matched",
+        "match": {
+            "id": "Q112824421",
+            "name": "Gatehouse St/Royal Pde (Parkville)",
+            "types": [
+                ""
+            ],
+            "score": 100
+        },
+        "shareNewTopics": false,
+        "description": "Match item Gatehouse St/Royal Pde (Parkville) (Q112824421) for cells containing \"Gatehouse Street\" in column Street"
+    },
+    {
+        "op": "core/recon-judge-similar-cells",
+        "engineConfig": {
+            "facets": [
+                {
+                    "type": "range",
+                    "name": "Sensor_Description: best candidate's score",
+                    "expression": "cell.recon.best.score",
+                    "columnName": "Sensor_Description",
+                    "from": 100,
+                    "to": 66,
+                    "selectNumeric": true,
+                    "selectNonNumeric": true,
+                    "selectBlank": true,
+                    "selectError": true
+                }
+            ],
+            "mode": "row-based"
+        },
+        "columnName": "Street",
+        "similarValue": "Collins Street",
+        "judgment": "matched",
+        "match": {
+            "id": "Q2796839",
+            "name": "Collins Street",
+            "types": [
+                ""
+            ],
+            "score": 100
+        },
+        "shareNewTopics": false,
+        "description": "Match item Collins Street (Q2796839) for cells containing \"Collins Street\" in column Street"
+    },
+    {
+        "op": "core/column-addition",
+        "engineConfig": {
+            "facets": [
+                {
+                    "type": "range",
+                    "name": "Sensor_Description: best candidate's score",
+                    "expression": "cell.recon.best.score",
+                    "columnName": "Sensor_Description",
+                    "from": 100,
+                    "to": 66,
+                    "selectNumeric": true,
+                    "selectNonNumeric": true,
+                    "selectBlank": true,
+                    "selectError": true
+                }
+            ],
+            "mode": "row-based"
+        },
+        "baseColumnName": "Street",
+        "expression": "grel:if(isNonBlank(cell.recon.match.id),\n \"http://www.wikidata.org/entity/\" + cell.recon.match.id,\n \"\"\n)",
+        "onError": "set-to-blank",
+        "newColumnName": "RC_Street",
+        "columnInsertIndex": 20,
+        "description": "Create column RC_Street at index 20 based on column Street using expression grel:if(isNonBlank(cell.recon.match.id),\n \"http://www.wikidata.org/entity/\" + cell.recon.match.id,\n \"\"\n)"
+    },
+    {
+        "op": "core/recon",
+        "engineConfig": {
+            "facets": [
+                {
+                    "type": "range",
+                    "name": "Sensor_Description: best candidate's score",
+                    "expression": "cell.recon.best.score",
+                    "columnName": "Sensor_Description",
+                    "from": 100,
+                    "to": 66,
+                    "selectNumeric": true,
+                    "selectNonNumeric": true,
+                    "selectBlank": true,
+                    "selectError": true
+                }
+            ],
+            "mode": "row-based"
+        },
+        "columnName": "City",
+        "config": {
+            "mode": "standard-service",
+            "service": "https://wikidata.reconci.link/en/api",
+            "identifierSpace": "http://www.wikidata.org/entity/",
+            "schemaSpace": "http://www.wikidata.org/prop/direct/",
+            "autoMatch": true,
+            "batchSize": 10,
+            "columnDetails": [],
+            "limit": 0
+        },
+        "description": "Reconcile cells in column City to type null"
+    },
+    {
+        "op": "core/recon-judge-similar-cells",
+        "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+        },
+        "columnName": "City",
+        "similarValue": "Melbourne",
+        "judgment": "matched",
+        "match": {
+            "id": "Q3141",
+            "name": "Melbourne",
+            "types": [
+                "Q515",
+                "Q7309306",
+                "Q1549591",
+                "Q1907114",
+                "Q11271835",
+                "Q1066984",
+                "Q200250"
+            ],
+            "score": 100
+        },
+        "shareNewTopics": false,
+        "description": "Match item Melbourne (Q3141) for cells containing \"Melbourne\" in column City"
+    },
+    {
+        "op": "core/recon",
+        "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+        },
+        "columnName": "City",
+        "config": {
+            "mode": "standard-service",
+            "service": "https://wikidata.reconci.link/en/api",
+            "identifierSpace": "http://www.wikidata.org/entity/",
+            "schemaSpace": "http://www.wikidata.org/prop/direct/",
+            "type": {
+                "id": "Q515",
+                "name": "city"
+            },
+            "autoMatch": true,
+            "batchSize": 10,
+            "columnDetails": [],
+            "limit": 0
+        },
+        "description": "Reconcile cells in column City to type Q515"
+    },
+    {
+        "op": "core/recon-judge-similar-cells",
+        "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+        },
+        "columnName": "City",
+        "similarValue": "Melbourne",
+        "judgment": "matched",
+        "match": {
+            "id": "Q3141",
+            "name": "Melbourne",
+            "types": [
+                "Q515",
+                "Q7309306",
+                "Q1549591",
+                "Q1907114",
+                "Q11271835",
+                "Q1066984",
+                "Q200250"
+            ],
+            "score": 100
+        },
+        "shareNewTopics": false,
+        "description": "Match item Melbourne (Q3141) for cells containing \"Melbourne\" in column City"
+    },
+    {
+        "op": "core/recon-judge-similar-cells",
+        "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+        },
+        "columnName": "City",
+        "similarValue": "Parkville",
+        "judgment": "matched",
+        "match": {
+            "id": "Q3427921",
+            "name": "Parkville",
+            "types": [
+                ""
+            ],
+            "score": 100
+        },
+        "shareNewTopics": false,
+        "description": "Match item Parkville (Q3427921) for cells containing \"Parkville\" in column City"
+    },
+    {
+        "op": "core/recon-judge-similar-cells",
+        "engineConfig": {
+            "facets": [
+                {
+                    "type": "list",
+                    "name": "City",
+                    "expression": "value",
+                    "columnName": "City",
+                    "invert": false,
+                    "omitBlank": false,
+                    "omitError": false,
+                    "selection": [
+                        {
+                            "v": {
+                                "v": "Docklands",
+                                "l": "Docklands"
+                            }
+                        }
+                    ],
+                    "selectBlank": false,
+                    "selectError": false
+                }
+            ],
+            "mode": "row-based"
+        },
+        "columnName": "City",
+        "similarValue": "Docklands",
+        "judgment": "matched",
+        "match": {
+            "id": "Q5287226",
+            "name": "Docklands",
+            "types": [
+                ""
+            ],
+            "score": 100
+        },
+        "shareNewTopics": false,
+        "description": "Match item Docklands (Q5287226) for cells containing \"Docklands\" in column City"
+    },
+    {
+        "op": "core/recon-judge-similar-cells",
+        "engineConfig": {
+            "facets": [
+                {
+                    "type": "list",
+                    "name": "Sensor_Description",
+                    "expression": "value",
+                    "columnName": "Sensor_Description",
+                    "invert": false,
+                    "omitBlank": false,
+                    "omitError": false,
+                    "selection": [
+                        {
+                            "v": {
+                                "v": "Batman Park",
+                                "l": "Batman Park"
+                            }
+                        }
+                    ],
+                    "selectBlank": false,
+                    "selectError": false
+                }
+            ],
+            "mode": "row-based"
+        },
+        "columnName": "Sensor_Description",
+        "similarValue": "Batman Park",
+        "judgment": "matched",
+        "match": {
+            "id": "Q112823758",
+            "name": "Batman Park/Spencer St (Melbourne City)",
+            "types": [
+                "Q2175765"
+            ],
+            "score": 65
+        },
+        "shareNewTopics": false,
+        "description": "Match item Batman Park/Spencer St (Melbourne City) (Q112823758) for cells containing \"Batman Park\" in column Sensor_Description"
+    },
+    {
+        "op": "core/column-removal",
+        "columnName": "RC_Sensor_Description",
+        "description": "Remove column RC_Sensor_Description"
+    },
+    {
+        "op": "core/column-addition",
+        "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+        },
+        "baseColumnName": "Sensor_Description",
+        "expression": "grel:if(isNonBlank(cell.recon.match.id),\n \"http://www.wikidata.org/entity/\" + cell.recon.match.id,\n \"\"\n)",
+        "onError": "set-to-blank",
+        "newColumnName": "RC_Sensor_Description",
+        "columnInsertIndex": 4,
+        "description": "Create column RC_Sensor_Description at index 4 based on column Sensor_Description using expression grel:if(isNonBlank(cell.recon.match.id),\n \"http://www.wikidata.org/entity/\" + cell.recon.match.id,\n \"\"\n)"
+    },
+    {
+        "op": "core/column-addition",
+        "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+        },
+        "baseColumnName": "City",
+        "expression": "grel:if(isNonBlank(cell.recon.match.id),\n \"http://www.wikidata.org/entity/\" + cell.recon.match.id,\n \"\"\n)",
+        "onError": "set-to-blank",
+        "newColumnName": "RC_City",
+        "columnInsertIndex": 24,
+        "description": "Create column RC_City at index 24 based on column City using expression grel:if(isNonBlank(cell.recon.match.id),\n \"http://www.wikidata.org/entity/\" + cell.recon.match.id,\n \"\"\n)"
+    },
+    {
+        "op": "core/recon",
+        "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+        },
+        "columnName": "Country",
+        "config": {
+            "mode": "standard-service",
+            "service": "https://wikidata.reconci.link/en/api",
+            "identifierSpace": "http://www.wikidata.org/entity/",
+            "schemaSpace": "http://www.wikidata.org/prop/direct/",
+            "type": {
+                "id": "Q6256",
+                "name": "country"
+            },
+            "autoMatch": true,
+            "batchSize": 10,
+            "columnDetails": [],
+            "limit": 0
+        },
+        "description": "Reconcile cells in column Country to type Q6256"
+    },
+    {
+        "op": "core/column-addition",
+        "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+        },
+        "baseColumnName": "Country",
+        "expression": "grel:if(isNonBlank(cell.recon.match.id),\n \"http://www.wikidata.org/entity/\" + cell.recon.match.id,\n \"\"\n)",
+        "onError": "set-to-blank",
+        "newColumnName": "RC_Country",
+        "columnInsertIndex": 26,
+        "description": "Create column RC_Country at index 26 based on column Country using expression grel:if(isNonBlank(cell.recon.match.id),\n \"http://www.wikidata.org/entity/\" + cell.recon.match.id,\n \"\"\n)"
+    },
+    {
+        "op": "core/recon",
+        "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+        },
+        "columnName": "Address",
+        "config": {
+            "mode": "standard-service",
+            "service": "https://wikidata.reconci.link/en/api",
+            "identifierSpace": "http://www.wikidata.org/entity/",
+            "schemaSpace": "http://www.wikidata.org/prop/direct/",
+            "autoMatch": true,
+            "batchSize": 10,
+            "columnDetails": [],
+            "limit": 0
+        },
+        "description": "Reconcile cells in column Address to type null"
+    }
+]
