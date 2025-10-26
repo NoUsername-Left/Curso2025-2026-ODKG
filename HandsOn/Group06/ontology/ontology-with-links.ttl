@@ -1,0 +1,199 @@
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix gtfs: <http://vocab.gtfs.org/terms#> .
+@prefix geo:  <http://www.w3.org/2003/01/geo/wgs84_pos#> .
+@prefix schema: <http://schema.org/> .
+@prefix ex:   <http://group06.linkeddata.es/ontology/madridbus/> .
+@prefix res:  <http://group06.linkeddata.es/resource/> .
+
+#################################################################
+# Route (from route_id 9__1__013_)
+#################################################################
+
+res:route/9__1__013_
+  a ex:BusRoute ;
+  gtfs:shortName "1" ;
+  gtfs:longName "L1 CIRCULAR (FFCC-Moreras-FFCC)" ;
+  gtfs:routeType 3 ;
+  rdfs:label "L1 CIRCULAR (FFCC-Moreras-FFCC)" .
+
+#################################################################
+# Trip (same trip_id across provided rows)
+#################################################################
+
+res:trip/9010201_9__1__013_-9__1__013__2_00:40:00_1_re__27_9__1__013_
+  a gtfs:Trip ;
+  gtfs:route res:route/9__1__013_ ;
+  gtfs:service res:service/9010201_9__1__013_ ;
+  gtfs:headsign "ESTUDIOS CINEMATOGRÁFICOS-MEDIODÍA" ;
+  gtfs:directionId 0 ;
+  gtfs:shape res:shape/9__1__013__1_re_IT_2 ;
+  rdfs:label "ESTUDIOS CINEMATOGRÁFICOS-MEDIODÍA" .
+
+#################################################################
+# Stops (with owl:sameAs Wikidata)
+#################################################################
+
+res:stop/par_8_09568
+  a ex:BusStop ;
+  rdfs:label "ESTACIÓN-EST.ARANJUEZ" ;
+  geo:lat  "40.0345268249512"^^xsd:float ;
+  geo:long "-3.61783719062805"^^xsd:float ;
+  gtfs:wheelchairBoarding 2 ;
+  owl:sameAs <http://www.wikidata.org/entity/Q3394535> .
+
+res:stop/par_8_21327
+  a ex:BusStop ;
+  rdfs:label "VALERAS-SAN ANTONIO" ;
+  geo:lat  "40.0337181091309"^^xsd:float ;
+  geo:long "-3.60868763923645"^^xsd:float ;
+  gtfs:wheelchairBoarding 0 ;
+  owl:sameAs <http://www.wikidata.org/entity/Q111388619> .
+
+res:stop/par_8_09572
+  a ex:BusStop ;
+  rdfs:label "ABASTOS-FLORIDA" ;
+  geo:lat  "40.0320510864258"^^xsd:float ;
+  geo:long "-3.60703206062317"^^xsd:float ;
+  gtfs:wheelchairBoarding 2 ;
+  owl:sameAs <http://www.wikidata.org/entity/Q109946281> .
+
+res:stop/par_8_09576
+  a ex:BusStop ;
+  rdfs:label "ABASTOS-AYUNTAMIENTO" ;
+  geo:lat  "40.0319328308105"^^xsd:float ;
+  geo:long "-3.60386633872986"^^xsd:float ;
+  gtfs:wheelchairBoarding 2 ;
+  owl:sameAs <http://www.wikidata.org/entity/Q126830041> .
+
+res:stop/par_8_09640
+  a ex:BusStop ;
+  rdfs:label "ABASTOS-CONCHA" ;
+  geo:lat  "40.0317115783691"^^xsd:float ;
+  geo:long "-3.60102796554565"^^xsd:float ;
+  gtfs:wheelchairBoarding 2 ;
+  owl:sameAs <http://www.wikidata.org/entity/Q42200530> .
+
+res:stop/par_8_09584
+  a ex:BusStop ;
+  rdfs:label "FOSO-GOBERNADOR" ;
+  geo:lat  "40.0323944091797"^^xsd:float ;
+  geo:long "-3.59809231758118"^^xsd:float ;
+  gtfs:wheelchairBoarding 2 ;
+  owl:sameAs <http://www.wikidata.org/entity/Q27038964> .
+
+res:stop/par_8_09585
+  a ex:BusStop ;
+  rdfs:label "FOSO-INFANTAS" ;
+  geo:lat  "40.0333786010742"^^xsd:float ;
+  geo:long "-3.59798359870911"^^xsd:float ;
+  gtfs:wheelchairBoarding 2 ;
+  owl:sameAs <http://www.wikidata.org/entity/Q8343724> .
+
+res:stop/par_8_09590
+  a ex:BusStop ;
+  rdfs:label "MORERAS-LA BARRACA DE FEDERICO GªLORCA" ;
+  geo:lat  "40.0354804992676"^^xsd:float ;
+  geo:long "-3.59678292274475"^^xsd:float ;
+  gtfs:wheelchairBoarding 2 ;
+  owl:sameAs <http://www.wikidata.org/entity/Q5909173> .
+
+res:stop/par_8_09592
+  a ex:BusStop ;
+  rdfs:label "MORERAS-ANCHA" ;
+  geo:lat  "40.0353317260742"^^xsd:float ;
+  geo:long "-3.59467196464539"^^xsd:float ;
+  gtfs:wheelchairBoarding 2 .
+
+res:stop/par_8_09593
+  a ex:BusStop ;
+  rdfs:label "MORERAS-PRIMERO DE MAYO" ;
+  gtfs:wheelchairBoarding 2 ;
+  geo:lat  "40.035213470459"^^xsd:float ;
+  geo:long "-3.59281897544861"^^xsd:float .
+
+#################################################################
+# StopTimes for each provided row (link trip & stop, with times)
+#################################################################
+
+res:stoptime/9010201_9__1__013_-9__1__013__2_00:40:00_1_re__27_9__1__013_-par_8_09568-0
+  a gtfs:StopTime ;
+  gtfs:trip res:trip/9010201_9__1__013_-9__1__013__2_00:40:00_1_re__27_9__1__013_ ;
+  gtfs:stop res:stop/par_8_09568 ;
+  gtfs:arrivalTime   "00:40:00"^^xsd:time ;
+  gtfs:departureTime "00:40:00"^^xsd:time ;
+  gtfs:stopSequence  0 .
+
+res:stoptime/9010201_9__1__013_-9__1__013__2_00:40:00_1_re__27_9__1__013_-par_8_21327-1
+  a gtfs:StopTime ;
+  gtfs:trip res:trip/9010201_9__1__013_-9__1__013__2_00:40:00_1_re__27_9__1__013_ ;
+  gtfs:stop res:stop/par_8_21327 ;
+  gtfs:arrivalTime   "00:40:00"^^xsd:time ;
+  gtfs:departureTime "00:40:00"^^xsd:time ;
+  gtfs:stopSequence  1 .
+
+res:stoptime/9010201_9__1__013_-9__1__013__2_00:40:00_1_re__27_9__1__013_-par_8_09572-2
+  a gtfs:StopTime ;
+  gtfs:trip res:trip/9010201_9__1__013_-9__1__013__2_00:40:00_1_re__27_9__1__013_ ;
+  gtfs:stop res:stop/par_8_09572 ;
+  gtfs:arrivalTime   "00:40:00"^^xsd:time ;
+  gtfs:departureTime "00:40:00"^^xsd:time ;
+  gtfs:stopSequence  2 .
+
+res:stoptime/9010201_9__1__013_-9__1__013__2_00:40:00_1_re__27_9__1__013_-par_8_09576-3
+  a gtfs:StopTime ;
+  gtfs:trip res:trip/9010201_9__1__013_-9__1__013__2_00:40:00_1_re__27_9__1__013_ ;
+  gtfs:stop res:stop/par_8_09576 ;
+  gtfs:arrivalTime   "00:40:00"^^xsd:time ;
+  gtfs:departureTime "00:40:00"^^xsd:time ;
+  gtfs:stopSequence  3 .
+
+res:stoptime/9010201_9__1__013_-9__1__013__2_00:40:00_1_re__27_9__1__013_-par_8_09640-4
+  a gtfs:StopTime ;
+  gtfs:trip res:trip/9010201_9__1__013_-9__1__013__2_00:40:00_1_re__27_9__1__013_ ;
+  gtfs:stop res:stop/par_8_09640 ;
+  gtfs:arrivalTime   "00:40:00"^^xsd:time ;
+  gtfs:departureTime "00:40:00"^^xsd:time ;
+  gtfs:stopSequence  4 .
+
+res:stoptime/9010201_9__1__013_-9__1__013__2_00:40:00_1_re__27_9__1__013_-par_8_09584-5
+  a gtfs:StopTime ;
+  gtfs:trip res:trip/9010201_9__1__013_-9__1__013__2_00:40:00_1_re__27_9__1__013_ ;
+  gtfs:stop res:stop/par_8_09584 ;
+  gtfs:arrivalTime   "00:40:00"^^xsd:time ;
+  gtfs:departureTime "00:40:00"^^xsd:time ;
+  gtfs:stopSequence  5 .
+
+res:stoptime/9010201_9__1__013_-9__1__013__2_00:40:00_1_re__27_9__1__013_-par_8_09585-6
+  a gtfs:StopTime ;
+  gtfs:trip res:trip/9010201_9__1__013_-9__1__013__2_00:40:00_1_re__27_9__1__013_ ;
+  gtfs:stop res:stop/par_8_09585 ;
+  gtfs:arrivalTime   "00:40:00"^^xsd:time ;
+  gtfs:departureTime "00:40:00"^^xsd:time ;
+  gtfs:stopSequence  6 .
+
+res:stoptime/9010201_9__1__013_-9__1__013__2_00:40:00_1_re__27_9__1__013_-par_8_09590-7
+  a gtfs:StopTime ;
+  gtfs:trip res:trip/9010201_9__1__013_-9__1__013__2_00:40:00_1_re__27_9__1__013_ ;
+  gtfs:stop res:stop/par_8_09590 ;
+  gtfs:arrivalTime   "00:40:00"^^xsd:time ;
+  gtfs:departureTime "00:40:00"^^xsd:time ;
+  gtfs:stopSequence  7 .
+
+res:stoptime/9010201_9__1__013_-9__1__013__2_00:40:00_1_re__27_9__1__013_-par_8_09592-8
+  a gtfs:StopTime ;
+  gtfs:trip res:trip/9010201_9__1__013_-9__1__013__2_00:40:00_1_re__27_9__1__013_ ;
+  gtfs:stop res:stop/par_8_09592 ;
+  gtfs:arrivalTime   "00:40:00"^^xsd:time ;
+  gtfs:departureTime "00:40:00"^^xsd:time ;
+  gtfs:stopSequence  8 .
+
+res:stoptime/9010201_9__1__013_-9__1__013__2_00:40:00_1_re__27_9__1__013_-par_8_09593-9
+  a gtfs:StopTime ;
+  gtfs:trip res:trip/9010201_9__1__013_-9__1__013__2_00:40:00_1_re__27_9__1__013_ ;
+  gtfs:stop res:stop/par_8_09593 ;
+  gtfs:arrivalTime   "00:40:00"^^xsd:time ;
+  gtfs:departureTime "00:40:00"^^xsd:time ;
+  gtfs:stopSequence  9 .
