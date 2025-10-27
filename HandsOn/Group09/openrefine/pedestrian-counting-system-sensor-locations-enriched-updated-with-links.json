@@ -1318,10 +1318,5 @@
     "op": "core/column-removal",
     "columnName": "Same_As_Wikidata_Dir_2",
     "description": "Eliminar columna Same_As_Wikidata_Dir_2"
-  },
-  {
-    "op": "core/column-removal",
-    "columnName": "Direction_2",
-    "description": "Eliminar columna Direction_2"
   }
 ]
