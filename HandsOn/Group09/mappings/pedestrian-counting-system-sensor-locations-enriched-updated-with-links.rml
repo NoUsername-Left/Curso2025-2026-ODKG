@@ -84,7 +84,7 @@
   ] ;
   
   rr:predicateObjectMap [
-    rr:predicate us:hasAddress ;
+    rr:predicate us:hasStreet ;
     rr:objectMap [
       rr:parentTriplesMap <#StreetMapping> ;
       rr:joinCondition [
@@ -92,11 +92,6 @@
          rr:parent "Street";
       ]
     ]
-  ] ;
-
-  rr:predicateObjectMap [
-    rr:predicate us:hasAddress ;
-    rr:objectMap [ rml:reference "Address" ; rr:termType rr:Literal ]
   ] ;
 
   rr:predicateObjectMap [
@@ -202,7 +197,7 @@
   
   rr:subjectMap [
     rr:template "https://smartcity.linkeddata.es/lcc/resource/street/{Street}";
-    rr:class schema:PostalAddress # This is the range of us:hasAddress
+    rr:class schema:PostalAddress # This is the range of us:hasStreet
   ];
   rr:predicateObjectMap [
     rr:predicate schema:streetAddress;
