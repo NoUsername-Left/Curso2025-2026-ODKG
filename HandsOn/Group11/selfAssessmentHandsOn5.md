@@ -7,4 +7,4 @@
 - [X] Has at least one owl:sameAs property that links to another dataset
 
 ## Comments on the self-assessment
-_(If required)_
+_(If required)_ 
