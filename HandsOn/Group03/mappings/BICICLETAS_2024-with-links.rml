@@ -22,6 +22,8 @@
     rr:predicate rdfs:label;
     rr:objectMap [
       rr:template "Bicycle observation at {identificador} on {fecha} at {hora}"
+    ;
+      rr:datatype xsd:string
     ]
   ];
 
@@ -45,6 +47,8 @@
     rr:predicate mts:bicycleIdentifier;
     rr:objectMap [
       rml:reference "identificador"
+    ;
+      rr:datatype xsd:string
     ]
   ];
 
@@ -60,6 +64,8 @@
     rr:predicate mts:bicycleStreetName;
     rr:objectMap [
       rml:reference "direccion"
+    ;
+      rr:datatype xsd:string
     ]
   ];
 
@@ -67,6 +73,8 @@
     rr:predicate mts:bicycleObservationDirection;
     rr:objectMap [
       rml:reference "observaciones_direccion"
+    ;
+      rr:datatype xsd:string
     ]
   ];
 
@@ -108,6 +116,8 @@
     rr:predicate rdfs:label;
     rr:objectMap [
       rml:reference "distrito"
+    ;
+      rr:datatype xsd:string
     ]
   ];
 
@@ -123,6 +133,8 @@
     rr:predicate mts:districtName;
     rr:objectMap [
       rml:reference "distrito"
+    ;
+      rr:datatype xsd:string
     ]
   ];
 

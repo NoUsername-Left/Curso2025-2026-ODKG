@@ -22,6 +22,8 @@
     rr:predicate rdfs:label;
     rr:objectMap [
       rr:template "Traffic Light {id}"
+    ;
+      rr:datatype xsd:string
     ]
   ];
 
@@ -53,6 +55,8 @@
     rr:predicate mts:trafficLightType;
     rr:objectMap [
       rml:reference "tipo_semaforo"
+    ;
+      rr:datatype xsd:string
     ]
   ];
 
@@ -60,6 +64,8 @@
     rr:predicate mts:lightsType;
     rr:objectMap [
       rml:reference "tipo_luz"
+    ;
+      rr:datatype xsd:string
     ]
   ];
 
@@ -101,6 +107,8 @@
     rr:predicate rdfs:label;
     rr:objectMap [
       rr:template "District {distrio_nombre}"
+    ;
+      rr:datatype xsd:string
     ]
   ];
 
@@ -116,6 +124,8 @@
     rr:predicate mts:districtName;
     rr:objectMap [
       rml:reference "distrio_nombre"
+    ;
+      rr:datatype xsd:string
     ]
   ];
 

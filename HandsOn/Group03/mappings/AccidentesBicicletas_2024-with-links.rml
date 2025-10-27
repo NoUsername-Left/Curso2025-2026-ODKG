@@ -22,6 +22,8 @@
     rr:predicate rdfs:label;
     rr:objectMap [
       rr:template "Accident {num_expediente}"
+    ;
+      rr:datatype xsd:string
     ]
   ];
 
@@ -29,6 +31,8 @@
     rr:predicate mts:caseNumber;
     rr:objectMap [
       rml:reference "num_expediente"
+    ;
+      rr:datatype xsd:string
     ]
   ];
 
@@ -52,6 +56,8 @@
     rr:predicate mts:accidentLocation;
     rr:objectMap [
       rml:reference "localizacion"
+    ;
+      rr:datatype xsd:string
     ]
   ];
 
@@ -59,6 +65,8 @@
     rr:predicate mts:houseNumber;
     rr:objectMap [
       rml:reference "numero"
+    ;
+      rr:datatype xsd:string
     ]
   ];
 
@@ -66,6 +74,8 @@
     rr:predicate mts:accidentType;
     rr:objectMap [
       rml:reference "tipo_accidente"
+    ;
+      rr:datatype xsd:string
     ]
   ];
 
@@ -73,6 +83,8 @@
     rr:predicate mts:weatherCondition;
     rr:objectMap [
       rml:reference "estado_meteorológico"
+    ;
+      rr:datatype xsd:string
     ]
   ];
 
@@ -80,6 +92,8 @@
     rr:predicate mts:vehicleType;
     rr:objectMap [
       rml:reference "tipo_vehiculo"
+    ;
+      rr:datatype xsd:string
     ]
   ];
 
@@ -121,6 +135,8 @@
     rr:predicate rdfs:label;
     rr:objectMap [
       rml:reference "distrito"
+    ;
+      rr:datatype xsd:string
     ]
   ];
 
@@ -136,6 +152,8 @@
     rr:predicate mts:districtName;
     rr:objectMap [
       rml:reference "distrito"
+    ;
+      rr:datatype xsd:string
     ]
   ];
 
@@ -163,6 +181,8 @@
     rr:predicate rdfs:label;
     rr:objectMap [
       rr:template "Person involved in {num_expediente}"
+    ;
+      rr:datatype xsd:string
     ]
   ];
 
@@ -170,6 +190,8 @@
     rr:predicate mts:personType;
     rr:objectMap [
       rml:reference "tipo_persona"
+    ;
+      rr:datatype xsd:string
     ]
   ];
 
@@ -177,6 +199,8 @@
     rr:predicate mts:ageRange;
     rr:objectMap [
       rml:reference "rango_edad"
+    ;
+      rr:datatype xsd:string
     ]
   ];
 
@@ -184,6 +208,8 @@
     rr:predicate mts:gender;
     rr:objectMap [
       rml:reference "sexo"
+    ;
+      rr:datatype xsd:string
     ]
   ];
 
@@ -232,6 +258,8 @@
     rr:predicate rdfs:label;
     rr:objectMap [
       rml:reference "lesividad"
+    ;
+      rr:datatype xsd:string
     ]
   ];
 
@@ -247,6 +275,8 @@
     rr:predicate mts:injuryDescription;
     rr:objectMap [
       rml:reference "lesividad"
+    ;
+      rr:datatype xsd:string
     ]
   ] .
 
@@ -265,6 +295,8 @@
     rr:predicate rdfs:label;
     rr:objectMap [
       rml:reference "tipo_vehiculo"
+    ;
+      rr:datatype xsd:string
     ]
   ];
 
