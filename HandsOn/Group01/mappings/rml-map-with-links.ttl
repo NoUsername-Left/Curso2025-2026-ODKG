@@ -55,11 +55,9 @@
   ];
 
   rr:predicateObjectMap [
-    rr:predicateMap [ rr:constant owl:sameAs; rr:termType rr:IRI ];
-    rr:objectMap [
-      rr:template "{NOMBRE-WIKI}";
-      rr:termType rr:IRI ]
-  ];
+    rr:predicate owl:sameAs ;
+    rr:objectMap [ rml:reference "NOMBRE-WIKI" ; rr:termType rr:IRI ] ;
+  ] ;
 
   # Propiedades específicas de Park
   rr:predicateObjectMap [ rr:predicate sc:surface; rr:objectMap [ rml:reference "Superfice m²"; rr:datatype xsd:integer ] ];
@@ -110,11 +108,10 @@
   ] ;
 
   rr:predicateObjectMap [
-    rr:predicateMap [ rr:constant owl:sameAs; rr:termType rr:IRI ];
-    rr:objectMap [
-      rr:template "{NOMBRE-WIKI}";
-      rr:termType rr:IRI ]
-  ];
+    rr:predicate owl:sameAs ;
+    rr:objectMap [ rml:reference "NOMBRE-WIKI" ; rr:termType rr:IRI ] ;
+  ] ;
+
 
   # Propiedades específicas de library
   rr:predicateObjectMap [ rr:predicate sc:hasWifi; rr:objectMap [ rml:reference "tieneWifi" ] ].
@@ -164,11 +161,10 @@
   ];
 
   rr:predicateObjectMap [
-    rr:predicateMap [ rr:constant owl:sameAs; rr:termType rr:IRI ];
-    rr:objectMap [
-      rr:template "{NOMBRE-WIKI}";
-      rr:termType rr:IRI ]
-  ];
+    rr:predicate owl:sameAs ;
+    rr:objectMap [ rml:reference "NOMBRE-WIKI" ; rr:termType rr:IRI ] ;
+  ] ;
+
 
   #Género alumnos, propiedad específica de los ResidenceHall, en teoría se generaría solo si existe valor en esa columna. 
   rr:predicateObjectMap [ rr:predicate sc:studentGender ; rr:objectMap [ rml:reference "generoAlumnos" ] ] .
@@ -218,10 +214,8 @@
   ];
 
   rr:predicateObjectMap [
-    rr:predicateMap [ rr:constant owl:sameAs; rr:termType rr:IRI ];
-    rr:objectMap [
-      rr:template "{NOMBRE-WIKI}";
-      rr:termType rr:IRI ]
+    rr:predicate owl:sameAs ;
+    rr:objectMap [ rml:reference "NOMBRE-WIKI" ; rr:termType rr:IRI ] ;
   ] .
 
 ##################################################################
@@ -248,11 +242,13 @@
   ] ;
 
   rr:predicateObjectMap [
-    rr:predicateMap [ rr:constant owl:sameAs; rr:termType rr:IRI ];
-    rr:objectMap [
-      rr:template "{DISTRITO-WIKI}";
-      rr:termType rr:IRI ]
-  ] .
+  rr:predicate owl:sameAs ;
+  rr:objectMap [
+    rml:reference "DISTRITO-WIKI" ;
+    rr:termType rr:IRI
+  ]
+] ;
+ .
 
 <#NeighbourhoodMap> 
   rml:logicalSource [ rml:source "../csv/combinado-updated.csv" ; rml:referenceFormulation ql:CSV ] ;
@@ -274,10 +270,11 @@
   ] ;
 
   rr:predicateObjectMap [
-    rr:predicateMap [ rr:constant owl:sameAs; rr:termType rr:IRI ];
+    rr:predicate owl:sameAs ;
     rr:objectMap [
-      rr:template "{BARRIO-WIKI}";
-      rr:termType rr:IRI ]
+      rml:reference "BARRIO-WIKI" ;
+      rr:termType rr:IRI
+    ]
   ] .
 
 <#MunicipalityMap> 
@@ -295,10 +292,11 @@
   ] ;
 
   rr:predicateObjectMap [
-    rr:predicateMap [ rr:constant owl:sameAs; rr:termType rr:IRI ];
+    rr:predicate owl:sameAs ;
     rr:objectMap [
-      rr:template "{LOCALIDAD-WIKI}";
-      rr:termType rr:IRI ]
+      rml:reference "LOCALIDAD-WIKI" ;
+      rr:termType rr:IRI
+    ]
   ] .
 
 #######################
