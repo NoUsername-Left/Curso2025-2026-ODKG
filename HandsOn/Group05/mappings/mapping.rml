@@ -31,7 +31,7 @@
   rr:predicateObjectMap [
 	 rr:predicateMap [ rr:constant owl:sameAs; rr:termType rr:IRI ];
 	 rr:objectMap [
-	 rr:template "https://www.wikidata.org/wiki/{Address-ID}";
+	 rr:template "http://www.wikidata.org/entity/{Address-ID}";
 	 rr:termType rr:IRI ]
   ].
 
