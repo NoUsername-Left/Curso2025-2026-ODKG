@@ -82,3 +82,78 @@ Location: https://smartcity.linkeddata.es/lcc/resource/location/5
   City: Melbourne (http://wikidata.org/entity/Q3141)
 
 ------------------------------------------------------------
+
+query4 = """
+SELECT DISTINCT ?class
+WHERE {
+  ?s a ?class .
+}
+"""
+
+------------------------------------------------------------
+
+(rdflib.term.URIRef('http://www.w3.org/ns/sosa/Result'),)
+(rdflib.term.URIRef('https://smartcity.linkeddata.es/lcc/ontology/urban-sensors#MicroclimateObservation'),)
+(rdflib.term.URIRef('http://schema.org/Country'),)
+(rdflib.term.URIRef('https://smartcity.linkeddata.es/lcc/ontology/urban-sensors#Location'),)
+(rdflib.term.URIRef('http://schema.org/Text'),)
+(rdflib.term.URIRef('http://schema.org/PostalAddress'),)
+(rdflib.term.URIRef('https://smartcity.linkeddata.es/lcc/ontology/urban-sensors#MicroclimateSensor'),)
+(rdflib.term.URIRef('http://schema.org/City'),)
+
+------------------------------------------------------------
+
+query5 = """
+SELECT ?loc ?lat ?long ?address
+WHERE {
+  ?loc a us:Location ;
+       wgs84_pos:lat ?lat ;
+       wgs84_pos:long ?long ;
+       schema:streetAddress ?address .
+}
+LIMIT 5
+"""
+
+------------------------------------------------------------
+
+(rdflib.term.URIRef('https://smartcity.linkeddata.es/lcc/resource/location/M08'), rdflib.term.Literal('-37.8184515', datatype=rdflib.term.URIRef('http://www.w3.org/2001/XMLSchema#float')), rdflib.term.Literal('144.9678474', datatype=rdflib.term.URIRef('http://www.w3.org/2001/XMLSchema#float')), rdflib.term.Literal('Flinders Street 207-361'))
+(rdflib.term.URIRef('https://smartcity.linkeddata.es/lcc/resource/location/M05'), rdflib.term.Literal('-37.8204083', datatype=rdflib.term.URIRef('http://www.w3.org/2001/XMLSchema#float')), rdflib.term.Literal('144.9591192', datatype=rdflib.term.URIRef('http://www.w3.org/2001/XMLSchema#float')), rdflib.term.Literal('Flinders Street 483'))
+(rdflib.term.URIRef('https://smartcity.linkeddata.es/lcc/resource/location/M01'), rdflib.term.Literal('-37.7956167', datatype=rdflib.term.URIRef('http://www.w3.org/2001/XMLSchema#float')), rdflib.term.Literal('144.9519007', datatype=rdflib.term.URIRef('http://www.w3.org/2001/XMLSchema#float')), rdflib.term.Literal('Gatehouse St/Royal Pde (Parkville) 29'))
+(rdflib.term.URIRef('https://smartcity.linkeddata.es/lcc/resource/location/M10'), rdflib.term.Literal('-37.8128595', datatype=rdflib.term.URIRef('http://www.w3.org/2001/XMLSchema#float')), rdflib.term.Literal('144.9745395', datatype=rdflib.term.URIRef('http://www.w3.org/2001/XMLSchema#float')), rdflib.term.Literal('Treasury Place 1'))
+(rdflib.term.URIRef('https://smartcity.linkeddata.es/lcc/resource/location/M03'), rdflib.term.Literal('-37.8140348', datatype=rdflib.term.URIRef('http://www.w3.org/2001/XMLSchema#float')), rdflib.term.Literal('144.96728', datatype=rdflib.term.URIRef('http://www.w3.org/2001/XMLSchema#float')), rdflib.term.Literal('Central Hall, Little Collins Street 210'))
+
+------------------------------------------------------------
+
+query6 = """
+SELECT ?location ?lat ?long ?streetName ?wikidataStreet ?cityName ?wikidataCity
+WHERE {
+    # Localización y coordenadas
+    ?location a us:Location ;
+              wgs84_pos:lat ?lat ;
+              wgs84_pos:long ?long ;
+              # Enlace a la entidad calle
+              us:hasStreet ?streetEntity ;
+              # Enlace a la entidad ciudad
+              us:inAdministrativeArea ?cityEntity .
+
+    # Detalles de la calle y su enlace Wikidata
+    ?streetEntity a schema:PostalAddress ;
+                  schema:streetAddress ?streetName ;
+                  owl:sameAs ?wikidataStreet .
+
+    # Detalles de la ciudad y su enlace Wikidata
+    ?cityEntity a schema:City ; # O schema:AdministrativeArea si es más general
+                rdfs:label ?cityName ;
+                owl:sameAs ?wikidataCity .
+
+}
+LIMIT 5
+"""
+
+------------------------------------------------------------
+
+(rdflib.term.URIRef('https://smartcity.linkeddata.es/lcc/resource/location/M08'), rdflib.term.Literal('-37.8184515', datatype=rdflib.term.URIRef('http://www.w3.org/2001/XMLSchema#float')), rdflib.term.Literal('144.9678474', datatype=rdflib.term.URIRef('http://www.w3.org/2001/XMLSchema#float')), rdflib.term.Literal('Flinders Street'), rdflib.term.URIRef('http://www.wikidata.org/entity/Q3442521'), rdflib.term.Literal('Melbourne'), rdflib.term.URIRef('http://www.wikidata.org/entity/Q3141'))
+(rdflib.term.URIRef('https://smartcity.linkeddata.es/lcc/resource/location/M05'), rdflib.term.Literal('-37.8204083', datatype=rdflib.term.URIRef('http://www.w3.org/2001/XMLSchema#float')), rdflib.term.Literal('144.9591192', datatype=rdflib.term.URIRef('http://www.w3.org/2001/XMLSchema#float')), rdflib.term.Literal('Flinders Street'), rdflib.term.URIRef('http://www.wikidata.org/entity/Q3442521'), rdflib.term.Literal('Melbourne'), rdflib.term.URIRef('http://www.wikidata.org/entity/Q3141'))
+(rdflib.term.URIRef('https://smartcity.linkeddata.es/lcc/resource/location/M01'), rdflib.term.Literal('-37.7956167', datatype=rdflib.term.URIRef('http://www.w3.org/2001/XMLSchema#float')), rdflib.term.Literal('144.9519007', datatype=rdflib.term.URIRef('http://www.w3.org/2001/XMLSchema#float')), rdflib.term.Literal('Gatehouse St/Royal Pde (Parkville)'), rdflib.term.URIRef('http://www.wikidata.org/entity/Q112824421'), rdflib.term.Literal('Parkville'), rdflib.term.URIRef('http://www.wikidata.org/entity/Q3427921'))
+(rdflib.term.URIRef('https://smartcity.linkeddata.es/lcc/resource/location/M03'), rdflib.term.Literal('-37.8140348', datatype=rdflib.term.URIRef('http://www.w3.org/2001/XMLSchema#float')), rdflib.term.Literal('144.96728', datatype=rdflib.term.URIRef('http://www.w3.org/2001/XMLSchema#float')), rdflib.term.Literal('Central Hall, Little Collins Street'), rdflib.term.URIRef('http://www.wikidata.org/entity/Q114636721'), rdflib.term.Literal('Melbourne'), rdflib.term.URIRef('http://www.wikidata.org/entity/Q3141'))
+(rdflib.term.URIRef('https://smartcity.linkeddata.es/lcc/resource/location/M07'), rdflib.term.Literal('-37.8222341', datatype=rdflib.term.URIRef('http://www.w3.org/2001/XMLSchema#float')), rdflib.term.Literal('144.9829409', datatype=rdflib.term.URIRef('http://www.w3.org/2001/XMLSchema#float')), rdflib.term.Literal('Olympic Boulevard'), rdflib.term.URIRef('http://www.wikidata.org/entity/Q136004235'), rdflib.term.Literal('Melbourne'), rdflib.term.URIRef('http://www.wikidata.org/entity/Q3141'))

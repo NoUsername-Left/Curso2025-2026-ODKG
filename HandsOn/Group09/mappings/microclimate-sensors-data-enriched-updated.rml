@@ -28,6 +28,7 @@
 
     rr:subjectMap [
         rr:template "https://smartcity.linkeddata.es/lcc/resource/location/{Location_ID}" ;
+        rr:termType rr:IRI ;
         rr:class us:Location ;
     ] ;
 

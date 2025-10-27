@@ -11,14 +11,21 @@
 @base <https://smartcity.linkeddata.es/lcc/resource/> .
 
 #################################################################
+# Logical Source
+#################################################################
+
+<#PedestrianSource>
+    a rml:LogicalSource ;
+    rml:source "../csv/pedestrian-counting-system-sensor-locations-enriched-updated-with-links.csv" ;
+    rml:referenceFormulation ql:CSV .
+
+#################################################################
 # Pedestrian Location Mapping
 #################################################################
 
-<#PedestrianLocation> a rr:TriplesMap;
-  rml:logicalSource [
-    rml:source "../csv/pedestrian-counting-system-sensor-locations-enriched-updated-with-links.csv" ;
-    rml:referenceFormulation ql:CSV 
-  ];
+<#PedestrianLocation>
+  a rr:TriplesMap ;
+  rml:logicalSource <#PedestrianSource> ;
 
   rr:subjectMap [
     rr:template "https://smartcity.linkeddata.es/lcc/resource/location/{Location_ID}";
@@ -101,11 +108,9 @@
 # Pedestrian Sensor Mapping
 #################################################################
 
-<#PedestrianSensor> a rr:TriplesMap;
-  rml:logicalSource [
-    rml:source "../csv/pedestrian-counting-system-sensor-locations-enriched-updated-with-links.csv" ;
-    rml:referenceFormulation ql:CSV 
-  ];
+<#PedestrianSensor> 
+  a rr:TriplesMap ;
+  rml:logicalSource <#PedestrianSource> ;
 
   rr:subjectMap [
     rml:template "https://smartcity.linkeddata.es/lcc/resource/sensor/{Sensor_Name}";
@@ -157,11 +162,10 @@
 # Subjects for reconciliation
 #################################################################
 
-<#CityMapping> a rr:TriplesMap;
-  rml:logicalSource [
-    rml:source "../csv/pedestrian-counting-system-sensor-locations-enriched-updated-with-links.csv" ;
-    rml:referenceFormulation ql:CSV 
-  ];
+<#CityMapping> 
+  a rr:TriplesMap ;
+  rml:logicalSource <#PedestrianSource> ;
+
   rr:subjectMap [
     rr:template "https://smartcity.linkeddata.es/lcc/resource/city/{City}";
     rr:class schema:City # schema:City is a subclass of schema:AdministrativeArea
@@ -175,11 +179,10 @@
     rr:objectMap [ rml:reference "Same_As_Wikidata_City"; rr:termType rr:IRI ]
   ].
 
-<#CountryMapping> a rr:TriplesMap;
-  rml:logicalSource [
-    rml:source "../csv/pedestrian-counting-system-sensor-locations-enriched-updated-with-links.csv" ;
-    rml:referenceFormulation ql:CSV 
-  ];
+<#CountryMapping> 
+  a rr:TriplesMap ;
+  rml:logicalSource <#PedestrianSource> ;
+
   rr:subjectMap [
     rr:template "https://smartcity.linkeddata.es/lcc/resource/country/{Country}";
     rr:class schema:Country # schema:Country is a subclass of schema:AdministrativeArea
@@ -193,11 +196,10 @@
     rr:objectMap [ rml:reference "Same_As_Wikidata_Country"; rr:termType rr:IRI ]
   ].
 
-<#StreetMapping> a rr:TriplesMap;
-  rml:logicalSource [
-    rml:source "../csv/pedestrian-counting-system-sensor-locations-enriched-updated-with-links.csv" ;
-    rml:referenceFormulation ql:CSV 
-  ];
+<#StreetMapping> 
+  a rr:TriplesMap ;
+  rml:logicalSource <#PedestrianSource> ;
+  
   rr:subjectMap [
     rr:template "https://smartcity.linkeddata.es/lcc/resource/street/{Street}";
     rr:class schema:PostalAddress # This is the range of us:hasAddress
