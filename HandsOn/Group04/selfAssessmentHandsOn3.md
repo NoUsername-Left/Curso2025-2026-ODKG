@@ -1,11 +1,21 @@
 # Hands-on 3 – Self-Assessment
 
-Dataset 1
+## Data–Ontology Consistency Checklist
 
-**File:** `selfAssessmentHandsOn3_Group4.md`  
-**Dataset:** `flux_daily_mov.csv`  
-**Author(s):** *Axel AOUIZERATE*  
-**Date:** *2025-10-17*
+### Resources (CSV)
+- [✔] Every resource has a unique identifier in a column (not auto-incremented).
+- [✔] Every resource is related to a class in the ontology.
+
+### Classes (Ontology)
+- [✔] Every class is related to at least one resource described in the CSV file.
+
+### Columns (CSV)
+- [✔] All values are trimmed (no leading/trailing whitespace).
+- [✔] All values are properly encoded (e.g., dates, booleans).
+- [✔] Every column is related to a property in the ontology.
+
+### Properties (Ontology)
+- [✔] Every property is related to a column in the CSV file.
 
 ---
 
@@ -24,15 +34,11 @@ Overall the data was very clean.
 The numbers values were in text type, and the decimals were ambiguous. We fixed it by checking verified data online (for example the distance in kilometers between cities).
 But no missing value, no dupplicate and no incorrect data.
 
-
 ---
 
 ## 3. Cleaning & Transformation Steps
 
 Cf Json document.
-
-
-
 
 ---
 
@@ -48,8 +54,6 @@ Dataset 2
 
 ## 2. Data Quality Issues Identified
 The population column was filled with text values instead of numbers. Therefore, we converted the values to numbers.
-
-
 
 ---
 
