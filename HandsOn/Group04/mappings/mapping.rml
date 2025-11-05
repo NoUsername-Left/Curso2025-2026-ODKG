@@ -15,7 +15,7 @@
 
 # --- 1. Data Source Definition ---
 <#LogicalSource_CSV>
-    rml:source "../csv/flux_daily_mov_updated.csv";
+    rml:source "../csv/flux_sample_updated.csv";
     rml:referenceFormulation ql:CSV.
 
 # --- 2. Main Mapping: The Mobility Observation ---
