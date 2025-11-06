@@ -103,3 +103,49 @@ WHERE {
          
     ?obs ex:hasDestinationActivity ?act .
 }
+
+# ZONES
+# ---
+# Query 1: Count all transformed zones
+# (Verifies that the expected number of rows has been processed)
+# ---
+SELECT (COUNT(?zone) AS ?totalZones)
+WHERE {
+  ?zone a schema:AdministrativeArea .
+}
+
+# ---
+# Query 2: Get details for a specific zone
+# (Verifies that properties are mapped correctly)
+# ---
+SELECT ?name ?population
+WHERE {
+  ?zone a schema:AdministrativeArea ;
+        schema:identifier "01059" ; # ID for Vitoria-Gasteiz
+        schema:name ?name ;
+        schema:population ?population .
+}
+
+# ---
+# Query 3: Find the 5 most populated zones
+# (Verifies that the 'population' datatype is numeric and sortable)
+# ---
+SELECT ?name ?population
+WHERE {
+  ?zone a schema:AdministrativeArea ;
+        schema:name ?name ;
+        schema:population ?population .
+}
+ORDER BY DESC(?population)
+LIMIT 5
+
+# ---
+# Query 4: Find all "agregaciones de municipios"
+# (Verifies string mapping and the use of filters)
+# ---
+SELECT ?name
+WHERE {
+  ?zone a schema:AdministrativeArea ;
+        schema:name ?name .
+  FILTER(CONTAINS(LCASE(?name), "agregacion de municipios"))
+}

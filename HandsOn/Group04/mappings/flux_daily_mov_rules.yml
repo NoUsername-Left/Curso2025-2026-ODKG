@@ -11,7 +11,7 @@ prefixes:
 
 sources:
   csv_data:
-    access: flux_daily_mov_updated.csv
+    access: ../csv/flux_sample_updated.csv
     referenceFormulation: csv
     iterator: $ # This means iterate over every row
 
