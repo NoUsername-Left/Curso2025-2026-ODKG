@@ -1,0 +1,325 @@
+/* index.css (REEMPLAZAR TODO) */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap');
+
+:root{
+  --bg: #0f172a;
+  --card: #181f3a;
+  --accent: #00e0c6;
+  --accent2: #ffb800;
+  --muted: #94a3b8;
+  --bar: #ffb800;
+  --station: #00e0c6;
+}
+
+/* index.html ya se encarga de body, html y #root */
+
+/* Hacemos que .app llene el #root (que es 100vh/100vw) */
+.app {
+  display: flex;
+  flex-direction: column; /* Layout vertical */
+  height: 100vh; /* Ocupa toda la altura */
+  width: 100vw;  /* Ocupa todo el ancho */
+  background: var(--bg);
+  color: #e6eef8;
+  font-family: 'Inter', sans-serif;
+  overflow: hidden; /* Evita barras de scroll innecesarias */
+}
+
+/* Título superior, como en tu imagen */
+.app-title {
+  padding: 10px 24px;
+  background: rgba(15, 23, 42, 0.9); /* Fondo oscuro */
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: #e6eef8;
+  flex-shrink: 0; /* Evita que el título se encoja */
+  border-bottom: 1px solid var(--card);
+}
+
+/* Contenedor del mapa, debe ser flexible para llenar el espacio restante */
+.map-container-wrapper {
+  flex-grow: 1; /* Ocupa todo el espacio vertical restante */
+  position: relative; /* Clave para posicionar controles */
+}
+
+/* El mapa debe llenar el wrapper */
+.leaflet-container {
+  height: 100%;
+  width: 100%;
+  background: #f0f0f0; /* Color de fondo mientras carga tiles */
+}
+
+/* Overlay de carga */
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  z-index: 2000;
+}
+
+/* --- Controles Flotantes --- */
+.map-controls {
+  position: absolute;
+  top: 10px;
+  /* Leaflet pone sus controles de zoom a la izquierda, así que nos movemos un poco */
+  left: 60px; 
+  z-index: 1000; /* Por encima del mapa */
+  background: rgba(255, 255, 255, 0.95); /* Fondo blanco casi opaco */
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  padding: 12px;
+  color: #333; /* Texto oscuro para los controles */
+}
+
+/* SearchBar (usa los classNames de tu SearchBar.jsx) */
+.search-container form {
+  display: flex;
+  margin-bottom: 10px; /* Espacio entre búsqueda y filtros */
+}
+
+.search-container input {
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px 0 0 4px;
+  font-size: 0.9rem;
+  color: #000; /* Texto de input oscuro */
+  width: 250px;
+}
+.search-container input:focus {
+  outline: none;
+  border-color: #007bff;
+}
+
+.search-container button {
+  padding: 8px 12px;
+  background: #007bff; /* Azul estándar */
+  color: white;
+  border: none;
+  border-radius: 0 4px 4px 0;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+.search-container button:hover {
+  background: #0056b3;
+}
+
+/* FilterButtons (usa los classNames de tu FilterButtons.jsx) */
+.filter-container .flex {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+.filter-container button {
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1px solid #ccc;
+  transition: background 0.2s, color 0.2s;
+  flex-grow: 1; /* Para que ocupen el espacio */
+}
+
+/* Botón normal (estado no-activo) */
+.filter-container button.bg-gray-200 {
+  background-color: #f0f0f0;
+  color: #333;
+}
+.filter-container button.bg-gray-200:hover {
+   background-color: #ddd;
+}
+
+/* Botón activo */
+.filter-container button.bg-blue-500 {
+   background-color: #007bff;
+   color: white;
+   border-color: #007bff;
+}
+
+/* Popups (usando los estilos de tu index.css original) */
+.leaflet-popup-content-wrapper {
+  background: var(--card) !important;
+  color: #fff !important;
+  border-radius: 12px !important;
+  box-shadow: 0 2px 12px #0005 !important;
+}
+.leaflet-popup-tip {
+  background: var(--card) !important;
+}
+.popup-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 4px;
+  color: #fff; /* Aseguramos texto blanco */
+}
+.popup-type-bar {
+  color: var(--bar); /* Naranja */
+  font-weight: 600;
+}
+.popup-type-station {
+  color: var(--station); /* Turquesa */
+  font-weight: 600;
+}
+
+/* index.css (AÑADIR ESTO AL FINAL) */
+
+/* Layout principal de la app
+  Cambiamos .app para que el título esté arriba y
+  el .main-content ocupe el resto.
+*/
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100vw;
+  background: var(--bg);
+  color: #e6eef8;
+  font-family: 'Inter', sans-serif;
+  overflow: hidden; 
+}
+
+.app-title {
+  flex-shrink: 0; /* Evita que el título se encoja */
+  /* (El resto de estilos de .app-title ya los tienes) */
+}
+
+/* Nuevo contenedor para el mapa y la barra lateral
+  Ocupará todo el espacio vertical restante
+*/
+.main-content {
+  display: flex;
+  flex-direction: row; /* Columnas: Mapa | Barra lateral */
+  flex-grow: 1;
+  min-height: 0; /* Arreglo para que flexbox funcione bien en 100vh */
+}
+
+/* El contenedor del mapa ahora es flexible */
+.map-container-wrapper {
+  flex-grow: 1; /* El mapa ocupa todo el espacio que puede */
+  position: relative;
+  min-width: 0; /* Arreglo para flexbox */
+}
+
+/* Nueva Barra Lateral Derecha
+*/
+.sidebar-container {
+  width: 280px; /* Ancho fijo para la lista */
+  flex-shrink: 0; /* Evita que se encoja */
+  background: var(--card); /* Fondo oscuro (como el título) */
+  padding: 20px;
+  overflow-y: auto; /* Scroll si hay muchos distritos */
+  border-left: 1px solid #0f172a; /* Borde sutil */
+  box-sizing: border-box; /* Incluye el padding en el ancho */
+}
+
+/* Estilos para la lista de Distritos
+*/
+.district-list h3 {
+  color: var(--accent); /* Color turquesa */
+  margin-top: 0;
+  margin-bottom: 16px;
+  font-size: 1.25rem;
+  border-bottom: 1px solid #2a3352;
+  padding-bottom: 8px;
+}
+
+.district-list .district-button {
+  display: block;
+  width: 100%;
+  padding: 12px 15px;
+  margin-bottom: 8px;
+  background: #2a3352; /* Un poco más claro que el fondo */
+  color: #e6eef8;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  text-align: left;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+}
+
+.district-list .district-button:hover {
+  background: #3a4362; /* Más claro al pasar el ratón */
+  border-color: var(--muted);
+}
+
+.district-list .district-button.active {
+  background: var(--accent); /* Color turquesa de acento */
+  color: var(--bg); /* Texto oscuro */
+  font-weight: 600;
+  border-color: var(--accent);
+}
+
+/* Ajuste para que el primer botón (Mostrar Todos) destaque un poco */
+.district-list .district-button:first-of-type {
+  background: #3a4362;
+  font-weight: 600;
+}
+.district-list .district-button:first-of-type.active {
+  background: var(--accent2); /* Naranja/Amarillo para 'Todos' */
+  color: var(--bg);
+  border-color: var(--accent2);
+}
+
+/* index.css (AÑADIR ESTO AL FINAL) */
+
+/* Estilo para el botón DENTRO del Popup */
+.popup-content {
+  width: 200px; /* Damos un ancho fijo al popup */
+}
+
+.proximity-button {
+  width: 100%;
+  padding: 8px 10px;
+  margin-top: 12px;
+  background-color: var(--accent); /* Color turquesa */
+  color: var(--bg); /* Texto oscuro */
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.proximity-button:hover {
+  background-color: #00b39e; /* Un turquesa más oscuro */
+}
+
+/* Estilo para el botón de "Mostrar Todos" en los controles del mapa */
+.reset-proximity-button {
+  background-color: var(--accent2); /* Color naranja */
+  color: var(--bg);
+  padding: 8px 12px;
+  border: none;
+  border-radius: 4px;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.2s ease;
+  width: 100%; /* Ocupa todo el ancho de los controles */
+  margin-top: 10px; /* <-- AÑADE ESTA LÍNEA */
+}
+
+.reset-proximity-button:hover {
+  background-color: #e6a300; /* Naranja más oscuro */
+}
+
+.popup-address {
+  font-size: 0.9em;
+  color: #ccc;
+  margin-top: 5px;
+}
