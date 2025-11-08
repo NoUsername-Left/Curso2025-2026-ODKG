@@ -6,6 +6,7 @@
 @prefix rdfs:   <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix xsd:    <http://www.w3.org/2001/XMLSchema#> .
 
+
 sc: a owl:Ontology ;
     rdfs:label "Smart City Facilities Ontology"@en ;
     rdfs:comment "Ontology describing urban facilities and nearby public transport in Madrid."@en .
@@ -68,18 +69,20 @@ schema:containedInPlace a owl:ObjectProperty ;
 sc:locatedInDistrict a owl:ObjectProperty ;
   rdfs:subPropertyOf schema:containedInPlace ;
   rdfs:domain dbo:Neighbourhood ;
-  rdfs:range dbo:District .
+  rdfs:range dbo:District ;
+  rdfs:label "located in district"@en .
 
 sc:locatedInMunicipality a owl:ObjectProperty ;
   rdfs:subPropertyOf schema:containedInPlace ;
   rdfs:domain dbo:District ;
-  rdfs:range dbo:Municipality.
+  rdfs:range dbo:Municipality ;
+  rdfs:label "located in municipality"@en .
 
 ########## DATA PROPERTIES ##########
 
 schema:postalCode a owl:DatatypeProperty ;
   rdfs:domain sc:Facility ;
-  rdfs:range  xsd:string .
+  rdfs:range  xsd:integer .
 
 schema:streetAddress a owl:DatatypeProperty ;
   rdfs:domain sc:Facility ;
@@ -99,7 +102,7 @@ schema:email a owl:DatatypeProperty ;
 
 sc:accessibility a owl:DatatypeProperty ;
   rdfs:domain sc:Facility ;
-  rdfs:range  xsd:string .
+  rdfs:range  xsd:integer .
 
 geo:lat a owl:DatatypeProperty ;
   rdfs:domain sc:Facility ;
@@ -110,7 +113,12 @@ geo:long a owl:DatatypeProperty ;
   rdfs:range  xsd:decimal .
 
 schema:name a owl:DatatypeProperty ;
-    rdfs:domain dbo:Municipality, dbo:Neighbourhood, dbo:District, schema:TrainStation, schema:SubwayStation, sc:Facility;
+    rdfs:domain dbo:Municipality ;
+    rdfs:domain dbo:Neighbourhood ;
+    rdfs:domain dbo:District ;
+    rdfs:domain schema:TrainStation ;
+    rdfs:domain schema:SubwayStation ;
+    rdfs:domain sc:Facility ;
     rdfs:range xsd:string .
 
 sc:hasLines a owl:DatatypeProperty ;
