@@ -67,13 +67,11 @@ schema:containedInPlace a owl:ObjectProperty ;
   rdfs:range dbo:Neighbourhood .
 
 sc:locatedInDistrict a owl:ObjectProperty ;
-  rdfs:subPropertyOf schema:containedInPlace ;
   rdfs:domain dbo:Neighbourhood ;
   rdfs:range dbo:District ;
   rdfs:label "located in district"@en .
 
 sc:locatedInMunicipality a owl:ObjectProperty ;
-  rdfs:subPropertyOf schema:containedInPlace ;
   rdfs:domain dbo:District ;
   rdfs:range dbo:Municipality ;
   rdfs:label "located in municipality"@en .
@@ -82,7 +80,7 @@ sc:locatedInMunicipality a owl:ObjectProperty ;
 
 schema:postalCode a owl:DatatypeProperty ;
   rdfs:domain sc:Facility ;
-  rdfs:range  xsd:integer .
+  rdfs:range  xsd:string .
 
 schema:streetAddress a owl:DatatypeProperty ;
   rdfs:domain sc:Facility ;
@@ -113,12 +111,8 @@ geo:long a owl:DatatypeProperty ;
   rdfs:range  xsd:decimal .
 
 schema:name a owl:DatatypeProperty ;
-    rdfs:domain dbo:Municipality ;
-    rdfs:domain dbo:Neighbourhood ;
-    rdfs:domain dbo:District ;
-    rdfs:domain schema:TrainStation ;
-    rdfs:domain schema:SubwayStation ;
-    rdfs:domain sc:Facility ;
+    rdfs:domain [ a owl:Class ;
+                  owl:unionOf ( sc:Facility dbo:Municipality dbo:Neighbourhood dbo:District schema:TrainStation schema:SubwayStation ) ] ;
     rdfs:range xsd:string .
 
 sc:hasLines a owl:DatatypeProperty ;

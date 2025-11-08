@@ -1,3 +1,4 @@
+@base <http://smartcity.linkeddata.es/lcc/mappings/> .
 @prefix rr: <http://www.w3.org/ns/r2rml#> .
 @prefix rml: <http://semweb.mmlab.be/ns/rml#> .
 @prefix ql: <http://semweb.mmlab.be/ns/ql#> .
@@ -12,16 +13,16 @@
  ######### PARKS ######
 <#ParkMap>
   rml:logicalSource [
-    rml:source "../csv/parques-jardines-updated.csv";
-    rml:referenceFormulation ql:CSV;
+    rml:source "../csv/parques-jardines-updated.csv" ;
+    rml:referenceFormulation ql:CSV ;
+  ] ;
 
-  ];
   rr:subjectMap [
     rr:template "http://smartcity.linkeddata.es/lcc/resource/facility/park/{IDNOMBRE}";
-    rr:class schema:ParkGarden;
+    rr:class schema:Park;
     rr:class sc:Facility;
     rr:termType rr:IRI;
-  ];
+  ] ;
 
   # Hereda todas las propiedades comunes
   rr:predicateObjectMap [ rr:predicate schema:name ; rr:objectMap [ rml:reference "NOMBRE" ; rr:termType rr:Literal ] ] ;
@@ -43,24 +44,24 @@
   # Transporte común a todas las facilities
   rr:predicateObjectMap [
     rr:predicate sc:hasNearby;
-    rr:objectMap [ rr:template "http://smartcity.linkeddata.es/lcc/resource/subway/{Metro}"; rr:termType rr:IRI ];
-  ];
+    rr:objectMap [ rr:template "http://smartcity.linkeddata.es/lcc/resource/subway/{Metro}"; rr:termType rr:IRI ] ;
+  ] ;
   rr:predicateObjectMap [
     rr:predicate sc:hasNearby;
-    rr:objectMap [ rr:template "http://smartcity.linkeddata.es/lcc/resource/bus/{Bus}"; rr:termType rr:IRI ];
-  ];
+    rr:objectMap [ rr:template "http://smartcity.linkeddata.es/lcc/resource/bus/{Bus}"; rr:termType rr:IRI ] ;
+  ] ;
   rr:predicateObjectMap [
     rr:predicate sc:hasNearby;
-    rr:objectMap [ rr:template "http://smartcity.linkeddata.es/lcc/resource/suburbantrain/{Cercanias}"; rr:termType rr:IRI ];
-  ];
+    rr:objectMap [ rr:template "http://smartcity.linkeddata.es/lcc/resource/suburbantrain/{Cercanias}"; rr:termType rr:IRI ] ;
+  ] ;
 
   rr:predicateObjectMap [
     rr:predicate owl:sameAs ;
-    rr:objectMap [ rml:reference "NOMBRE-WIKI" ; rr:termType rr:IRI ] ;
+    rr:objectMap [ rml:reference "NOMBRE-WIKI" ; rr:termType rr:IRI ]
   ] ;
 
   # Propiedades específicas de Park
-  rr:predicateObjectMap [ rr:predicate sc:surface; rr:objectMap [ rml:reference "Superfice m²"; rr:datatype xsd:integer ] ];
+  rr:predicateObjectMap [ rr:predicate sc:surface; rr:objectMap [ rml:reference "Superficie m²"; rr:datatype xsd:integer ] ] ;
   rr:predicateObjectMap [ rr:predicate sc:hasSportsFacilities; rr:objectMap [ rml:reference "tieneInstalacionesDeportivas" ] ] .
 
  ######### LIBRARIES  ######
@@ -68,13 +69,13 @@
    rml:logicalSource [
     rml:source "../csv/bibliotecas-updated.csv";
     rml:referenceFormulation ql:CSV;
-  ];
+  ] ;
   rr:subjectMap [
     rr:template "http://smartcity.linkeddata.es/lcc/resource/facility/library/{IDNOMBRE}";
     rr:class schema:Library;
     rr:class sc:Facility;
     rr:termType rr:IRI;
-  ];
+  ] ;
 
   # Hereda todas las propiedades comunes
   rr:predicateObjectMap [ rr:predicate schema:name ; rr:objectMap [ rml:reference "NOMBRE" ; rr:termType rr:Literal ] ] ;
@@ -96,15 +97,15 @@
   # Transporte común a todas las facilities
   rr:predicateObjectMap [
     rr:predicate sc:hasNearby;
-    rr:objectMap [ rr:template "http://smartcity.linkeddata.es/lcc/resource/subway/{Metro}"; rr:termType rr:IRI ];
-  ];
+    rr:objectMap [ rr:template "http://smartcity.linkeddata.es/lcc/resource/subway/{Metro}"; rr:termType rr:IRI ] ;
+  ] ;
   rr:predicateObjectMap [
     rr:predicate sc:hasNearby;
-    rr:objectMap [ rr:template "http://smartcity.linkeddata.es/lcc/resource/bus/{Bus}"; rr:termType rr:IRI ];
-  ];
+    rr:objectMap [ rr:template "http://smartcity.linkeddata.es/lcc/resource/bus/{Bus}"; rr:termType rr:IRI ] ;
+  ] ;
   rr:predicateObjectMap [
     rr:predicate sc:hasNearby;
-    rr:objectMap [ rr:template "http://smartcity.linkeddata.es/lcc/resource/suburbantrain/{Cercanias}"; rr:termType rr:IRI ];
+    rr:objectMap [ rr:template "http://smartcity.linkeddata.es/lcc/resource/suburbantrain/{Cercanias}"; rr:termType rr:IRI ] ;
   ] ;
 
   rr:predicateObjectMap [
@@ -121,13 +122,13 @@
    rml:logicalSource [
     rml:source "../csv/universidades-updated.csv";
     rml:referenceFormulation ql:CSV;
-  ];
+  ] ;
   rr:subjectMap [
     rr:template "http://smartcity.linkeddata.es/lcc/resource/facility/educationalInstitution/{IDNOMBRE}";
     rr:class sc:EducationalInstitution;
     rr:class sc:Facility;
     rr:termType rr:IRI;
-  ];
+  ] ;
 
   # Hereda todas las propiedades comunes
   rr:predicateObjectMap [ rr:predicate schema:name ; rr:objectMap [ rml:reference "NOMBRE" ; rr:termType rr:Literal ] ] ;
@@ -149,16 +150,16 @@
   # Transporte común a todas las facilities
   rr:predicateObjectMap [
     rr:predicate sc:hasNearby;
-    rr:objectMap [ rr:template "http://smartcity.linkeddata.es/lcc/resource/subway/{Metro}"; rr:termType rr:IRI ];
-  ];
+    rr:objectMap [ rr:template "http://smartcity.linkeddata.es/lcc/resource/subway/{Metro}"; rr:termType rr:IRI ] ;
+  ] ;
   rr:predicateObjectMap [
     rr:predicate sc:hasNearby;
-    rr:objectMap [ rr:template "http://smartcity.linkeddata.es/lcc/resource/bus/{Bus}"; rr:termType rr:IRI ];
-  ];
+    rr:objectMap [ rr:template "http://smartcity.linkeddata.es/lcc/resource/bus/{Bus}"; rr:termType rr:IRI ] ;
+  ] ;
   rr:predicateObjectMap [
     rr:predicate sc:hasNearby;
-    rr:objectMap [ rr:template "http://smartcity.linkeddata.es/lcc/resource/suburbantrain/{Cercanias}"; rr:termType rr:IRI ];
-  ];
+    rr:objectMap [ rr:template "http://smartcity.linkeddata.es/lcc/resource/suburbantrain/{Cercanias}"; rr:termType rr:IRI ] ;
+  ] ;
 
   rr:predicateObjectMap [
     rr:predicate owl:sameAs ;
@@ -174,13 +175,13 @@
    rml:logicalSource [
     rml:source "../csv/polideportivos-updated.csv";
     rml:referenceFormulation ql:CSV;
-  ];
+  ] ;
   rr:subjectMap [
     rr:template "http://smartcity.linkeddata.es/lcc/resource/facility/sportCenter/{IDNOMBRE}";
     rr:class sc:SportsCenter;
     rr:class sc:Facility;
     rr:termType rr:IRI;
-  ];
+  ] ;
 
   # Hereda todas las propiedades comunes
   rr:predicateObjectMap [ rr:predicate schema:name ; rr:objectMap [ rml:reference "NOMBRE" ; rr:termType rr:Literal ] ] ;
@@ -202,16 +203,16 @@
   # Transporte común a todas las facilities
   rr:predicateObjectMap [
     rr:predicate sc:hasNearby;
-    rr:objectMap [ rr:template "http://smartcity.linkeddata.es/lcc/resource/subway/{Metro}"; rr:termType rr:IRI ];
-  ];
+    rr:objectMap [ rr:template "http://smartcity.linkeddata.es/lcc/resource/subway/{Metro}"; rr:termType rr:IRI ] ;
+  ] ;
   rr:predicateObjectMap [
     rr:predicate sc:hasNearby;
-    rr:objectMap [ rr:template "http://smartcity.linkeddata.es/lcc/resource/bus/{Bus}"; rr:termType rr:IRI ];
-  ];
+    rr:objectMap [ rr:template "http://smartcity.linkeddata.es/lcc/resource/bus/{Bus}"; rr:termType rr:IRI ] ;
+  ] ;
   rr:predicateObjectMap [
     rr:predicate sc:hasNearby;
-    rr:objectMap [ rr:template "http://smartcity.linkeddata.es/lcc/resource/suburbantrain/{Cercanias}"; rr:termType rr:IRI ];
-  ];
+    rr:objectMap [ rr:template "http://smartcity.linkeddata.es/lcc/resource/suburbantrain/{Cercanias}"; rr:termType rr:IRI ] ;
+  ] ;
 
   rr:predicateObjectMap [
     rr:predicate owl:sameAs ;
@@ -247,8 +248,7 @@
     rml:reference "DISTRITO-WIKI" ;
     rr:termType rr:IRI
   ]
-] ;
- .
+] .
 
 <#NeighbourhoodMap> 
   rml:logicalSource [ rml:source "../csv/combinado-updated.csv" ; rml:referenceFormulation ql:CSV ] ;
