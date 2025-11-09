@@ -3,27 +3,27 @@
 @prefix ql:   <http://semweb.mmlab.be/ns/ql#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-@prefix geo: <http://www.opengis.net/ont/geosparql#> .
+@prefix geo:  <http://www.opengis.net/ont/geosparql#> .
 @prefix owl:  <http://www.w3.org/2002/07/owl#> .
 
-@prefix :   <https://iamabsa.github.io/chargingstation/resource/> .
-@prefix ns: <https://iamabsa.github.io/chargingstation#> .
+@prefix co: <https://iamabsa.github.io/ontology/ChargingOntology#> .
+@prefix res: <https://iamabsa.github.io/resource/> .
 
-@base <https://iamabsa.github.io/chargingstation#> .
+@base <https://iamabsa.github.io/resource/> .
 
 #######################################################################
 # TriplesMap: Charging Station
 #######################################################################
 
-<#TriplesMap_Station> a rr:TriplesMap ;
+<#TriplesMap_ChargingStation> a rr:TriplesMap ;
   rml:logicalSource [
     rml:source "CSV/ELADESTELLEOGD-with-links.csv" ;
     rml:referenceFormulation ql:CSV
   ] ;
 
   rr:subjectMap [
-    rr:template "https://iamabsa.github.io/chargingstation/resource/station/{EVSEID}" ;
-    rr:class ns:ChargingStation
+    rr:template "https://iamabsa.github.io/resource/ChargingStation#{EVSEID}" ;
+    rr:class co:ChargingStation
   ] ;
 
   # Literals / attributes
@@ -32,27 +32,27 @@
     rr:objectMap [ rml:reference "DESIGNATION" ]
   ] ;
   rr:predicateObjectMap [
-    rr:predicate ns:evseId ;
+    rr:predicate co:evseId ;
     rr:objectMap [ rml:reference "EVSEID" ]
   ] ;
   rr:predicateObjectMap [
-    rr:predicate ns:address ;
+    rr:predicate co:address ;
     rr:objectMap [ rml:reference "ADDRESS" ]
   ] ;
   rr:predicateObjectMap [
-    rr:predicate ns:countryCode ;
+    rr:predicate co:countryCode ;
     rr:objectMap [ rml:reference "COUNTRYCODE" ]
   ] ;
   rr:predicateObjectMap [
-    rr:predicate ns:directPayment ;
+    rr:predicate co:directPayment ;
     rr:objectMap [ rml:reference "DIRECTPAYMENT" ; rr:datatype xsd:boolean ]
   ] ;
 
   # Link to District
   rr:predicateObjectMap [
-    rr:predicate ns:isInDistrict ;
+    rr:predicate co:isInDistrict ;
     rr:objectMap [
-      rr:template "https://iamabsa.github.io/chargingstation/resource/district/{CITY}-{BEZIRK}" ;
+      rr:template "https://iamabsa.github.io/resource/District#{CITY}-{BEZIRK}" ;
       rr:termType rr:IRI
     ]
   ] ;
@@ -61,7 +61,7 @@
   rr:predicateObjectMap [
     rr:predicate geo:hasGeometry ;
     rr:objectMap [
-      rr:template "https://iamabsa.github.io/chargingstation/resource/geometry/{EVSEID}" ;
+      rr:template "https://iamabsa.github.io/resource/Geometry#{EVSEID}" ;
       rr:termType rr:IRI
     ]
   ] ;
@@ -94,7 +94,7 @@
     rml:referenceFormulation ql:CSV
   ] ;
   rr:subjectMap [
-    rr:template "https://iamabsa.github.io/chargingstation/resource/geometry/{EVSEID}" ;
+    rr:template "https://iamabsa.github.io/resource/Geometry#{EVSEID}" ;
     rr:class geo:Geometry
   ] ;
   rr:predicateObjectMap [
@@ -116,8 +116,8 @@
   ] ;
 
   rr:subjectMap [
-    rr:template "https://iamabsa.github.io/chargingstation/resource/{OPERATORNAME}" ;
-    rr:class ns:Operator
+    rr:template "https://iamabsa.github.io/resource/Operator#{OPERATORNAME}" ;
+    rr:class co:Operator
   ] ;
 
   rr:predicateObjectMap [
@@ -140,8 +140,8 @@
   ] ;
 
   rr:subjectMap [
-    rr:template "https://iamabsa.github.io/chargingstation/resource/{BEZIRK}" ;
-    rr:class ns:District
+    rr:template "https://iamabsa.github.io/resource/District#{BEZIRK}" ;
+    rr:class co:District
   ] ;
   
   rr:predicateObjectMap [
@@ -149,9 +149,9 @@
     rr:objectMap [ rml:reference "BEZIRK" ]
   ] ;
   rr:predicateObjectMap [
-    rr:predicate ns:districtCity ;
+    rr:predicate co:districtCity ;
     rr:objectMap [
-      rr:template "https://iamabsa.github.io/chargingstation/resource/{CITY}" ;
+      rr:template "https://iamabsa.github.io/resource/City#{CITY}" ;
       rr:termType rr:IRI
     ]
   ] ;
@@ -171,8 +171,8 @@
   ] ;
 
   rr:subjectMap [
-    rr:template "https://iamabsa.github.io/chargingstation/resource/{CITY}" ;
-    rr:class ns:City
+    rr:template "https://iamabsa.github.io/resource/City#{CITY}" ;
+    rr:class co:City
   ] ;
 
   rr:predicateObjectMap [
@@ -180,9 +180,9 @@
     rr:objectMap [ rml:reference "CITY" ]
   ] ;
   rr:predicateObjectMap [
-    rr:predicate ns:isCityOf ;
+    rr:predicate co:isCityOf ;
     rr:objectMap [
-      rr:template "https://iamabsa.github.io/chargingstation/resource/{COUNTRYCODE}" ;
+      rr:template "https://iamabsa.github.io/resource/Country#{COUNTRYCODE}" ;
       rr:termType rr:IRI
     ]
   ] ;
@@ -202,8 +202,8 @@
   ] ;
 
   rr:subjectMap [
-    rr:template "https://iamabsa.github.io/chargingstation/resource/{COUNTRYCODE}" ;
-    rr:class ns:Country
+    rr:template "https://iamabsa.github.io/resource/Country#{COUNTRYCODE}" ;
+    rr:class co:Country
   ] ;
 
   rr:predicateObjectMap [
@@ -214,6 +214,3 @@
     rr:predicate owl:sameAs ;
     rr:objectMap [ rml:reference "COUNTRYCODE_URL" ; rr:termType rr:IRI ]
   ] .
-
-
-
