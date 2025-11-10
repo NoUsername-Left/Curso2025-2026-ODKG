@@ -3481,5 +3481,11 @@
     "newColumnName": "LOCALIDAD-WIKI",
     "columnInsertIndex": 22,
     "description": "Create column LOCALIDAD-WIKI at index 22 based on column LOCALIDAD using expression grel:if(isNonBlank(cell.recon.match.id),\n  \"http://www.wikidata.org/entity/\" + cell.recon.match.id,\n  \"\"\n)"
+  },
+  {
+    "op": "core/column-rename",
+    "oldColumnName": "Superfice m²",
+    "newColumnName": "Superficie m²",
+    "description": "Renombra la columna Superfice m² a Superficie m²"
   }
 ]
