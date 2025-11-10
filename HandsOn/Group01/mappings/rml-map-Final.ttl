@@ -58,6 +58,7 @@
   rr:predicateObjectMap [ rr:predicate sc:surface; rr:objectMap [ rml:reference "Superficie m²"; rr:datatype xsd:integer ] ] ;
   rr:predicateObjectMap [ rr:predicate sc:hasSportsFacilities; rr:objectMap [ rml:reference "tieneInstalacionesDeportivas" ] ] .
 
+
  ######### LIBRARIES  ######
 <#LibraryMap>
    rml:logicalSource [

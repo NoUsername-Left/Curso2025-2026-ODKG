@@ -25,26 +25,30 @@ sc:Faculty            a owl:Class ; rdfs:subClassOf sc:EducationalInstitution ; 
 sc:UniversitySchool   a owl:Class ; rdfs:subClassOf sc:EducationalInstitution ; rdfs:label "University School"@en .
 sc:OtherCenters       a owl:Class ; rdfs:subClassOf sc:EducationalInstitution ; rdfs:label "Other Centers"@en .
 
+
 # Facilities – culture & leisure
 schema:Library     a owl:Class ; rdfs:subClassOf sc:Facility ; rdfs:label "Library"@en .
 schema:Park  a owl:Class ; rdfs:subClassOf sc:Facility ; rdfs:label "Park or Garden"@en .
 
 # Facilities – sports (extendidas con nuevas subclases)
-sc:SportsCenter    a owl:Class ; rdfs:subClassOf sc:Facility ; rdfs:label "Sports Center"@en .
-sc:Gym             a owl:Class ; rdfs:subClassOf sc:SportsCenter ; rdfs:label "Gym"@en .
-sc:FootballField   a owl:Class ; rdfs:subClassOf sc:SportsCenter ; rdfs:label "Football Field"@en .
-sc:SwimmingPool    a owl:Class ; rdfs:subClassOf sc:SportsCenter ; rdfs:label "Swimming Pool"@en .
-sc:TennisCourt     a owl:Class ; rdfs:subClassOf sc:SportsCenter ; rdfs:label "Tennis Court"@en .
-sc:ClimbingWall    a owl:Class ; rdfs:subClassOf sc:SportsCenter ; rdfs:label "Climbing Wall"@en .
-sc:RowingPier      a owl:Class ; rdfs:subClassOf sc:SportsCenter ; rdfs:label "Rowing Pier"@en .
-sc:Stadium         a owl:Class ; rdfs:subClassOf sc:SportsCenter ; rdfs:label "Stadium"@en .
-sc:BasketballCourt a owl:Class ; rdfs:subClassOf sc:SportsCenter ; rdfs:label "Basketball Court"@en .
+sc:SportsFacility    a owl:Class ; rdfs:subClassOf sc:Facility ; rdfs:label "Sport Facility"@en .
+
+sc:Gym             a owl:Class ; rdfs:subClassOf sc:SportsFacility ; rdfs:label "Gym"@en .
+sc:FootballField   a owl:Class ; rdfs:subClassOf sc:SportsFacility ; rdfs:label "Football Field"@en .
+sc:SwimmingPool    a owl:Class ; rdfs:subClassOf sc:SportsFacility ; rdfs:label "Swimming Pool"@en .
+sc:TennisCourt     a owl:Class ; rdfs:subClassOf sc:SportsFacility ; rdfs:label "Tennis Court"@en .
+sc:ClimbingWall    a owl:Class ; rdfs:subClassOf sc:SportsFacility ; rdfs:label "Climbing Wall"@en .
+sc:RowingPier      a owl:Class ; rdfs:subClassOf sc:SportsFacility ; rdfs:label "Rowing Pier"@en .
+sc:Stadium         a owl:Class ; rdfs:subClassOf sc:SportsFacility ; rdfs:label "Stadium"@en .
+sc:BasketballCourt a owl:Class ; rdfs:subClassOf sc:SportsFacility ; rdfs:label "Basketball Court"@en .
 
 
 # Transport subclasses (y equivalencias con la segunda ontología)
-schema:SubwayStation    a owl:Class ; rdfs:subClassOf sc:PublicTransport ; rdfs:label "Subway"@en .
-schema:BusStation    a owl:Class ; rdfs:subClassOf sc:PublicTransport ; rdfs:label "Bus"@en .
-schema:TrainStation  a owl:Class ; rdfs:subClassOf sc:PublicTransport ; rdfs:label "Suburban Train"@es, "Commuter Rail"@en .
+sc:Subway  a owl:Class ; rdfs:subClassOf sc:PublicTransport ; rdfs:label "Subway"@en .
+sc:Bus   a owl:Class ; rdfs:subClassOf sc:PublicTransport ; rdfs:label "Bus"@en .
+sc:Train  a owl:Class ; rdfs:subClassOf sc:PublicTransport ; rdfs:label "Train"@en .
+
+
 
 # Clases externas de territorio
 dbo:Municipality  a owl:Class ; rdfs:label "Municipality"@en .
@@ -75,6 +79,7 @@ sc:locatedInMunicipality a owl:ObjectProperty ;
   rdfs:domain dbo:District ;
   rdfs:range dbo:Municipality ;
   rdfs:label "located in municipality"@en .
+
 
 ########## DATA PROPERTIES ##########
 
@@ -111,13 +116,17 @@ geo:long a owl:DatatypeProperty ;
   rdfs:range  xsd:decimal .
 
 schema:name a owl:DatatypeProperty ;
-    rdfs:domain [ a owl:Class ;
-                  owl:unionOf ( sc:Facility dbo:Municipality dbo:Neighbourhood dbo:District schema:TrainStation schema:SubwayStation ) ] ;
+    rdfs:domain dbo:Municipality, dbo:Neighbourhood, dbo:District, sc:Facility;
     rdfs:range xsd:string .
 
-sc:hasLines a owl:DatatypeProperty ;
+sc:hasLines a owl:DatatypeProperty ;          
   rdfs:label "public transport lines"@en ;
   rdfs:domain sc:PublicTransport ;
+  rdfs:range  xsd:string .
+
+sc:hasStations a owl:DatatypeProperty ;          
+  rdfs:label "public transport stations"@en ;
+  rdfs:domain sc:Subway, sc:Train ;
   rdfs:range  xsd:string .
 
 
