@@ -6,7 +6,7 @@
 # In[1]:
 
 
-get_ipython().system('pip install rdflib')
+#get_ipython().system('pip install rdflib')
 import urllib.request
 url = 'https://raw.githubusercontent.com/FacultadInformatica-LinkedData/Curso2025-2026/refs/heads/master/Assignment4/course_materials/python/validation.py'
 urllib.request.urlretrieve(url, 'validation.py')
