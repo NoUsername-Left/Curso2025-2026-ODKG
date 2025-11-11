@@ -116,7 +116,19 @@ geo:long a owl:DatatypeProperty ;
   rdfs:range  xsd:decimal .
 
 schema:name a owl:DatatypeProperty ;
-    rdfs:domain dbo:Municipality, dbo:Neighbourhood, dbo:District, sc:Facility;
+    rdfs:domain dbo:Municipality ;
+    rdfs:range xsd:string .
+
+schema:name a owl:DatatypeProperty ;
+    rdfs:domain dbo:Neighbourhood ;
+    rdfs:range xsd:string .
+
+schema:name a owl:DatatypeProperty ;
+    rdfs:domain dbo:District;
+    rdfs:range xsd:string .
+
+schema:name a owl:DatatypeProperty ;
+    rdfs:domain sc:Facility;
     rdfs:range xsd:string .
 
 sc:hasLines a owl:DatatypeProperty ;          
