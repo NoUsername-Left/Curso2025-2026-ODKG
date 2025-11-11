@@ -1,0 +1,209 @@
+@prefix :            <https://smartcity.linkeddata.es/lcc/ontology/urban-sensors#> .
+@prefix us:          <https://smartcity.linkeddata.es/lcc/ontology/urban-sensors#> .
+@prefix owl:         <http://www.w3.org/2002/07/owl#> .
+@prefix rdf:         <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xsd:         <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs:        <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sosa:        <http://www.w3.org/ns/sosa/> .
+@prefix schema:      <http://schema.org/> .
+@prefix dcterms:     <http://purl.org/dc/terms/> .
+@prefix wgs84_pos:   <http://www.w3.org/2003/01/geo/wgs84_pos#> .
+@prefix qudt:        <http://qudt.org/schema/qudt/> .
+@prefix unit:        <http://qudt.org/vocab/unit/> .
+
+@base <https://smartcity.linkeddata.es/lcc/ontology/urban-sensors> .
+
+<https://smartcity.linkeddata.es/lcc/ontology/urban-sensors>
+    a                  owl:Ontology ;
+    owl:versionIRI     <https://smartcity.linkeddata.es/lcc/ontology/urban-sensors/2025-10> ;
+    dcterms:creator    "Group 09 — Andosilla Herráiz, Gil Planes, Beamonte Gonzalez, Herrero Míguez, Hunziker Cadabal"@en ;
+    dcterms:description "Lightweight ontology to describe pedestrian and microclimate sensors, their locations (as Features of Interest), and observations in Melbourne, enriched with addresses. Reuses schema.org for administrative areas and addresses, and SOSA for sensing."@en ;
+    dcterms:license    <https://creativecommons.org/licenses/by/4.0/> ;
+    dcterms:title      "Urban Sensors Ontology"@en ;
+    owl:versionInfo    "2025-10-17" .
+
+#################################################################
+# Annotation properties
+#################################################################
+
+dcterms:creator        a owl:AnnotationProperty .
+dcterms:description    a owl:AnnotationProperty .
+dcterms:license        a owl:AnnotationProperty .
+dcterms:title          a owl:AnnotationProperty .
+
+#################################################################
+# Classes
+#################################################################
+
+# SOSA core
+sosa:Observation        a owl:Class .
+sosa:Sensor             a owl:Class .
+sosa:FeatureOfInterest  a owl:Class .
+
+# Sensor specializations
+us:PedestrianSensor
+    rdfs:subClassOf     sosa:Sensor ;
+    rdfs:label          "Pedestrian sensor"@en .
+
+us:MicroclimateSensor
+    rdfs:subClassOf     sosa:Sensor ;
+    rdfs:label          "Microclimate sensor"@en .
+
+# Feature of Interest used for locations (keyed by Location_ID)
+us:Location
+    a                   owl:Class ;
+    rdfs:subClassOf     sosa:FeatureOfInterest ;
+    rdfs:label          "Location (FoI)"@en ;
+    rdfs:comment        "Physical place used as Feature of Interest; it is keyed by Location_ID."@en .
+
+# Observation specializations
+us:MicroclimateObservation
+    a                   owl:Class ;
+    rdfs:subClassOf     sosa:Observation ;
+    rdfs:label          "Microclimate observation"@en ;
+    rdfs:comment        "Environmental reading (e.g., temperature, humidity, wind, pressure, noise, PM10)."@en .
+
+us:PedestrianObservation
+    a                   owl:Class ;
+    rdfs:subClassOf     sosa:Observation ;
+    rdfs:label          "Pedestrian observation"@en ;
+    rdfs:comment        "Hourly pedestrian count observation (possibly aggregated over directions)."@en .
+
+#################################################################
+# Object Properties
+#################################################################
+
+# Street of a Feature of Interest (FoI) — aligned with schema:address
+us:hasStreet
+    a                   owl:DatatypeProperty ;
+    rdfs:subPropertyOf  schema:address ;
+    rdfs:domain         sosa:FeatureOfInterest ;
+    rdfs:range          xsd:string ;
+    rdfs:label          "has street"@en ;
+    rdfs:comment        "Links a Feature of Interest (place/air point) to its street."@en .
+
+# Inverse of hasStreet
+us:streetOfLocation
+    a                   owl:ObjectProperty ;
+    owl:inverseOf       us:hasStreet ;
+    rdfs:domain         xsd:string ;
+    rdfs:range          sosa:FeatureOfInterest ;
+    rdfs:label          "street of location"@en ;
+    rdfs:comment        "Inverse of us:hasStreet."@en .
+
+# Sensor → FoI link (where the sensor is physically located)
+us:locatedAt
+    a                   owl:ObjectProperty ;
+    rdfs:subPropertyOf  schema:location ;
+    rdfs:domain         sosa:Sensor ;
+    rdfs:range          sosa:FeatureOfInterest ;
+    rdfs:label          "located at"@en ;
+    rdfs:comment        "Links a sensor to the Feature of Interest (place/air) where it is physically located."@en .
+
+us:direction1
+    a                   owl:DatatypeProperty ;
+    rdfs:domain         us:PedestrianSensor ;
+    rdfs:range          xsd:string ;
+    rdfs:label          "direction 1"@en ;
+    rdfs:comment        "Primary counting direction for a pedestrian sensor."@en .
+
+us:direction2
+    a                   owl:DatatypeProperty ;
+    rdfs:domain         us:PedestrianSensor ;
+    rdfs:range          xsd:string ;
+    rdfs:label          "direction 2"@en ;
+    rdfs:comment        "Secondary counting direction for a pedestrian sensor."@en .
+    
+us:closestPedestrianSensor
+    a                   owl:ObjectProperty ;
+    rdfs:domain         us:MicroclimateSensor ;
+    rdfs:range          us:PedestrianSensor ;
+    rdfs:label          "closest pedestrian sensor"@en ;
+    rdfs:comment        "Links a microclimate sensor to the closest pedestrian sensor."@en .
+
+us:closestMicroclimateSensor
+    a                   owl:ObjectProperty ;
+    rdfs:domain         us:PedestrianSensor ;
+    rdfs:range          us:MicroclimateSensor ;
+    rdfs:label          "closest microclimate sensor"@en ;
+    rdfs:comment        "Links a pedestrian sensor to the closest microclimate sensor."@en .
+
+#################################################################
+# Observable properties (as SOSA observable properties / individuals)
+#################################################################
+
+us:hasAirTemperature
+    a owl:DatatypeProperty ;
+    rdfs:domain us:MicroclimateObservation ;
+    rdfs:range xsd:float ;
+    rdfs:label "air temperature"@en ;
+    rdfs:comment "Air temperature observable property."@en .
+
+us:hasRelativeHumidity
+    a owl:DatatypeProperty ;
+    rdfs:domain us:MicroclimateObservation ;
+    rdfs:range xsd:float ;
+    rdfs:label "relative humidity"@en ;
+    rdfs:comment "Relative humidity observable property."@en .
+
+us:hasAverageWindSpeed
+    a owl:DatatypeProperty ;
+    rdfs:domain us:MicroclimateObservation ;
+    rdfs:range xsd:float ;
+    rdfs:label "average wind speed"@en ;
+    rdfs:comment "Average wind speed observable property."@en .
+
+us:hasAverageWindDirection
+    a owl:DatatypeProperty ;
+    rdfs:domain us:MicroclimateObservation ;
+    rdfs:range xsd:float ;
+    rdfs:label "average wind direction"@en ;
+    rdfs:comment "Average wind direction observable property."@en .
+
+us:hasAtmosphericPressure
+    a owl:DatatypeProperty ;
+    rdfs:domain us:MicroclimateObservation ;
+    rdfs:range xsd:float ;
+    rdfs:label "atmospheric pressure"@en ;
+    rdfs:comment "Atmospheric pressure observable property."@en .
+
+us:hasPM10
+    a owl:DatatypeProperty ;
+    rdfs:domain us:MicroclimateObservation ;
+    rdfs:range xsd:float ;
+    rdfs:label "PM10"@en ;
+    rdfs:comment "PM10 observable property."@en .
+
+us:hasNoise
+    a owl:DatatypeProperty ;
+    rdfs:domain us:MicroclimateObservation ;
+    rdfs:range xsd:float ;
+    rdfs:label "noise"@en ;
+    rdfs:comment "Acoustic noise level observable property."@en .
+
+us:hasPedestrianCount
+    a owl:DatatypeProperty ;
+    rdfs:domain us:PedestrianObservation ;
+    rdfs:range xsd:integer ;
+    rdfs:label "pedestrian count"@en ;
+    rdfs:comment "Pedestrian count observable property."@en .
+    
+us:hasPedestrianCountD1 
+    a owl:DatatypeProperty ;
+    rdfs:domain us:PedestrianObservation ;
+    rdfs:range xsd:integer ;
+    rdfs:label "pedestrian count in direction1"@en ; 
+    rdfs:comment "Pedestrian count in direction 1 observable property."@en .
+    
+us:hasPedestrianCountD2 
+    a owl:DatatypeProperty ;
+    rdfs:domain us:PedestrianObservation ;
+    rdfs:range xsd:integer ;
+    rdfs:label "pedestrian count in direction2"@en ; 
+    rdfs:comment "Pedestrian count in direction 2 observable property."@en .
+
+#################################################################
+# Help
+#################################################################
+
+# Observation --sosa:madeBySensor--> Sensor --us:locatedAt--> FoI

@@ -1,0 +1,143 @@
+@prefix :            <https://smartcity.linkeddata.es/lcc/ontology/urban-sensors#> .
+@prefix us:          <https://smartcity.linkeddata.es/lcc/ontology/urban-sensors#> .
+@prefix owl:         <http://www.w3.org/2002/07/owl#> .
+@prefix rdf:         <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xsd:         <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs:        <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sosa:        <http://www.w3.org/ns/sosa/> .
+@prefix schema:      <http://schema.org/> .
+@prefix dcterms:     <http://purl.org/dc/terms/> .
+@prefix wgs84_pos:   <http://www.w3.org/2003/01/geo/wgs84_pos#> .
+@prefix qudt:        <http://qudt.org/schema/qudt/> .
+@prefix unit:        <http://qudt.org/vocab/unit/> .
+
+##################################################################################################
+# Sensor Locations - Town Hall (Pedestrian counting sensor) + Curtin House (Microclimate sensor)
+##################################################################################################
+
+:location_45
+    a us:Location ;
+    us:hasStreet "Swanston Street" ;
+    rdfs:comment "Outdoor" ;
+    wgs84_pos:lat "-37.81414075"^^xsd:float ;
+    wgs84_pos:long "144.96609379"^^xsd:float ;
+    schema:postalCode "3000" ;
+    schema:streetAddress "Swanston Street 144" ;
+    schema:addressLocality "Melbourne" ;
+    schema:addressCountry "Australia" .
+
+:location_M03
+    a us:Location ;
+    us:hasStreet "Central Hall, Little Collins Street" ;
+    wgs84_pos:lat "-37.8140348"^^xsd:float ;
+    wgs84_pos:long "144.96728"^^xsd:float ;
+    schema:postalCode "3000" ;
+    schema:streetAddress "Central Hall, Little Collins Street 210" ;
+    schema:addressLocality "Melbourne" ;
+    schema:addressCountry "Australia" .
+
+#################################################################
+# Pedestrian Sensor
+#################################################################
+
+:pedestrianSensor_Swa148_T
+    a us:PedestrianSensor ;
+    us:direction1 "North" ;
+    us:direction2 "South" ;
+    rdfs:comment "Pushbox Upgrade, 03/08/2023" ;
+    schema:dateInstalled "2017-06-29"^^xsd:date ;
+    schema:description "Little Collins St-Swanston St (East)" ;
+    schema:status "A" ;
+    us:closestMicroclimateSensor :microclimateSensor_ICTMicroclimate-03 ;
+    us:locatedAt :location_45 .
+
+#################################################################
+# Microclimate Sensor
+#################################################################
+
+:microclimateSensor_ICTMicroclimate-03
+    a us:MicroclimateSensor ;
+    us:closestPedestrianSensor :pedestrianSensor_Swa148_T ;
+    us:locatedAt :location_M03 .
+
+#################################################################
+# Pedestrian Counting Observation
+#################################################################
+
+:pedestrianObservation_451420241225
+    a us:PedestrianObservation ;
+    us:pedestrianCount 1145 ;
+    us:pedestrianCountD1 470 ;
+    us:pedestrianCountD2 675 ;
+    sosa:madeBySensor :pedestrianSensor_Swa148_T ;
+    sosa:resultTime "2024-12-09T01:00:00"^^xsd:dateTime .
+
+#################################################################
+# Microclimate Observation
+#################################################################
+
+:microclimateObservation_Curtin_House_2024-12-30T11:54:23+11:00
+    a us:MicroclimateObservation ;
+    us:hasAirTemperature 22.4 ;
+    us:hasRelativeHumidity 71.1 ;
+    us:hasAverageWindSpeed 4.2 ; 
+    us:hasAverageWindDirection 163 ;
+    us:hasAtmosphericPressure 1008.0 ;
+    us:hasPM10 12.0 ;
+    us:hasNoise 91.2 ;
+    sosa:madeBySensor :microclimateSensor_ICTMicroclimate-03 ;
+    sosa:resultTime "2024-12-30T11:54:23+11:00"^^xsd:dateTime .
+
+#################################################################
+# Observations of the properties
+#################################################################
+
+:obsAirTemperature
+   a sosa:Observation ;
+   sosa:observedProperty us:airTemperature ;
+   sosa:hasSimpleResult 22.4 .
+
+:obsRelativeHumidity
+   a sosa:Observation ;
+   sosa:observedProperty us:relativeHumidity ;
+   sosa:hasSimpleResult 71.1 .
+
+:obsAverageWindSpeed
+   a sosa:Observation ;
+   sosa:observedProperty us:averageWindSpeed ;
+   sosa:hasSimpleResult 4.2 .
+
+:obsAverageWindDirection
+   a sosa:Observation ;
+   sosa:observedProperty us:averageWindDirection ;
+   sosa:hasSimpleResult 163 .
+
+:obsAtmosphericPressure
+   a sosa:Observation ;
+   sosa:observedProperty us:atmosphericPressure ;
+   sosa:hasSimpleResult 1008.0 .
+
+:obsPm10
+   a sosa:Observation ;
+   sosa:observedProperty us:pm10 ;
+   sosa:hasSimpleResult 12.0 .
+
+:obsNoise
+   a sosa:Observation ;
+   sosa:observedProperty us:noise ;
+   sosa:hasSimpleResult 91.2 .
+
+:obsPedestrianCount
+   a sosa:Observation ;
+   sosa:observedProperty us:pedestrianCount ;
+   sosa:hasSimpleResult 1145 .
+
+:obsPedestrianCountD1
+   a sosa:Observation ;
+   sosa:observedProperty us:pedestrianCountD1 ;
+   sosa:hasSimpleResult 470 .
+
+:obsPedestrianCountD2
+   a sosa:Observation ;
+   sosa:observedProperty us:pedestrianCountD2 ;
+   sosa:hasSimpleResult 675 .
