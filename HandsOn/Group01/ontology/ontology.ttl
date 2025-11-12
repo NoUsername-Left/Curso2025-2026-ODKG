@@ -27,8 +27,8 @@ sc:OtherCenters       a owl:Class ; rdfs:subClassOf sc:EducationalInstitution ; 
 
 
 # Facilities – culture & leisure
-schema:Library     a owl:Class ; rdfs:subClassOf sc:Facility ; rdfs:label "Library"@en .
-schema:Park  a owl:Class ; rdfs:subClassOf sc:Facility ; rdfs:label "Park or Garden"@en .
+sc:Library     a owl:Class ; rdfs:subClassOf sc:Facility ; rdfs:label "Library"@en .
+sc:Park  a owl:Class ; rdfs:subClassOf sc:Facility ; rdfs:label "Park or Garden"@en .
 
 # Facilities – sports (extendidas con nuevas subclases)
 sc:SportsFacility    a owl:Class ; rdfs:subClassOf sc:Facility ; rdfs:label "Sport Facility"@en .
@@ -151,15 +151,15 @@ sc:studentGender a owl:DatatypeProperty ;
   
 sc:hasWifi a owl:DatatypeProperty ;
   rdfs:label "has wifi"@en ;
-  rdfs:domain schema:Library ;
+  rdfs:domain sc:Library ;
   rdfs:range  xsd:string .
   
 sc:surface a owl:DatatypeProperty ;
   rdfs:label "surface"@en ;
-  rdfs:domain schema:Park ;
+  rdfs:domain sc:Park ;
   rdfs:range  xsd:integer .
   
 sc:hasSportsFacilities a owl:DatatypeProperty ;
   rdfs:label "has sport facility"@en ;
-  rdfs:domain schema:Park;
+  rdfs:domain sc:Park;
   rdfs:range  xsd:string .

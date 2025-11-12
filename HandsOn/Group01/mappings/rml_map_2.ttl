@@ -37,6 +37,7 @@
   ]; 
 
 
+
  ########################################
  ### Definición predicados-objeto ###
  ########################################
@@ -57,14 +58,9 @@
 # Propiedades para asignar las subclases: 
 ########################################
 
-# Subclases de Facilites: tipo instalacion: library, SportsFacility, EducationalInstitution, Park
+# CREO QUE HABRÍA QUE QUITARLO
 
- rr:predicateObjectMap [
-    rr:predicate rdf:type ;
-    rr:objectMap [
-      rr:template "http://smartcity.linkeddata.es/lcc/resource/{TipoInstalacion}"
-    ]
-  ] ;
+
 
 
 # Subclases de Facilites: tipo instalacion: library, SportsFacility, EducationalInstitution, Park
@@ -75,6 +71,7 @@
       rr:template "http://smartcity.linkeddata.es/lcc/ontology#{TipoInstalacion}"
     ]
   ] ;
+
 
 # Subclases de EducationalInstitution: colegio mayor, facultad ... 
 
@@ -144,18 +141,18 @@ rr:predicateObjectMap [
 
  ######### MAPPING Neighbourhood ######
 
+
 <#NeighbourhoodMap>
   rml:logicalSource [
     rml:source "../csv/Subclases_Universidades.csv";
     rml:referenceFormulation ql:CSV;
-    rml:iterator [ rr:template "http://smartcity.linkeddata.es/lcc/resource/neigbourhood/{BARRIO}" ];
   ];
 
 
   ########### Sujeto de Neighborhood
 
   rr:subjectMap [
-    rr:template "http://smartcity.linkeddata.es/lcc/resource/neigbourhood/{BARRIO}";
+    rr:template "http://smartcity.linkeddata.es/lcc/resource/neighbourhood/{BARRIO}";
     rr:class dbo:Neighbourhood;
     rr:termType rr:IRI;
   ]; 
@@ -259,7 +256,7 @@ rr:predicateObjectMap [
 
 ######### MAPPING SUBWAY ######
 
-<#MunicipalityMap>
+<#SubwayMap>
   rml:logicalSource [
     rml:source "../csv/Subclases_Universidades.csv";
     rml:referenceFormulation ql:CSV;
