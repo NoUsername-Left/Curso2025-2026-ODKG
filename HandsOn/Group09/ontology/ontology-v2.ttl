@@ -40,11 +40,11 @@ sosa:Sensor             a owl:Class .
 sosa:FeatureOfInterest  a owl:Class .
 
 # Sensor specializations
-us:PedestrianSensor
+:PedestrianSensor
     rdfs:subClassOf     sosa:Sensor ;
     rdfs:label          "Pedestrian sensor"@en .
 
-us:MicroclimateSensor
+:MicroclimateSensor
     rdfs:subClassOf     sosa:Sensor ;
     rdfs:label          "Microclimate sensor"@en .
 
@@ -53,7 +53,7 @@ us:MicroclimateSensor
 #################################################################
 
 # Street of a Feature of Interest (FoI) — aligned with schema:address
-us:hasStreet
+:hasStreet
     a                   owl:DatatypeProperty ;
     rdfs:domain         schema:PostalAddress ;
     rdfs:range          xsd:string ;
@@ -61,24 +61,24 @@ us:hasStreet
     rdfs:comment        "Links a Postal Address to its street."@en .
 
 # Sensor → FoI link (where the sensor is physically located)
-us:locatedAt
+:locatedAt
     a                   owl:ObjectProperty ;
     rdfs:domain         sosa:Sensor ;
     rdfs:range          schema:Place ;
     rdfs:label          "located at"@en ;
     rdfs:comment        "Links a sensor to the Feature of Interest (place/air) where it is physically located."@en .
     
-us:closestPedestrianSensor
+:closestPedestrianSensor
     a                   owl:ObjectProperty ;
-    rdfs:domain         us:MicroclimateSensor ;
-    rdfs:range          us:PedestrianSensor ;
+    rdfs:domain         :MicroclimateSensor ;
+    rdfs:range          :PedestrianSensor ;
     rdfs:label          "closest pedestrian sensor"@en ;
     rdfs:comment        "Links a microclimate sensor to the closest pedestrian sensor."@en .
 
-us:closestMicroclimateSensor
+:closestMicroclimateSensor
     a                   owl:ObjectProperty ;
-    rdfs:domain         us:PedestrianSensor ;
-    rdfs:range          us:MicroclimateSensor ;
+    rdfs:domain         :PedestrianSensor ;
+    rdfs:range          :MicroclimateSensor ;
     rdfs:label          "closest microclimate sensor"@en ;
     rdfs:comment        "Links a pedestrian sensor to the closest microclimate sensor."@en .
 
@@ -86,47 +86,47 @@ us:closestMicroclimateSensor
 # Observable properties (as SOSA observable properties / individuals)
 #######################################################################
 
-us:dateInstalled
+:dateInstalled
     a owl:DatatypeProperty ;
     rdfs:domain sosa:Sensor ;
     rdfs:range xsd:date .
 
-us:pedestrianCount
+:pedestrianCount
     a                   sosa:ObservableProperty ;
     rdfs:label          "pedestrian count"@en ;
     rdfs:comment        "Pedestrian count observable property."@en .
 
-us:airTemperature
+:airTemperature
     a                   sosa:ObservableProperty ;
     rdfs:label          "air temperature"@en ;
     rdfs:comment        "Air temperature observable property."@en .
 
-us:relativeHumidity
+:relativeHumidity
     a                   sosa:ObservableProperty ;
     rdfs:label          "relative humidity"@en ;
     rdfs:comment        "Relative humidity observable property."@en .
 
-us:averageWindSpeed
+:averageWindSpeed
     a                   sosa:ObservableProperty ;
     rdfs:label          "average wind speed"@en ;
     rdfs:comment        "Average wind speed observable property."@en .
 
-us:averageWindDirection
+:averageWindDirection
     a                   sosa:ObservableProperty ;
     rdfs:label          "average wind direction"@en ;
     rdfs:comment        "Average wind direction observable property."@en .
 
-us:atmosphericPressure
+:atmosphericPressure
     a                   sosa:ObservableProperty ;
     rdfs:label          "atmospheric pressure"@en ;
     rdfs:comment        "Atmospheric pressure observable property."@en .
 
-us:pm10
+:pm10
     a                   sosa:ObservableProperty ;
     rdfs:label          "pm10"@en ;
     rdfs:comment        "Particulate matter PM10 observable property."@en .
 
-us:noise
+:noise
     a                   sosa:ObservableProperty ;
     rdfs:label          "noise level"@en ;
     rdfs:comment        "Acoustic noise level observable property."@en .
@@ -136,4 +136,4 @@ us:noise
 # Help
 #################################################################
 
-# Observation --sosa:madeBySensor--> Sensor --us:locatedAt--> FoI
+# Observation --sosa:madeBySensor--> Sensor --:locatedAt--> FoI
