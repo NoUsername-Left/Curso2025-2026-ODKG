@@ -26,9 +26,10 @@ sc:UniversitySchool   a owl:Class ; rdfs:subClassOf sc:EducationalInstitution ; 
 sc:OtherCenters       a owl:Class ; rdfs:subClassOf sc:EducationalInstitution ; rdfs:label "Other Centers"@en .
 
 
-# Facilities – culture & leisure
-sc:Library     a owl:Class ; rdfs:subClassOf sc:Facility ; rdfs:label "Library"@en .
-sc:Park  a owl:Class ; rdfs:subClassOf sc:Facility ; rdfs:label "Park or Garden"@en .
+# Facilities – culture & leisure 
+# (nos es mas adecuado para un mapping automatico usar nuestro propio prefijo pero hemos encontrado que existen las clases en la ontología schema se #han asociado también como subclases más especificas:incluyen nuestras propias propiedades como superficie m2)
+sc:Library     a owl:Class ; rdfs:subClassOf schema:Library ; rdfs:subClassOf sc:Facility ; rdfs:label "Library"@en.
+sc:Park  a owl:Class ;  rdfs:subClassOf schema:Park ; rdfs:subClassOf sc:Facility ; rdfs:label "Park or Garden"@en .
 
 # Facilities – sports (extendidas con nuevas subclases)
 sc:SportsFacility    a owl:Class ; rdfs:subClassOf sc:Facility ; rdfs:label "Sport Facility"@en .
@@ -105,7 +106,7 @@ schema:email a owl:DatatypeProperty ;
 
 sc:accessibility a owl:DatatypeProperty ;
   rdfs:domain sc:Facility ;
-  rdfs:range  xsd:integer .
+  rdfs:range  xsd:string .
 
 geo:lat a owl:DatatypeProperty ;
   rdfs:domain sc:Facility ;
