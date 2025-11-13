@@ -101,6 +101,7 @@
   ] ;
 
   rr:predicateObjectMap [
+<<<<<<< HEAD:HandsOn/Group09/mappings/pedestrian-counting-system-sensor-locations-updated-v2.rml
     rr:predicate schema:containedInPlace ;
     rr:objectMap [
       rr:template "https://smartcity.linkeddata.es/lcc/resource/street/{Street}" ;
@@ -109,11 +110,14 @@
   ] ;
 
   rr:predicateObjectMap [
+=======
+>>>>>>> 2d3054c1093729fd00a6fe8d084ac4f93f090ade:HandsOn/Group09/mappings/pedestrian-counting-system-sensor-locations-updated-ttl.rml.ttl
     rr:predicate schema:address ;
     rr:objectMap [
       rr:template "https://smartcity.linkeddata.es/lcc/resource/address/{Location_ID}" ;
       rr:termType rr:IRI 
     ]
+<<<<<<< HEAD:HandsOn/Group09/mappings/pedestrian-counting-system-sensor-locations-updated-v2.rml
   ] .
 
 <#StreetMapping> 
@@ -160,6 +164,8 @@
          rr:parent "Country";
       ]
     ]
+=======
+>>>>>>> 2d3054c1093729fd00a6fe8d084ac4f93f090ade:HandsOn/Group09/mappings/pedestrian-counting-system-sensor-locations-updated-ttl.rml.ttl
   ] .
 
 <#CountryMapping> 
