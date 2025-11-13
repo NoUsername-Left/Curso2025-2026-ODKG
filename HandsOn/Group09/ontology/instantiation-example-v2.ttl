@@ -17,17 +17,29 @@
 :location_45 
    a                          sosa:FeatureOfInterest, schema:Place ;
    schema:address             :address_45 ;
+   schema:containedInPlace    :street_45 ;
    wgs84_pos:lat              "40.4195"^^xsd:decimal ;
    wgs84_pos:long             "-3.6922"^^xsd:decimal .
 
 :address_45
    a                          schema:PostalAddress ;
-   :hasStreet                 "Swanston Street" ;
    rdfs:comment               "Outdoor" ;
    schema:postalCode          "3000"^^xsd:integer ;
-   schema:streetAddress       "Swanston Street 144" ;
-   schema:addressLocality     "Melbourne" ;
-   schema:addressCountry      "Australia" .
+   schema:streetAddress       "Swanston Street 144" .
+
+:street_45 
+   a                          :Street ;
+   rdfs:label                 "Swanston Street" ;
+   schema:containedInPlace    :city_45 .
+
+:city_45
+   a                          schema:City ;
+   rdfs:label                 "Melbourne" ;
+   schema:containedInPlace    :country_45 .
+
+:country_45
+   a                          schema:Country ;
+   rdfs:label                 "Australia" .
 
 #################################################################
 # Pedestrian Sensor
@@ -62,17 +74,29 @@
 :location_M03
    a                          sosa:FeatureOfInterest, schema:Place ;
    schema:address             :address_M03 ;
+   schema:containedInPlace    :street_M03 ;
    wgs84_pos:lat              "-37.8140348"^^xsd:decimal ;
    wgs84_pos:long             "144.96728"^^xsd:decimal .
 
 :address_M03
    a                          schema:PostalAddress ;
-   :hasStreet                 "Central Hall, Little Collins Street" ;
    rdfs:comment               "Outdoor" ;
    schema:postalCode          "3000"^^xsd:integer ;
-   schema:streetAddress       "Central Hall, Little Collins Street 210" ;
-   schema:addressLocality     "Melbourne" ;
-   schema:addressCountry      "Australia" .
+   schema:streetAddress       "Central Hall, Little Collins Street 210" .
+
+:street_M03
+   a                          :Street ;
+   rdfs:label                 "Central Hall, Little Collins Street" ;
+   schema:containedInPlace    :city_M03 .
+
+:city_M03
+   a                          schema:City ;
+   rdfs:label                 "Melbourne" ;
+   schema:containedInPlace    :country_M03 .
+
+:country_M03
+   a                          schema:Country ;
+   rdfs:label                 "Australia" .
 
 #################################################################
 # Microclimate Sensor
