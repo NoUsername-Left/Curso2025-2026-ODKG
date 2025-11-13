@@ -21,7 +21,7 @@
 
 <#FacilityMap>
   rml:logicalSource [
-    rml:source "../csv/Subclases_Universidades.csv";
+    rml:source "../csv/combinado-updated-with-links-Final.csv";
     rml:referenceFormulation ql:CSV;
   ];
 
@@ -150,7 +150,7 @@ rr:predicateObjectMap [
 
 <#NeighbourhoodMap>
   rml:logicalSource [
-    rml:source "../csv/Subclases_Universidades.csv";
+    rml:source "../csv/combinado-updated-with-links-Final.csv";
     rml:referenceFormulation ql:CSV;
   ];
 
@@ -199,7 +199,7 @@ rr:predicateObjectMap [
 
 <#DistrictMap>
   rml:logicalSource [
-    rml:source "../csv/Subclases_Universidades.csv";
+    rml:source "../csv/combinado-updated-with-links-Final.csv";
     rml:referenceFormulation ql:CSV;
     rml:iterator [ rr:template "http://smartcity.linkeddata.es/lcc/resource/district/{DISTRITO}"];
 
@@ -246,7 +246,7 @@ rr:predicateObjectMap [
 
 <#MunicipalityMap>
   rml:logicalSource [
-    rml:source "../csv/Subclases_Universidades.csv";
+    rml:source "../csv/combinado-updated-with-links-Final.csv";
     rml:referenceFormulation ql:CSV;
     rml:iterator [ rr:template "http://smartcity.linkeddata.es/lcc/resource/municipality/{LOCALIDAD}" ];
   ];
@@ -286,7 +286,7 @@ rr:predicateObjectMap [
 
 <#SubwayMap>
   rml:logicalSource [
-    rml:source "../csv/Subclases_Universidades.csv";
+    rml:source "../csv/combinado-updated-with-links-Final.csv";
     rml:referenceFormulation ql:CSV;
   ];
 
@@ -322,7 +322,7 @@ rr:predicateObjectMap [
 
 <#TrainMap>
   rml:logicalSource [
-    rml:source "../csv/Subclases_Universidades.csv";
+    rml:source "../csv/combinado-updated-with-links-Final.csv";
     rml:referenceFormulation ql:CSV;
   ];
 
@@ -359,7 +359,7 @@ rr:predicateObjectMap [
 
 <#BusMap>
   rml:logicalSource [
-    rml:source "../csv/Subclases_Universidades.csv";
+    rml:source "../csv/combinado-updated-with-links-Final.csv";
     rml:referenceFormulation ql:CSV;
   ];
 

@@ -7,8 +7,8 @@ SCHEMA = Namespace("https://schema.org/")
 GEO = Namespace("http://www.w3.org/2003/01/geo/wgs84_pos#")
 DBO = Namespace("http://dbpedia.org/ontology/")
 
-ONTO_FILE = "../ontology/ontology-27.ttl"
-DATA_FILE = "../data/tripletas-27.nt"
+ONTO_FILE = "../ontology/ontology.ttl"
+DATA_FILE = "../data/tripletas-Final.nt"
     
 
 @lru_cache(maxsize=1)
@@ -21,8 +21,8 @@ def get_graph() -> Graph:
 # Mapa “bonito” -> nombre mostrado en UI -> nombre local de clase en tu ontología
 FACILITY_CLASS_MAP = {
     # Clases Principales
-    "Library": "schema:Library",
-    "Park/Garden": "schema:Park",
+    "Library": "sc:Library",
+    "Park/Garden": "sc:Park",
     "Sports Center": "sc:SportsCenter",
     "Educational Institution": "sc:EducationalInstitution",
     # Mas subclases
