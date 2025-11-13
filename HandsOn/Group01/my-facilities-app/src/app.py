@@ -11,6 +11,9 @@ from queries import (
     get_neighbourhoods_in_district,
     get_nearby_transport,
     FACILITY_CLASS_MAP,
+    FACILITY_MAIN_TYPES,
+    FACILITY_SUBTYPES_BY_MAIN,
+    ALL_FACILITY_TYPES,
 )
 
 st.set_page_config(page_title="Smart City Facilities", layout="wide")
@@ -20,17 +23,40 @@ st.title("Smart City Facilities Explorer")
 mode = st.sidebar.radio("Modo de exploración", ["Por tipo de facility", "Por localizacion"])
 
 if mode == "Por tipo de facility":
-    readable = list(FACILITY_CLASS_MAP.keys())
-    choice = st.sidebar.selectbox("Tipo de facility", readable, index=0)
+    # --- Primer selector: clase principal (opcional) ---
+    main_choice = st.sidebar.selectbox(
+        "Tipo principal de facility (opcional)",
+        ["Ninguno"] + FACILITY_MAIN_TYPES,
+        index=0,
+    )
+
+    # --- Segundo selector: tipo concreto ---
+    if main_choice == "Ninguno":
+        # No se filtra por clase principal: mostramos todas las clases posibles
+        type_options = ALL_FACILITY_TYPES
+    else:
+        # Mostramos solo las subclases (y/o el tipo genérico) de esa clase principal
+        type_options = FACILITY_SUBTYPES_BY_MAIN.get(main_choice, [])
+
+    if not type_options:
+        st.warning("No hay subtipos configurados para este tipo de facility.")
+        st.stop()
+
+    choice = st.sidebar.selectbox("Subtipo concreto de facility", type_options, index=0)
+
     st.subheader(f"Instalaciones – {choice}")
 
+    # La consulta sigue igual, pero ahora siempre con el tipo concreto elegido
     data = get_facilities_by_type(choice)
     df = pd.DataFrame(data)
     st.caption(f"{len(df)} resultados")
     if not df.empty:
         # Tabla compacta
-        st.dataframe(df[["name","class","neighbourhood","district","municipality","telephone","email","uri"]],
-                     use_container_width=True, hide_index=True)
+        st.dataframe(
+            df[["name","class","neighbourhood","district","municipality","telephone","email","uri"]],
+            use_container_width=True,
+            hide_index=True,
+        )
 
         # --- Mapa ---
         map_df = df.dropna(subset=["lat","long"]).copy()
