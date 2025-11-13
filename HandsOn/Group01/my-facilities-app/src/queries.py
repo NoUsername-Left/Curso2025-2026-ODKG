@@ -23,23 +23,63 @@ FACILITY_CLASS_MAP = {
     # Clases Principales
     "Library": "sc:Library",
     "Park/Garden": "sc:Park",
-    "Sports Center": "sc:SportsCenter",
+    "Sports Center": "sc:SportsFacility",
     "Educational Institution": "sc:EducationalInstitution",
     # Mas subclases
-    #"Residence hall": "sc:ResidenceHall",
-    #"Faculty": "sc:Faculty",
-    #"University school": "sc:UniversitySchool",
-    #"Other centers": "sc:OtherCenters",
+    "Residence hall": "sc:ResidenceHall",
+    "Faculty": "sc:Faculty",
+    "University school": "sc:UniversitySchool",
+    "Other centers": "sc:OtherCenters",
 
-    #"Gym": "sc:Gym",
-    #"FootballField": "sc:FootballField",
-    #"SwimmingPool": "sc:SwimmingPool",
-    #"Tennis court": "sc:TennisCourt",
-    #"Climbing wall": "sc:ClimbingWall",
-    #"Rowing pier": "sc:RowingPier",
-    #"Stadium": "sc:Stadium",
-    #"Basketball court": "sc:BasketballCourt"
+    "Gym": "sc:Gym",
+    "FootballField": "sc:FootballField",
+    "SwimmingPool": "sc:SwimmingPool",
+    "Tennis court": "sc:TennisCourt",
+    "Climbing wall": "sc:ClimbingWall",
+    "Rowing pier": "sc:RowingPier",
+    "Stadium": "sc:Stadium",
+    "Basketball court": "sc:BasketballCourt"
 }
+
+# Las 4 clases principales de facilities (primer desplegable)
+FACILITY_MAIN_TYPES = [
+    "Library",
+    "Park/Garden",
+    "Sports Center",
+    "Educational Institution",
+]
+
+# Para cada clase principal, qué opciones de tipo concreto se muestran
+FACILITY_SUBTYPES_BY_MAIN = {
+    # Para Library y Park/Garden, el propio tipo principal es la única clase concreta
+    "Library": ["Library"],
+    "Park/Garden": ["Park/Garden"],
+
+    # Sports Center: tipo genérico + subclases deportivas
+    "Sports Center": [
+        "Sports Center",      # todas las instalaciones deportivas
+        "Gym",
+        "FootballField",
+        "SwimmingPool",
+        "Tennis court",
+        "Climbing wall",
+        "Rowing pier",
+        "Stadium",
+        "Basketball court",
+    ],
+
+    # Educational Institution: tipo genérico + subclases
+    "Educational Institution": [
+        "Educational Institution",  # todas las educativas
+        "Residence hall",
+        "Faculty",
+        "University school",
+        "Other centers",
+    ],
+
+}
+# Todas las clases seleccionables en el segundo desplegable
+ALL_FACILITY_TYPES = list(FACILITY_CLASS_MAP.keys())
 
 def _norm_coord(val: object, kind: str) -> float | None:
     """
@@ -309,7 +349,7 @@ def get_nearby_transport(facility_uri: str):
         if transport_name.startswith("subway"):
             transport_name = transport_name.replace("subway/", "").strip(":")  # Elimina "subway" y el colon al final
         elif transport_name.startswith("suburbantrain"):
-            transport_name = transport_name.replace("suburbantrain/", "").strip(":")  # Elimina "suburbantrain"
+            transport_name = transport_name.replace("train/", "").strip(":")  # Elimina "suburbantrain"
         elif transport_name.startswith("bus"):
             transport_name = transport_name.replace("bus/", "").strip(":")  # Elimina "bus"
         
