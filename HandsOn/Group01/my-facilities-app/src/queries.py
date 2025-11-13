@@ -130,7 +130,7 @@ def _pretty_class(uri_or_label: str | None) -> str | None:
         s = s.split("/")[-1].split("#")[-1]
     return s
 
-def get_facilities_by_type(class_label: str):
+def get_facilities_by_type1(class_label: str):
     """
     Devuelve facilities (con datos básicos y territorio) de una subclase concreta.
     class_label es la clave visible (p.ej. 'Library'); se traduce a schema:Library o sc:SportsCenter
@@ -195,6 +195,65 @@ def get_facilities_by_type(class_label: str):
             "class": _pretty_class(local),
         })
     return results
+def get_facilities_by_type(class_label: str):
+    g = get_graph()
+    local = FACILITY_CLASS_MAP[class_label]
+
+    q = f"""
+    PREFIX schema: <{SCHEMA}>
+    PREFIX sc: <{SC}>
+    PREFIX geo: <{GEO}>
+    PREFIX dbo: <{DBO}>
+
+    SELECT DISTINCT ?facility ?name ?lat ?long ?tel ?email
+                    ?nhName ?distName ?munName ?classLocal
+    WHERE {{
+      ?facility a ?class ;
+                schema:name ?name .
+
+      # Filtrar instalaciones por clase exacta (ontology# o resource/)
+      FILTER(
+        ?class = {local} ||
+        STR(?class) = REPLACE(STR({local}), "ontology#", "resource/")
+      )
+
+      ########################################
+      ## TERRITORIO CORRECTO (ARREGLADO)
+      ########################################
+
+      OPTIONAL {{
+        ?facility schema:containedInPlace ?nh .
+        ?nh schema:name ?nhName .
+        ?nh sc:locatedInDistrict ?dist .
+        ?dist schema:name ?distName .
+        ?dist sc:locatedInMunicipality ?mun .
+        ?mun schema:name ?munName .
+      }}
+
+      OPTIONAL {{ ?facility geo:lat ?lat . }}
+      OPTIONAL {{ ?facility geo:long ?long . }}
+      OPTIONAL {{ ?facility schema:telephone ?tel . }}
+      OPTIONAL {{ ?facility schema:email ?email . }}
+
+      BIND(REPLACE(REPLACE(STR(?class), "^.*/", ""), "^.*#", "") AS ?classLocal)
+    }}
+    """
+    rows = g.query(q)
+    results = []
+    for r in rows:
+        results.append({
+            "uri": str(r.facility),
+            "name": str(r.name),
+            "lat": _norm_coord(r.lat, "lat"),
+            "long": _norm_coord(r.long, "lon"),
+            "telephone": str(r.tel) if r.tel else None,
+            "email": str(r.email) if r.email else None,
+            "neighbourhood": str(r.nhName) if r.nhName else None,
+            "district": str(r.distName) if r.distName else None,
+            "municipality": str(r.munName) if r.munName else None,
+            "class": _pretty_class(r.classLocal),
+        })
+    return results
 
 
 def get_neighbourhoods():
@@ -217,8 +276,8 @@ def get_neighbourhoods():
         results.append((uri, name))
     return results
 
+
 def get_facilities_in_neighbourhood(nh_uri: str):
-    """Devuelve todas las facilities de cualquier tipo que están en el barrio indicado."""
     g = get_graph()
     q = f"""
     PREFIX sc: <{SC}>
@@ -226,37 +285,37 @@ def get_facilities_in_neighbourhood(nh_uri: str):
     PREFIX geo: <{GEO}>
     PREFIX dbo: <{DBO}>
 
-    SELECT DISTINCT ?facility ?name ?lat ?long ?tel ?email ?classLocal ?distName ?munName
+    SELECT DISTINCT ?facility ?name ?lat ?long ?tel ?email
+                    ?classLocal ?distName ?munName
     WHERE {{
-      # La instalación debe pertenecer al barrio seleccionado
-      ?facility schema:containedInPlace <{nh_uri}> ;
-                schema:name ?name .
+        ?facility schema:containedInPlace <{nh_uri}> ;
+                  schema:name ?name .
 
-      OPTIONAL {{ ?facility geo:lat ?lat . }}
-      OPTIONAL {{ ?facility geo:long ?long . }}
-      OPTIONAL {{ ?facility schema:telephone ?tel . }}
-      OPTIONAL {{ ?facility schema:email ?email . }}
+        ########################################
+        ## TERRITORIO CORRECTO (ARREGLADO)
+        ########################################
 
-      # Recuperar su clase concreta (Library, Park, SportsCenter, etc.)
-      OPTIONAL {{
-        ?facility a ?class .
-        FILTER(?class != sc:Facility)
-        BIND(REPLACE(REPLACE(STR(?class), "^.*/", ""), "^.*#", "") AS ?classLocal)
-      }}
+        OPTIONAL {{
+            <{nh_uri}> sc:locatedInDistrict ?dist .
+            ?dist schema:name ?distName .
+            ?dist sc:locatedInMunicipality ?mun .
+            ?mun schema:name ?munName .
+        }}
 
-      OPTIONAL {{
-        ?facility schema:containedInPlace ?dist .
-        ?dist a dbo:District .
-        OPTIONAL {{ ?dist schema:name ?distName . }}
-      }}
-      OPTIONAL {{
-        ?facility schema:containedInPlace ?mun .
-        ?mun a dbo:Municipality .
-        OPTIONAL {{ ?mun schema:name ?munName . }}
-      }}
+        OPTIONAL {{ ?facility geo:lat ?lat . }}
+        OPTIONAL {{ ?facility geo:long ?long . }}
+        OPTIONAL {{ ?facility schema:telephone ?tel . }}
+        OPTIONAL {{ ?facility schema:email ?email . }}
+
+        OPTIONAL {{
+            ?facility a ?class .
+            FILTER(?class != sc:Facility)
+            BIND(REPLACE(REPLACE(STR(?class), "^.*/", ""), "^.*#", "") AS ?classLocal)
+        }}
     }}
     ORDER BY ?name
     """
+
     rows = g.query(q)
     out = []
     for r in rows:
@@ -321,7 +380,7 @@ def get_neighbourhoods_in_district(district_uri: str):
 
 def get_nearby_transport(facility_uri: str):
     """
-    Devuelve el transporte cercano (Subway, Bus, Train) para una facility dada.
+    Devuelve el transporte cercano (Subway, Bus, Train) con sus líneas y estaciones.
     """
     g = get_graph()
     q = f"""
@@ -329,37 +388,47 @@ def get_nearby_transport(facility_uri: str):
     PREFIX schema: <{SCHEMA}>
     PREFIX dbo: <{DBO}>
 
-    SELECT DISTINCT ?transport ?transportClass
+    SELECT DISTINCT ?transport ?transportClass ?line ?station
     WHERE {{
-      <{facility_uri}> sc:hasNearby ?transport .  # La facility tiene cerca un transporte público
-      ?transport a ?transportClass .  # El transporte es de una clase
-      FILTER(?transportClass IN (sc:Subway, sc:Bus, sc:Train))  # Filtrar solo por Subway, Bus, y Train
+      <{facility_uri}> sc:hasNearby ?transport .
+      ?transport a ?transportClass .
+      FILTER(?transportClass IN (sc:Subway, sc:Bus, sc:Train))
+
+      OPTIONAL {{ ?transport sc:hasLines ?line . }}
+      OPTIONAL {{ ?transport sc:hasStations ?station . }}
     }}
     """
 
     rows = g.query(q)
-    
-    # Estructuramos los resultados por tipo de transporte
-    transport = {"Subway": [], "Bus": [], "Train": []}
-    
+
+    # Construcción de estructura completa
+    transport = {
+        "Subway": {},
+        "Bus": {},
+        "Train": {}
+    }
+
     for r in rows:
-        # Extraemos el nombre del transporte a partir del URI después de "resource/"
-        transport_name = str(r.transport).split("resource/")[-1]
-        # Eliminar los prefijos de transporte como "subway", "suburbantrain" y "bus" al principio del nombre
-        if transport_name.startswith("subway"):
-            transport_name = transport_name.replace("subway/", "").strip(":")  # Elimina "subway" y el colon al final
-        elif transport_name.startswith("suburbantrain"):
-            transport_name = transport_name.replace("train/", "").strip(":")  # Elimina "suburbantrain"
-        elif transport_name.startswith("bus"):
-            transport_name = transport_name.replace("bus/", "").strip(":")  # Elimina "bus"
-        
-        # Decodificamos el nombre del transporte para convertir caracteres codificados (como %20) a su forma normal
-        transport_name = unquote(transport_name)
-        transport_class = str(r.transportClass).split("#")[-1]  # Obtener el nombre de la clase de transporte
-        
-        if transport_class in transport:
-            transport[transport_class].append(transport_name)
-    
+        uri = str(r.transport)
+        t_class = str(r.transportClass).split("#")[-1]  # Subway | Bus | Train
+        name = uri.split("resource/")[-1]
+        name = unquote(name)
+
+        if name not in transport[t_class]:
+            transport[t_class][name] = {"lines": set(), "stations": set()}
+
+        if r.line:
+            transport[t_class][name]["lines"].add(str(r.line))
+
+        if r.station:
+            transport[t_class][name]["stations"].add(str(r.station))
+
+    # Convertir sets → listas
+    for t in transport:
+        for name in transport[t]:
+            transport[t][name]["lines"] = list(transport[t][name]["lines"])
+            transport[t][name]["stations"] = list(transport[t][name]["stations"])
+
     return transport
 
 '''

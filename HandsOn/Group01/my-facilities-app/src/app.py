@@ -97,10 +97,52 @@ if mode == "Por tipo de facility":
                 tr = get_nearby_transport(sel["uri"])
 
                 # Mostrar transporte en columnas
+                #cols = st.columns(3)
+                #cols[0].markdown("**Metro:**<br>" + ("<br>".join(tr["Subway"]) or "—"), unsafe_allow_html=True)
+                #cols[1].markdown("**Bus:**<br>" + ("<br>".join(tr["Bus"]) or "—"), unsafe_allow_html=True)
+                #cols[2].markdown("**Cercanías:**<br>" + ("<br>".join(tr["Train"]) or "—"), unsafe_allow_html=True)
                 cols = st.columns(3)
-                cols[0].markdown("**Metro:**<br>" + ("<br>".join(tr["Subway"]) or "—"), unsafe_allow_html=True)
-                cols[1].markdown("**Bus:**<br>" + ("<br>".join(tr["Bus"]) or "—"), unsafe_allow_html=True)
-                cols[2].markdown("**Cercanías:**<br>" + ("<br>".join(tr["Train"]) or "—"), unsafe_allow_html=True)
+
+                ### METRO
+                if tr["Subway"]:
+                    metro_html = "<div style='font-size:16px;'>"
+                    metro_html += "<h3 style='margin-bottom:5px;'>🚇 Metro</h3>"
+                    for name, data in tr["Subway"].items():
+                        lines = ", ".join(data["lines"]) if data["lines"] else "—"
+                        stations = ", ".join(data["stations"]) if data["stations"] else "—"
+                        metro_html += f"<p><b>Líneas:</b> {lines}<br><b>Estaciones:</b> {stations}</p>"
+                    metro_html += "</div>"
+                else:
+                    metro_html = "<h3>🚇 Metro</h3><p>—</p>"
+
+                cols[0].markdown(metro_html, unsafe_allow_html=True)
+
+                ### BUS
+                if tr["Bus"]:
+                    bus_html = "<div style='font-size:16px;'>"
+                    bus_html += "<h3 style='margin-bottom:5px;'>🚌 Bus</h3>"
+                    for name, data in tr["Bus"].items():
+                        lines = ", ".join(data["lines"]) if data["lines"] else "—"
+                        bus_html += f"<p><b>Líneas:</b> {lines}</p>"
+                    bus_html += "</div>"
+                else:
+                    bus_html = "<h3>🚌 Bus</h3><p>—</p>"
+
+                cols[1].markdown(bus_html, unsafe_allow_html=True)
+
+                ### TREN
+                if tr["Train"]:
+                    train_html = "<div style='font-size:16px;'>"
+                    train_html += "<h3 style='margin-bottom:5px;'>🚆 Cercanías</h3>"
+                    for name, data in tr["Train"].items():
+                        lines = ", ".join(data["lines"]) if data["lines"] else "—"
+                        stations = ", ".join(data["stations"]) if data["stations"] else "—"
+                        train_html += f"<p><b>Líneas:</b> {lines}<br><b>Estaciones:</b> {stations}</p>"
+                    train_html += "</div>"
+                else:
+                    train_html = "<h3>🚆 Cercanías</h3><p>—</p>"
+
+                cols[2].markdown(train_html, unsafe_allow_html=True)
 
 
 else:
@@ -172,9 +214,3 @@ else:
 
             # Obtener los transportes cercanos
             tr = get_nearby_transport(sel["uri"])
-
-            # Mostrar transporte en columnas
-            cols = st.columns(3)
-            cols[0].markdown("**Metro:**<br>" + ("<br>".join(tr["Subway"]) or "—"), unsafe_allow_html=True)
-            cols[1].markdown("**Bus:**<br>" + ("<br>".join(tr["Bus"]) or "—"), unsafe_allow_html=True)
-            cols[2].markdown("**Cercanías:**<br>" + ("<br>".join(tr["Train"]) or "—"), unsafe_allow_html=True)
