@@ -48,17 +48,13 @@ sosa:FeatureOfInterest  a owl:Class .
     rdfs:subClassOf     sosa:Sensor ;
     rdfs:label          "Microclimate sensor"@en .
 
+:Street
+    rdfs:subClassOf     schema:Place ;
+    rdfs:label          "Street name"@en .
+
 #################################################################
 # Object and Datatype Properties
 #################################################################
-
-# Street of a Feature of Interest (FoI) — aligned with schema:address
-:hasStreet
-    a                   owl:DatatypeProperty ;
-    rdfs:domain         schema:PostalAddress ;
-    rdfs:range          xsd:string ;
-    rdfs:label          "has street"@en ;
-    rdfs:comment        "Links a Postal Address to its street."@en .
 
 # Sensor → FoI link (where the sensor is physically located)
 :locatedAt
