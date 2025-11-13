@@ -100,6 +100,25 @@
   ] .
 
 #################################################################
+# Postal Address Mapping
+#################################################################
+
+<#PedestrianLocation>
+  a rr:TriplesMap ;
+  rml:logicalSource <#PedestrianSource> ;
+
+  rr:subjectMap [
+    rr:template "https://smartcity.linkeddata.es/lcc/resource/location/{Location_ID}";
+    rr:termType rr:IRI ;
+    rr:class us:Location
+  ];
+
+  rr:predicateObjectMap [
+    rr:predicate rdfs:comment ;
+    rr:objectMap [ rml:reference "Location_Type"; rr:termType rr:Literal  ]
+  ] ;
+  
+#################################################################
 # Pedestrian Sensor Mapping
 #################################################################
 
@@ -197,10 +216,10 @@
   
   rr:subjectMap [
     rr:template "https://smartcity.linkeddata.es/lcc/resource/street/{Street}";
-    rr:class schema:PostalAddress # This is the range of us:hasStreet
+    rr:class xsd:string # This is the range of us:hasStreet
   ];
   rr:predicateObjectMap [
-    rr:predicate schema:streetAddress;
+    rr:predicate xsd:string ;
     rr:objectMap [ rml:reference "Street" ; rr:termType rr:Literal ]
   ];
   rr:predicateObjectMap [

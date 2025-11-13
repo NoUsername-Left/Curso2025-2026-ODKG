@@ -353,10 +353,10 @@
   
   rr:subjectMap [
     rr:template "https://smartcity.linkeddata.es/lcc/resource/street/{Street}";
-    rr:class schema:PostalAddress
+    rr:class xsd:string
   ];
   rr:predicateObjectMap [
-    rr:predicate schema:streetAddress;
+    rr:predicate xsd:string ;
     rr:objectMap [ rml:reference "Street" ; rr:termType rr:Literal ]
   ];
   rr:predicateObjectMap [

@@ -10,25 +10,89 @@
 @base <https://smartcity.linkeddata.es/lcc/resource/> .
 
 #################################################################
+# Logical Source
+#################################################################
+
+<#PedestrianSensorSource>
+    a rml:LogicalSource ;
+    rml:source "../csv/pedestrian-counting-system-sensor-locations-updated.csv" ;
+    rml:referenceFormulation ql:CSV .
+
+<#PedestrianObservationSource>
+    a rml:LogicalSource ;
+    rml:source "../csv/pedestrian-counting-system-monthly-counts-per-hour-updated-v2.csv" ;
+    rml:referenceFormulation ql:CSV .
+
+#################################################################
+# Pedestrian Sensor Mapping
+#################################################################
+
+<#PedestrianSensor> a rr:TriplesMap;
+  rml:logicalSource [
+    rml:logicalSource <#PedestrianSensorSource> ;
+    rml:referenceFormulation ql:CSV 
+  ];
+
+  rr:subjectMap [
+    rml:template "https://smartcity.linkeddata.es/lcc/resource/sensor/{Sensor_Name}";
+    rr:termType rr:IRI ;
+    rr:class us:PedestrianSensor
+  ] ;
+
+  rr:predicateObjectMap [
+    rr:predicate schema:description ;
+    rr:objectMap [ rml:reference "Sensor_Description" ; rr:termType rr:Literal ]
+  ] ;
+
+  rr:predicateObjectMap [
+    rr:predicate us:dateInstalled ;
+    rr:objectMap [ rml:reference "Installation_Date" ; rr:datatype xsd:date ; rr:termType rr:Literal]
+  ] ;
+
+  rr:predicateObjectMap [
+    rr:predicate rdfs:comment ;
+    rr:objectMap [ rml:reference "Note" ; rr:termType rr:Literal]
+  ] ;
+
+  rr:predicateObjectMap [
+    rr:predicate schema:status ;
+    rr:objectMap [ rml:reference "Status" ; rr:termType rr:Literal]
+  ] ;
+
+  rr:predicateObjectMap [
+    rr:predicate us:locatedAt ;
+    rr:objectMap [
+      rr:parentTriplesMap <#PedestrianLocation> ;
+      ] ;
+  ] ;
+
+  rr:predicateObjectMap [
+    rr:predicate us:closestMicroclimateSensor ;
+    rr:objectMap [
+      rr:template "https://smartcity.linkeddata.es/lcc/resource/microclimateSensor/{Closest_Microclimate_Sensor_Name}"
+    ]
+  ] ;
+
+  rr:predicateObjectMap [
+    rr:predicate sosa:observes ;
+    rr:object us:pedestrianCount
+  ] .
+
+#################################################################
 # Pedestrian Location Mapping
 #################################################################
 
 <#PedestrianLocation> a rr:TriplesMap;
   rml:logicalSource [
-    rml:source "pedestrian-counting-system-sensor-locations-updated.csv" ;
+    rml:logicalSource <#PedestrianSensorSource> ;
     rml:referenceFormulation ql:CSV 
   ];
 
   rr:subjectMap [
     rr:template "https://smartcity.linkeddata.es/lcc/resource/location/{Location_ID}";
     rr:termType rr:IRI ;
-    rr:class us:Location
+    rr:class schema:Place
   ];
-
-  rr:predicateObjectMap [
-    rr:predicate rdfs:comment ;
-    rr:objectMap [ rml:reference "Location_Type"; rr:termType rr:Literal  ]
-  ] ;
 
   rr:predicateObjectMap [
     rr:predicate wgs84_pos:lat ;
@@ -38,6 +102,28 @@
   rr:predicateObjectMap [
     rr:predicate wgs84_pos:long ;
     rr:objectMap [ rml:reference "Longitude" ; rr:datatype xsd:float ; rr:termType rr:Literal ]
+  ] .
+
+<#AddressMapping>
+  a rr:TriplesMap ;
+  rml:logicalSource [
+    rml:logicalSource <#PedestrianSensorSource> ;
+    rml:referenceFormulation ql:CSV 
+  ];
+
+  rr:subjectMap [
+    rr:template "https://smartcity.linkeddata.es/lcc/resource/address/{Location_id}" ;
+    rr:class schema:PostalAddress
+  ] ;
+
+  rr:predicateObjectMap [
+    rr:predicate us:hasStreet ;
+    rr:objectMap [ rml:reference "Street" ]
+  ] ;
+
+  rr:predicateObjectMap [
+    rr:predicate rdfs:comment ;
+    rr:objectMap [ rml:reference "Location_Type"; rr:termType rr:Literal  ]
   ] ;
 
   rr:predicateObjectMap [
@@ -61,67 +147,49 @@
       rr:template "{Street} {House_Number}" ;
       rr:termType rr:Literal
     ]
-  ] ;
-
-  rr:predicateObjectMap [
-    rr:predicate us:hasAddress ;
-    rr:objectMap [ rml:reference "Address" ; rr:termType rr:Literal ]
-  ] ;
-
-  rr:predicateObjectMap [
-    rr:predicate us:MicroclimateSensor ;
-    rr:objectMap [ rml:reference "Closest_Microclimate_Sensor_Name" ; rr:termType rr:Literal ]
   ] .
 
 #################################################################
-# Pedestrian Sensor Mapping
+# Pedestrian Count Observation Mapping
 #################################################################
 
-<#PedestrianSensor> a rr:TriplesMap;
+<#PedestrianObservationMapping>
+  a rr:TriplesMap ;
   rml:logicalSource [
-    rml:source "pedestrian-counting-system-sensor-locations-updated.csv" ;
+    rml:logicalSource <#PedestrianObservationSource> ;
     rml:referenceFormulation ql:CSV 
   ];
 
   rr:subjectMap [
-    rml:template "https://smartcity.linkeddata.es/lcc/resource/sensor/{Sensor_Name}";
-    rr:termType rr:IRI ;
-    rr:class us:PedestrianSensor
+    rr:template "https://smartcity.linkeddata.es/lcc/resource/pedestrianObservation/{PedObserv_ID}" ;
+    rr:class sosa:Observation
   ] ;
 
   rr:predicateObjectMap [
-    rr:predicate schema:description ;
-    rr:objectMap [ rml:reference "Sensor_Description" ; rr:termType rr:Literal ]
+    rr:predicate sosa:observedProperty ;
+    rr:object us:pedestrianCount
   ] ;
 
   rr:predicateObjectMap [
-    rr:predicate schema:dateInstalled ;
-    rr:objectMap [ rml:reference "Installation_Date" ; rr:datatype xsd:date ; rr:termType rr:Literal]
-  ] ;
-
-  rr:predicateObjectMap [
-    rr:predicate rdfs:comment ;
-    rr:objectMap [ rml:reference "Note" ; rr:termType rr:Literal]
-  ] ;
-
-  rr:predicateObjectMap [
-    rr:predicate schema:status ;
-    rr:objectMap [ rml:reference "Status" ; rr:termType rr:Literal]
-  ] ;
-
-  rr:predicateObjectMap [
-    rr:predicate us:direction1 ;
-    rr:objectMap [ rml:reference "Direction_1" ; rr:termType rr:Literal]
-  ] ;
-
-  rr:predicateObjectMap [
-    rr:predicate us:direction2 ;
-    rr:objectMap [ rml:reference "Direction_2" ; rr:termType rr:Literal]
-  ] ;
-
-  rr:predicateObjectMap [
-    rr:predicate us:locatedAt ;
+    rr:predicate sosa:hasFeatureOfInterest ;
     rr:objectMap [
-      rr:parentTriplesMap <#PedestrianLocation> ;
-      ] ;
+      rr:template "https://smartcity.linkeddata.es/lcc/resource/pedestrianFoI/{PedObserv_ID}"
+    ]
+  ] ;
+
+  rr:predicateObjectMap [
+    rr:predicate sosa:hasSimpleResult ;
+    rr:objectMap [ rml:reference "Total_of_Directions" ; rr:datatype xsd:integer ]
+  ] ;
+
+  rr:predicateObjectMap [
+    rr:predicate sosa:madeBySensor ;
+    rr:objectMap [
+      rr:parentTriplesMap <#PedestrianSensorMapping> ;
+    ]
+  ] ;
+
+  rr:predicateObjectMap [
+    rr:predicate sosa:resultTime ;
+    rr:objectMap [ rml:reference "DateTime" ; rr:datatype xsd:dateTime ]
   ] .

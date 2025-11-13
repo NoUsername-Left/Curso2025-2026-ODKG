@@ -210,3 +210,4 @@ rdfs:comment "Pedestrian count in direction 2 observable property."@en .
 # Observation --sosa:madeBySensor--> Sensor --us:locatedAt--> FoI
 # ⇒ Observation --us:observedAtLocation--> FoI
 # us:observedAtLocation owl:propertyChainAxiom ( sosa:madeBySensor us:locatedAt ) .
+
