@@ -82,7 +82,7 @@ def query_arrival_times(stop_id, time_str):
     query_template = f"""
     PREFIX ont: <http://crtm-urban-buses.org/opendata/handsOn/group11/ontology#>
     PREFIX schema: <http://schema.org/>
-    SELECT ?lineName ?destination ?arrivalTime ?departureTime
+    SELECT DISTINCT ?lineName ?destination ?arrivalTime ?departureTime
     WHERE {{
         ?stop a ont:Stop ;
               ont:stopId "{stop_id}" .
