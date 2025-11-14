@@ -1,3 +1,51 @@
+#1 Query get all stops to store them with their coordinates
+def get_all_stops():
+    query = """
+    PREFIX ont: <http://crtm-urban-buses.org/opendata/handsOn/group11/ontology#>
+    PREFIX schema: <http://schema.org/>
+    PREFIX geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>
+    SELECT ?stop ?stopName ?stopId ?lat ?lon
+    WHERE {
+        ?stop a ont:Stop ;
+              schema:name ?stopName ;
+              ont:stopId ?stopId ;
+              geo:lat ?lat ;
+              geo:long ?lon .
+    }
+    """
+    sparql = SPARQLWrapper(GRAPHDB_URL)
+    sparql.setQuery(query)
+    sparql.setReturnFormat(JSON)
+    stops = []
+    try:
+        results = sparql.query().convert()
+        for r in results["results"]["bindings"]:
+            stops.append({
+                "stopId": r["stopId"]["value"],
+                "name": r["stopName"]["value"],
+                "lat": float(r["lat"]["value"]),
+                "lon": float(r["lon"]["value"])
+            })
+    except Exception as e:
+        st.error(f"Error querying GraphDB: {e}")
+    return pd.DataFrame(stops)
+
+def haversine(lat1, lon1, lat2, lon2):
+    R = 6371.0  # km
+    phi1 = math.radians(lat1)
+    phi2 = math.radians(lat2)
+    dphi = math.radians(lat2 - lat1)
+    dlambda = math.radians(lon2 - lon1)
+    a = math.sin(dphi/2)**2 + math.cos(phi1) * math.cos(phi2) * math.sin(dlambda/2)**2
+    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1-a))
+    return R * c
+#Calculate de nearest stops with the haversine function
+def find_nearby_stops(lat, lon, radius_km=1.0):
+    all_stops = st.session_state.all_stops.copy()
+    all_stops["distance_km"] = all_stops.apply(lambda row: haversine(lat, lon, row["lat"], row["lon"]), axis=1)
+    nearby = all_stops[all_stops["distance_km"] <= radius_km].sort_values("distance_km")
+    return nearby
+
 #2 Query, get arrival times of a specific stop
 def query_arrival_times(stop_id, time_str):
     query_template = f"""
