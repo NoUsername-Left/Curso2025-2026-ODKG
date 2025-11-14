@@ -173,7 +173,7 @@ ont:tripHeadsignComplete a owl:DatatypeProperty ;
 ont:tripHeadsign a owl:DatatypeProperty ;
   rdfs:label "trip headsign" ;
   rdfs:domain ont:Trip ;
-  rdfs:range xsd:string ;
+  rdfs:range xsd:string .
 
 ont:busNumber a owl:DatatypeProperty ;
   rdfs:label "bus number" ;
