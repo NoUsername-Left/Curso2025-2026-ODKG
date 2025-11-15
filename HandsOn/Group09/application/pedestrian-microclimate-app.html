@@ -35,6 +35,7 @@
   button:hover{background:#111827}
   button:active{transform:scale(.98)}
   .files{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+  /* .pill ya no se usa, la podrías borrar si quieres, pero no molesta */
   .pill{font-size:10px;padding:4px 9px;border:1px solid var(--line);border-radius:999px;background:#fff;color:var(--muted);display:inline-flex;gap:6px;align-items:center;cursor:pointer}
   .pill b{color:var(--ink);font-weight:600}
   .pill input{display:none}
@@ -77,10 +78,9 @@
       <h1>Urban Sensors — Pedestrians &amp; Microclimate</h1>
       <div class="note">Client-side exploration strictly based on your ontology &amp; RML mappings (with Wikidata tram stops).</div>
     </div>
+
+    <!-- AQUÍ SOLO DEJAMOS EL ESTADO, SIN BOTONES DE TTL -->
     <div class="files">
-      <label class="pill" for="filePedSensors">Pedestrian sensor locations <b>(sensor-locations.ttl)</b><input id="filePedSensors" type="file" accept=".ttl"></label>
-      <label class="pill" for="filePedObs">Pedestrian observations <b>(ped-observations.ttl)</b><input id="filePedObs" type="file" accept=".ttl"></label>
-      <label class="pill" for="fileMicroObs">Microclimate sensors &amp; observations <b>(microclimate.ttl)</b><input id="fileMicroObs" type="file" accept=".ttl"></label>
       <span id="fileStatus" class="note"></span>
     </div>
   </div>
@@ -121,14 +121,14 @@
 
     <div class="grid g3" style="margin:8px 0 8px">
       <div class="stat">
-            <span>Avg pedestrians / h (filtered)</span>
-            <b id="avgStat">—</b>
-        </div>
-        <div class="stat">
-            <span id="sensorStatLabel">Pedestrian sensors with data</span>
-            <b id="sensorStat">0</b>
-        </div>
-        <div class="stat"><span>Date range in view</span><b id="rangeStat">—</b></div>
+        <span>Avg pedestrians / h (filtered)</span>
+        <b id="avgStat">—</b>
+      </div>
+      <div class="stat">
+        <span id="sensorStatLabel">Pedestrian sensors with data</span>
+        <b id="sensorStat">0</b>
+      </div>
+      <div class="stat"><span>Date range in view</span><b id="rangeStat">—</b></div>
     </div>
 
     <div id="map"></div>
@@ -143,7 +143,9 @@
   <aside class="panel grid" style="grid-template-rows:auto 160px 160px 1fr">
     <div>
       <h3 style="margin:0 0 4px">Sensor detail</h3>
-      <div id="detailBox" class="note">Upload TTLs, choose filters, then click a pedestrian marker or select a sensor.</div>
+      <div id="detailBox" class="note">
+        Upload TTLs, choose filters, then click a pedestrian marker or select a sensor.
+      </div>
     </div>
     <div>
       <div class="note">Pedestrian trend (current selection / all)</div>
@@ -169,8 +171,31 @@ const P = {
   rdfs: 'http://www.w3.org/2000/01/rdf-schema#',
   rdf:  'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
   owl:  'http://www.w3.org/2002/07/owl#',
-  schema: 'http://schema.org/'          // NEW: to read schema:description as label
+  schema: 'http://schema.org/'
 };
+
+const SPARQL_ENDPOINT = 'http://localhost:9000/sparql';
+
+const CONSTRUCT_ALL = `
+  CONSTRUCT { ?s ?p ?o }
+  WHERE { ?s ?p ?o }
+`;
+
+// Ejecutar SPARQL y devolver texto o JSON según Accept
+async function runSparqlRaw(query, accept = 'application/sparql-results+json') {
+  const res = await fetch(SPARQL_ENDPOINT, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+      'Accept': accept
+    },
+    body: new URLSearchParams({ query })
+  });
+  if (!res.ok) {
+    throw new Error('SPARQL error ' + res.status);
+  }
+  return accept === 'text/turtle' ? res.text() : res.json();
+}
 
 // === DATA TIME ZONE (Melbourne, summer ~ UTC+11) ===
 const DATA_TZ = '+11:00';
@@ -208,27 +233,24 @@ function dataLocalHour(d) {
   return shifted.getUTCHours();
 }
 
-
 const MICRO_SENSOR_BASE =
   'https://smartcity.linkeddata.es/lcc/resource/microclimate/sensor/';
 
-// For later: pedestrian sensors may also carry Wikidata links, so keep it generic
 const US_WIKIDATA_PRED = P.us + 'Same_As_Wikidata_Sensor_Description';
 
 const DB = {
-  fois: new Map(),          // FoI IRI -> { iri, lat, long, label?, microCodes?: Set<string> }
-  pedSensors: new Map(),    // pedSensor IRI -> { iri, label, foi, dir1, dir2, closestMicroCode?, sameAs?: string[] }
-  pedObs: [],               // { iri, time, sensorIRI, foiIRI, total }
-  microSensors: new Map(),  // microSensor IRI -> { iri, foi, label?, sameAs?: string[] }
-  microObs: [],             // { iri, time, foiIRI, metrics:{propIri:value} }
-  microProps: new Map(),    // propIri -> { iri, label }
-  wikidataItems: new Set(), // QIDs from owl:sameAs / us:Same_As_Wikidata_Sensor_Description
-  tramStops: new Map(),     // QID -> { qid, label, lat, lon, lines: [ { qid, label } ], codes:Set }
-  tramLinks: new Map(),     // QID -> Set(codes) coming from sensor-description
-  wikidataSubjects: new Map(), // NEW: subject IRI -> Set(QIDs)
-  foiWikidata: new Map()       // NEW: FoI IRI -> Set(QIDs)
+  fois: new Map(),
+  pedSensors: new Map(),
+  pedObs: [],
+  microSensors: new Map(),
+  microObs: [],
+  microProps: new Map(),
+  wikidataItems: new Set(),
+  tramStops: new Map(),
+  tramLinks: new Map(),
+  wikidataSubjects: new Map(),
+  foiWikidata: new Map()
 };
-
 
 const State = {
   range: [null,null],
@@ -258,13 +280,21 @@ const microLayer = L.layerGroup().addTo(map);
 const tramLayer = L.layerGroup().addTo(map);
 
 const trendChart = new Chart(document.getElementById('trend'),{
-  type:'line', data:{labels:[],datasets:[{label:'Pedestrians',data:[],tension:0.25}]},
-  options:{responsive:true,maintainAspectRatio:false,layout:{padding:{bottom:12}},plugins:{legend:{display:false}},scales:{x:{ticks:{maxRotation:0,autoSkip:true,font:{size:8}}},y:{ticks:{font:{size:8}}}}}
+  type:'line',
+  data:{labels:[],datasets:[{label:'Pedestrians',data:[],tension:0.25}]},
+  options:{responsive:true,maintainAspectRatio:false,layout:{padding:{bottom:12}},
+    plugins:{legend:{display:false}},
+    scales:{x:{ticks:{maxRotation:0,autoSkip:true,font:{size:8}}},
+            y:{ticks:{font:{size:8}}}}}
 });
 
 const microTrendChart = new Chart(document.getElementById('microTrend'),{
-  type:'line', data:{labels:[],datasets:[{label:'Microclimate',data:[],tension:0.25,borderColor:'#dc2626',backgroundColor:'rgba(220,38,38,0.15)'}]},
-  options:{responsive:true,maintainAspectRatio:false,layout:{padding:{bottom:18}},plugins:{legend:{display:false}},scales:{x:{ticks:{maxRotation:0,autoSkip:true,font:{size:8}}},y:{ticks:{font:{size:8}}}}}
+  type:'line',
+  data:{labels:[],datasets:[{label:'Microclimate',data:[],tension:0.25,borderColor:'#dc2626',backgroundColor:'rgba(220,38,38,0.15)'}]},
+  options:{responsive:true,maintainAspectRatio:false,layout:{padding:{bottom:18}},
+    plugins:{legend:{display:false}},
+    scales:{x:{ticks:{maxRotation:0,autoSkip:true,font:{size:8}}},
+            y:{ticks:{font:{size:8}}}}}
 });
 
 /* ==== HELPERS ==== */
@@ -272,19 +302,15 @@ const fmt = n => (n==null || Number.isNaN(n)) ? '—' : new Intl.NumberFormat().
 function parseXSDDateTime(lex){
   try{
     let s = lex;
-
-    // Si viene sin zona (ej. "2024-12-20T13:00:00"), asumimos DATA_TZ (+11:00)
     if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}$/.test(lex)) {
       s = lex + DATA_TZ;
     }
-
     const d = new Date(s);
     return isNaN(d.getTime()) ? null : d;
   }catch(e){
     return null;
   }
 }
-
 function objValue(o){ return o.termType === 'Literal' ? o.value : o.id; }
 function shortLabel(iri){ const frag = iri.split(/[\/#]/).pop() || iri; return frag.replace(/[_\-]/g,' '); }
 
@@ -293,8 +319,7 @@ function iriToQID(iri){
   return m ? m[1] : null;
 }
 
-// Extrae QIDs y códigos (ICTMicroclimate-xx, aws5-0999) desde sensor-description
-// Extrae QIDs y códigos (ICTMicroclimate-xx, aws5-0999) desde sensor-description
+// Extrae QIDs y códigos desde sensor-description
 function collectSensorDescriptionQIDs(quads){
   let added = 0;
 
@@ -306,7 +331,6 @@ function collectSensorDescriptionQIDs(quads){
       const qid = iriToQID(target);
       if(!qid) continue;
 
-      // 1) subject -> QIDs (generic, works for streets, locations, sensor-description, etc.)
       let subjSet = DB.wikidataSubjects.get(s);
       if(!subjSet){
         subjSet = new Set();
@@ -317,13 +341,11 @@ function collectSensorDescriptionQIDs(quads){
         added++;
       }
 
-      // 2) keep global list of QIDs (for Wikidata query)
       DB.wikidataItems.add(qid);
 
-      // 3) if subject is a sensor-description, also map QID -> microclimate codes (like before)
       const isSensorDesc = /\/resource\/sensor-description\//.test(s);
       if(isSensorDesc){
-        const code = (s.split('/').pop() || '').trim();  // e.g. ICTMicroclimate-05
+        const code = (s.split('/').pop() || '').trim();
         if(code){
           if(!DB.tramLinks.has(qid)) DB.tramLinks.set(qid, new Set());
           DB.tramLinks.get(qid).add(code);
@@ -345,21 +367,26 @@ function collectSensorDescriptionQIDs(quads){
   }
   console.log('[Wikidata] QIDs collected in TTLs (candidates):', added,
               '| total unique QIDs:', DB.wikidataItems.size);
-
 }
-
 
 async function parseTTL(text){
   let cleaned = text.replace(/^\uFEFF/, '').replace(/^\u00EF\u00BB\u00BF/, '').replace(/\u221A/g, '')
                     .replace(/[\u0000-\u0008\u000B-\u000C\u000E-\u001F\u007F]/g, '');
   const parser = new N3.Parser();
   const quads = parser.parse(cleaned);
-  return quads.map(q => ({ s: N3.Util.isNamedNode(q.subject)?q.subject.id:q.subject.id, p: q.predicate.id, o: q.object }));
+  return quads.map(q => ({
+    s: N3.Util.isNamedNode(q.subject)?q.subject.id:q.subject.id,
+    p: q.predicate.id,
+    o: q.object
+  }));
 }
 
 function upsertFoi(iri, patch){
   const cur = DB.fois.get(iri) || { iri, microCodes:new Set() };
-  if(patch.microCodes && cur.microCodes){ patch.microCodes.forEach(c => cur.microCodes.add(c)); delete patch.microCodes; }
+  if(patch.microCodes && cur.microCodes){
+    patch.microCodes.forEach(c => cur.microCodes.add(c));
+    delete patch.microCodes;
+  }
   Object.assign(cur, patch); DB.fois.set(iri, cur);
 }
 function upsertPedSensor(iri, patch){ DB.pedSensors.set(iri, Object.assign(DB.pedSensors.get(iri)||{iri}, patch)); }
@@ -394,42 +421,32 @@ function buildFromPedSensorLocations(quads){
       tset.has(P.sosa + 'FeatureOfInterest') ||
       foiHints.has(s);
 
-        if (isPedSensor) {
-            // NAME: true sensor name
-            if (
-                p === P.rdfs + 'label' ||          // e.g. "Sensor 01"
-                p === P.schema + 'name' ||         // schema:name if you use it
-                p === P.us + 'sensorName'          // custom property, por si acaso
-            ) {
-                upsertPedSensor(s, { name: val });
-
-            // DESCRIPTION: longer human text
-            } else if (p === P.schema + 'description') {
-                upsertPedSensor(s, { description: val });
-
-            } else if (p === P.us + 'direction1') {
-                upsertPedSensor(s, { dir1: val });
-
-            } else if (p === P.us + 'direction2') {
-                upsertPedSensor(s, { dir2: val });
-
-            } else if (p === P.us + 'locatedAt') {
-                upsertPedSensor(s, { foi: val });
-
-            } else if (p === P.us + 'closestMicroclimateSensor') {
-                // link to microclimate by code
-                upsertPedSensor(s, { closestMicroCode: val.trim() });
-
-            } else if (p === P.owl + 'sameAs' || p === US_WIKIDATA_PRED) {
-                const qid = iriToQID(val);
-                if (qid) {
-                const cur = DB.pedSensors.get(s) || { iri: s };
-                cur.sameAs = [...(cur.sameAs || []), val];
-                DB.pedSensors.set(s, cur);
-                DB.wikidataItems.add(qid);
-            }
+    if (isPedSensor) {
+      if (
+        p === P.rdfs + 'label' ||
+        p === P.schema + 'name' ||
+        p === P.us + 'sensorName'
+      ) {
+        upsertPedSensor(s, { name: val });
+      } else if (p === P.schema + 'description') {
+        upsertPedSensor(s, { description: val });
+      } else if (p === P.us + 'direction1') {
+        upsertPedSensor(s, { dir1: val });
+      } else if (p === P.us + 'direction2') {
+        upsertPedSensor(s, { dir2: val });
+      } else if (p === P.us + 'locatedAt') {
+        upsertPedSensor(s, { foi: val });
+      } else if (p === P.us + 'closestMicroclimateSensor') {
+        upsertPedSensor(s, { closestMicroCode: val.trim() });
+      } else if (p === P.owl + 'sameAs' || p === US_WIKIDATA_PRED) {
+        const qid = iriToQID(val);
+        if (qid) {
+          const cur = DB.pedSensors.get(s) || { iri: s };
+          cur.sameAs = [...(cur.sameAs || []), val];
+          DB.pedSensors.set(s, cur);
+          DB.wikidataItems.add(qid);
         }
-
+      }
     } else if(isLocation){
       if(p === P.rdfs + 'label'){
         upsertFoi(s,{label:val});
@@ -446,22 +463,20 @@ function buildFromPedSensorLocations(quads){
         }
       }
 
-      // NEW: if this FoI / street has Wikidata QIDs, remember them
       const qset = DB.wikidataSubjects.get(s);
       if(qset && qset.size){
         DB.foiWikidata.set(s, new Set(qset));
       }
     }
-
   }
 }
 
-/* ==== 2) PEDESTRIAN OBSERVATIONS (v2 TTL) ==== */
+/* ==== 2) PEDESTRIAN OBSERVATIONS ==== */
 function buildFromPedObservations(quads){
   const madeBy   = P.sosa + 'madeBySensor';
-  const atLoc    = P.sosa + 'hasFeatureOfInterest';    // NEW: v2 uses sosa:hasFeatureOfInterest
+  const atLoc    = P.sosa + 'hasFeatureOfInterest';
   const rt       = P.sosa + 'resultTime';
-  const resVal   = P.sosa + 'hasSimpleResult';         // NEW: simple result holds the count
+  const resVal   = P.sosa + 'hasSimpleResult';
   const obsProp  = P.sosa + 'observedProperty';
   const BASE     = 'https://smartcity.linkeddata.es/lcc/resource/';
 
@@ -484,12 +499,11 @@ function buildFromPedObservations(quads){
       const num = Number(v);
       if(!Number.isNaN(num)) r.total = num;
     } else if(p === obsProp){
-      r.prop = v;    // to be sure it's pedestrianCount
+      r.prop = v;
     }
   }
 
   for(const r of obs.values()){
-    // only keep observations of pedestrianCount if property is present
     if(r.prop && r.prop !== P.us + 'pedestrianCount') continue;
 
     if(!r.sensorIRI && r.sensorCode){
@@ -504,7 +518,6 @@ function buildFromPedObservations(quads){
       if(!s.foi) upsertPedSensor(r.sensorIRI,{foi:r.foiIRI});
     }
 
-    // legacy fallback (if someday D1/D2 appear again)
     if(r.total == null){
       const d1 = Number.isFinite(r.d1)?r.d1:null;
       const d2 = Number.isFinite(r.d2)?r.d2:null;
@@ -549,7 +562,6 @@ function buildFromMicroclimate(quads){
     const v = objValue(o);
     const tset = types.get(s) || new Set();
 
-    // capture Wikidata links anywhere (sensor-description, etc.)
     if (p === P.owl + 'sameAs' || p === US_WIKIDATA_PRED) {
       const qid = iriToQID(v);
       if (qid) DB.wikidataItems.add(qid);
@@ -642,12 +654,11 @@ function refreshWeatherOptions(){
   }
 }
 
-/* ==== LINK: PED SENSOR -> MICRO FoIs (v2: closestMicroclimateSensor) ==== */
+/* ==== LINK PED SENSOR -> MICRO FoIs ==== */
 function microFoIsForPedSensor(sensorIRI){
   const s = DB.pedSensors.get(sensorIRI);
   const foiset = new Set();
 
-  // 1) NEW: via closestMicroclimateSensor code
   if(s && s.closestMicroCode){
     const code = s.closestMicroCode.trim();
     if(code){
@@ -659,7 +670,6 @@ function microFoIsForPedSensor(sensorIRI){
     }
   }
 
-  // 2) Legacy: via FoI.microCodes if still present
   if(s && s.foi){
     const foi = DB.fois.get(s.foi);
     if(foi && foi.microCodes && foi.microCodes.size){
@@ -672,7 +682,6 @@ function microFoIsForPedSensor(sensorIRI){
       });
     }
   }
-
   return Array.from(foiset);
 }
 
@@ -683,8 +692,8 @@ function avgMetricAtFoi(foiIRI, propIri, range, hourVal){
 
   const hm = d => {
     if (h === 'all') return true;
-    const targetHour = Number(h.slice(0, 2));   // "10:00" -> 10
-    return dataLocalHour(d) === targetHour;     // usamos hora en Melbourne
+    const targetHour = Number(h.slice(0, 2));
+    return dataLocalHour(d) === targetHour;
   };
 
   const vals = DB.microObs
@@ -701,7 +710,6 @@ function avgMetricAtFoi(foiIRI, propIri, range, hourVal){
   const sum = vals.reduce((a,b)=>a+b,0);
   return sum / vals.length;
 }
-
 
 function avgMetricForSensor(sensorIRI, propIri){
   const foIs = microFoIsForPedSensor(sensorIRI);
@@ -754,8 +762,6 @@ function applyFilters(){
   aggregateAndRender();
 }
 
-
-// helper: normalize route labels
 function asRouteLabel(s){
   if(!s) return null;
   const m = s.match(/\b(route|line|línea|tram route)\s*([0-9]+(?:[a-z]|[0-9a-z]?\/[0-9a-z]+)?)/i);
@@ -765,7 +771,7 @@ function asRouteLabel(s){
   return parts.map(p => `route ${p}`);
 }
 
-/* ==== WIKIDATA: FETCH TRAM STOPS FROM QIDs ==== */
+/* ==== WIKIDATA ==== */
 async function loadWikidataTramStops(){
   const qids = [...DB.wikidataItems];
   if(!qids.length){
@@ -826,7 +832,6 @@ SELECT ?item ?itemLabel ?coord ?line ?lineLabel WHERE {
     }
   }
 
-    // After processing all chunks:
   const withCoords = [...DB.tramStops.values()]
     .filter(t => Number.isFinite(t.lat) && Number.isFinite(t.lon)).length;
 
@@ -849,44 +854,6 @@ SELECT ?item ?itemLabel ?coord ?line ?lineLabel WHERE {
   aggregateAndRender();
 }
 
-function renderTramStops(){
-  tramLayer.clearLayers();
-  const bounds = [];
-
-  for (const [qid, t] of DB.tramStops){
-    if (!(Number.isFinite(t.lat) && Number.isFinite(t.lon))) continue;
-
-    const marker = L.circleMarker([t.lat, t.lon], {
-      radius: 7, color: '#15803d', fillColor: '#22c55e', weight: 1, fillOpacity: 0.9
-    }).addTo(tramLayer);
-
-    const linesArrRaw = (t.lines || []).map(l => l.label);
-    const exploded = linesArrRaw.flatMap(asRouteLabel).filter(Boolean);
-    const linesArr = [...new Set(exploded)];
-
-    const shown = linesArr.slice(0, 4);
-    const more = Math.max(0, linesArr.length - shown.length);
-
-    const shortLines = shown.join(', ') + (more ? `, +${more} more` : '');
-    const title = t.label || qid;
-    const coords = `${t.lat.toFixed(5)}, ${t.lon.toFixed(5)}`;
-
-    const fullHtml =
-      `<div><b>${title}</b></div>` +
-      (linesArr.length ? `<div><b>Lines</b>: ${linesArr.join(', ')}</div>` : '') +
-      `<div><b>Coords</b>: ${coords}</div>` +
-      `<div style="margin-top:4px"><a href="https://www.wikidata.org/wiki/${qid}" target="_blank">Open in Wikidata</a></div>`;
-
-    marker.bindPopup(fullHtml, { className: 'tram-pop', autoPan: false, closeButton: true });
-    marker.on('mouseover', () => marker.openPopup());
-    marker.on('mouseout',  () => marker.closePopup());
-
-    bounds.push([t.lat, t.lon]);
-  }
-
-  if (bounds.length) map.fitBounds(bounds, { padding: [20, 20] });
-}
-
 /* ==== MAIN RENDER ==== */
 function aggregateAndRender(){
   const [from,to] = State.range;
@@ -897,10 +864,9 @@ function aggregateAndRender(){
   const inRange = d => (!from || d>=from) && (!to || d<=to);
   const hm = d => {
     if (h === 'all') return true;
-    const targetHour = Number(h.slice(0, 2));   // "10:00" -> 10
-    return dataLocalHour(d) === targetHour;     // hora de los datos, no la de tu navegador
+    const targetHour = Number(h.slice(0, 2));
+    return dataLocalHour(d) === targetHour;
   };
-
 
   const filtered = DB.pedObs.filter(o =>
     o.time && inRange(o.time) && hm(o.time) &&
@@ -919,7 +885,7 @@ function aggregateAndRender(){
   tramLayer.clearLayers();
   const bounds = [];
 
-  // === PEDESTRIAN MARKERS (blue) ===
+  // PEDESTRIAN MARKERS
   for(const [iri,sum] of bySensor){
     const s = DB.pedSensors.get(iri);
     if(!s || !s.foi || !DB.fois.get(s.foi)) continue;
@@ -954,7 +920,7 @@ function aggregateAndRender(){
     bounds.push([lat,lng]);
   }
 
-  // === MICROCLIMATE MARKERS (red) ===
+  // MICROCLIMATE MARKERS
   let allowedMicroFoIs = null;
   if(scope){
     const mappedFoIs = microFoIsForPedSensor(scope);
@@ -1012,7 +978,7 @@ function aggregateAndRender(){
     bounds.push([lat,lng]);
   }
 
-  // === TRAM STOPS (green) linked to selected pedestrian sensor ===
+  // TRAM STOPS
   const tramBounds = [];
   let allowedQids = null;
 
@@ -1020,7 +986,6 @@ function aggregateAndRender(){
     const ps = DB.pedSensors.get(scope);
     const qidSet = new Set();
 
-    // 1) QIDs coming from the FoI / street where this sensor is located
     if (ps && ps.foi) {
       const foiQids = DB.foiWikidata.get(ps.foi);
       if (foiQids) {
@@ -1028,7 +993,6 @@ function aggregateAndRender(){
       }
     }
 
-    // 2) QIDs coming from closest microclimate codes (legacy sensor-description links)
     const codes = new Set();
     if (ps && ps.closestMicroCode) {
       codes.add(ps.closestMicroCode.trim());
@@ -1058,8 +1022,6 @@ function aggregateAndRender(){
   if (State.tramLoaded) {
     for (const [qid, t] of DB.tramStops) {
       if (!(Number.isFinite(t.lat) && Number.isFinite(t.lon))) continue;
-
-      // If a sensor is selected, only show its associated tram QIDs
       if (allowedQids && !allowedQids.has(qid)) continue;
 
       const marker = L.circleMarker([t.lat, t.lon], {
@@ -1071,7 +1033,6 @@ function aggregateAndRender(){
       const linesArr = [...new Set(exploded)];
       const shown = linesArr.slice(0, 4);
       const more  = Math.max(0, linesArr.length - shown.length);
-      const shortLines = shown.join(', ') + (more ? `, +${more} more` : '');
       const title  = t.label || qid;
       const coords = `${t.lat.toFixed(5)}, ${t.lon.toFixed(5)}`;
 
@@ -1090,10 +1051,9 @@ function aggregateAndRender(){
   }
 
   bounds.push(...tramBounds);
-
   if(bounds.length) map.fitBounds(bounds,{padding:[20,20]});
 
-  // === STATS ===
+  // STATS
   const total = filtered.reduce((a,b)=>a+(b.total||0),0);
   const hours = new Set(filtered.map(o => dataLocalHourKey(o.time))).size;
   const avg = hours ? Math.round(total/hours) : null;
@@ -1101,11 +1061,9 @@ function aggregateAndRender(){
   const sensorStatLabel = document.getElementById('sensorStatLabel');
 
   const currentIRI = State.selectedSensor || (State.sensor !== 'all' ? State.sensor : null);
-
   if (currentIRI) {
     const s = DB.pedSensors.get(currentIRI) || {};
     const name = s.label || currentIRI.split('/').pop();
-
     sensorStatLabel.textContent = 'Current pedestrian sensor';
     sensorStat.textContent = name;
   } else {
@@ -1118,8 +1076,7 @@ function aggregateAndRender(){
     ' → ' +
     (to ? formatDataLocal(to, false)   : '—');
 
-
-  // === SENSOR RANK LIST ===
+  // SENSOR RANK LIST
   const list = document.getElementById('sensorList');
   list.innerHTML = '';
   [...bySensor.entries()]
@@ -1133,19 +1090,19 @@ function aggregateAndRender(){
       list.appendChild(row);
     });
 
-  // === PEDESTRIAN TREND ===
+  // PEDESTRIAN TREND
   const pedGrouped = new Map();
-    for (const o of filtered) {
+  for (const o of filtered) {
     if (scope && o.sensorIRI !== scope) continue;
-    const key = dataLocalHourKey(o.time);     // "YYYY-MM-DD HH:00" en TZ de datos
+    const key = dataLocalHourKey(o.time);
     pedGrouped.set(key, (pedGrouped.get(key) || 0) + (o.total || 0));
-    }
+  }
   const pedLabels = [...pedGrouped.keys()].sort();
   trendChart.data.labels = pedLabels;
   trendChart.data.datasets[0].data = pedLabels.map(k=>pedGrouped.get(k));
   trendChart.update();
 
-  // === MICROCLIMATE TREND ===
+  // MICROCLIMATE TREND
   const microLabelSpan = document.getElementById('microMetricLabel');
   if(metric === 'none' || !DB.microProps.has(metric)){
     microLabelSpan.textContent = 'no metric selected';
@@ -1216,7 +1173,9 @@ function aggregateAndRender(){
   if(State.selectedSensor){
     updateDetailBox(State.selectedSensor, bySensor.get(State.selectedSensor)||0);
   } else {
-    detailBox.innerHTML = 'Select a pedestrian sensor to see its pedestrians & linked microclimate; with "All" sensors, charts show network-wide behaviour.';
+    detailBox.innerHTML =
+      'Select a pedestrian sensor to see its pedestrians & linked microclimate; ' +
+      'with "All" sensors, charts show network-wide behaviour.';
   }
 }
 
@@ -1266,86 +1225,53 @@ function selectSensor(iri){
   aggregateAndRender();
 }
 
-/* ==== FILE HANDLERS ==== */
-async function readFileAsText(file){
-  if(!file) return null;
-  return new Promise((res,rej)=>{
-    const r=new FileReader();
-    r.onload=()=>res(r.result);
-    r.onerror=()=>rej(r.error||new Error('File read error'));
-    r.readAsText(file);
-  });
-}
-
-async function handlePedSensorsFile(file){
-  try{
-    const txt = await readFileAsText(file);
-    if(!txt) return;
-    const quads = await parseTTL(txt);
-
-    collectSensorDescriptionQIDs(quads);
+/* ==== CARGA DESDE GRAPHDB (sin archivos locales) ==== */
+async function loadAllFromGraphDB() {
+  try {
+    if (typeof fileStatus !== 'undefined') {
+      fileStatus.textContent = 'Loading data from GraphDB...';
+    }
 
     DB.fois.clear();
     DB.pedSensors.clear();
-    buildFromPedSensorLocations(quads);
-    refreshSensorSelect();
-    aggregateAndRender();
-    fileStatus.textContent = `Locations loaded (${DB.fois.size} FoIs, ${DB.pedSensors.size} pedestrian sensors).`;
-  }catch(e){
-    console.error(e);
-    fileStatus.textContent = 'Error parsing sensor-locations TTL (see console).';
-  }
-}
-
-async function handlePedObsFile(file){
-  try{
-    const txt = await readFileAsText(file);
-    if(!txt) return;
-    const quads = await parseTTL(txt);
     DB.pedObs = [];
-    buildFromPedObservations(quads);
-    refreshSensorSelect();
-    aggregateAndRender();
-    fileStatus.textContent = `Pedestrian observations loaded (${DB.pedObs.length} obs).`;
-  }catch(e){
-    console.error(e);
-    fileStatus.textContent = 'Error parsing pedestrian observations TTL (see console).';
-  }
-}
-
-async function handleMicroObsFile(file){
-  try{
-    const txt = await readFileAsText(file);
-    if(!txt) return;
-    const quads = await parseTTL(txt);
-
-    // Reset only microclimate-specific structures
     DB.microSensors.clear();
     DB.microObs = [];
     DB.microProps.clear();
-    // IMPORTANT: do NOT clear Wikidata QIDs, we want union with pedestrian links
-    // DB.wikidataItems.clear();
-    // It's ok to clear tramStops/tramLinks if you want a fresh fetch from Wikidata:
+    DB.wikidataItems.clear();
     DB.tramStops.clear();
     DB.tramLinks.clear();
+    DB.wikidataSubjects.clear();
+    DB.foiWikidata.clear();
 
-    collectSensorDescriptionQIDs(quads);   // adds microclimate QIDs on top of pedestrian ones
+    const ttlText = await runSparqlRaw(CONSTRUCT_ALL, 'text/turtle');
+    const quads = await parseTTL(ttlText);
+
+    collectSensorDescriptionQIDs(quads);
+    buildFromPedSensorLocations(quads);
+    buildFromPedObservations(quads);
     buildFromMicroclimate(quads);
+
+    refreshSensorSelect();
     refreshWeatherOptions();
     aggregateAndRender();
-    fileStatus.textContent =
-      `Microclimate data loaded (${DB.microObs.length} obs, ${DB.microProps.size} metrics, tram QIDs: ${DB.wikidataItems.size}).`;
-  }catch(e){
+
+    if (typeof fileStatus !== 'undefined') {
+      fileStatus.textContent =
+        `Loaded from GraphDB: ${DB.pedSensors.size} pedestrian sensors, ` +
+        `${DB.pedObs.length} pedestrian obs, ${DB.microObs.length} microclimate obs.`;
+    }
+    console.log('[GraphDB] Data loaded from repository urban-sensors');
+  } catch (e) {
     console.error(e);
-    fileStatus.textContent = 'Error parsing microclimate TTL (see console).';
+    if (typeof fileStatus !== 'undefined') {
+      fileStatus.textContent = 'Error loading from GraphDB (see console).';
+    }
+    detailBox.textContent = 'Error loading from GraphDB. Check console.';
   }
 }
 
-
 /* ==== WIRING ==== */
-filePedSensors.addEventListener('change', e => handlePedSensorsFile(e.target.files[0]));
-filePedObs.addEventListener('change', e => handlePedObsFile(e.target.files[0]));
-fileMicroObs.addEventListener('change', e => handleMicroObsFile(e.target.files[0]));
 applyBtn.addEventListener('click', applyFilters);
 wikidataBtn.addEventListener('click', loadWikidataTramStops);
 sensorSel.addEventListener('change', e => {
@@ -1363,6 +1289,9 @@ weatherSel.addEventListener('change', () => {
   toDate.value   = '2024-12-31';
   applyFilters();
 })();
+
+// Cargar datos desde GraphDB cuando se carga la página
+loadAllFromGraphDB();
 </script>
 </body>
 </html>
