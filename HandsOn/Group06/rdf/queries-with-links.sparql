@@ -1,7 +1,6 @@
-# queries-with-links.sparql
+# SPARQL Queries for Madrid Bus Network WITH Wikidata Links
 # Group 06 — GTFS Madrid (with Wikidata links)
-# These queries validate the presence and quality of external links (owl:sameAs)
-# and sanity-check the core GTFS classes generated from the RML mapping.
+# Validation queries for external links (owl:sameAs)
 
 PREFIX ex:   <http://group06.linkeddata.es/ontology/madridbus/>
 PREFIX res:  <http://group06.linkeddata.es/resource/>
@@ -11,110 +10,59 @@ PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX owl:  <http://www.w3.org/2002/07/owl#>
 PREFIX xsd:  <http://www.w3.org/2001/XMLSchema#>
 
-#################################################################
-# Q1 — How many bus stops are linked to external entities (Wikidata)?
-#################################################################
-SELECT (COUNT(DISTINCT ?stop) AS ?stopsLinked)
+# ========================================================================
+# QUERY 1: Count LocalAreas linked to Wikidata
+# ========================================================================
+SELECT (COUNT(DISTINCT ?area) AS ?areasLinked)
 WHERE {
-  ?stop a ex:BusStop ; owl:sameAs ?wd .
+  ?area a ex:LocalArea ; owl:sameAs ?wd .
   FILTER(STRSTARTS(STR(?wd), "http://www.wikidata.org/entity/"))
 }
 
-#################################################################
-# Q2 — Bus stops missing an external link (to complete via reconciliation)
-#################################################################
-SELECT ?stop ?name
+# ========================================================================
+# QUERY 2: Sample LocalAreas with their Wikidata links
+# ========================================================================
+SELECT ?area ?name ?code ?wd
 WHERE {
-  ?stop a ex:BusStop ; rdfs:label ?name .
-  FILTER NOT EXISTS { ?stop owl:sameAs ?x }
+  ?area a ex:LocalArea ;
+        rdfs:label ?name ;
+        ex:areaCode ?code ;
+        owl:sameAs ?wd .
+  FILTER(STRSTARTS(STR(?wd), "http://www.wikidata.org/entity/"))
 }
-ORDER BY ?name
-LIMIT 50
+LIMIT 20
 
-#################################################################
-# Q3 — External links that are not Wikidata (suspicious format)
-#################################################################
-SELECT ?stop ?ext
+# ========================================================================
+# QUERY 3: Verify owl:sameAs points to valid Wikidata URIs
+# ========================================================================
+SELECT ?area ?wd
 WHERE {
-  ?stop a ex:BusStop ; owl:sameAs ?ext .
-  FILTER(!STRSTARTS(STR(?ext), "http://www.wikidata.org/entity/"))
+  ?area a ex:LocalArea ; owl:sameAs ?wd .
+  FILTER(STRSTARTS(STR(?wd), "http://www.wikidata.org/entity/Q"))
 }
-LIMIT 50
+LIMIT 20
 
-#################################################################
-# Q4 — Top-level type counts (sanity check after mapping)
-#################################################################
+# ========================================================================
+# QUERY 4: Resource type counts (sanity check)
+# ========================================================================
 SELECT ?type (COUNT(*) AS ?count)
 WHERE { ?s a ?type }
 GROUP BY ?type
 ORDER BY DESC(?count)
 
-#################################################################
-# Q5 — Verify coordinates are xsd:float for BusStop resources
-#################################################################
-SELECT ?stop ?lat ?lon
+# ========================================================================
+# QUERY 5: Find stops in areas with Wikidata context (application query)
+# ========================================================================
+SELECT ?stop ?stopName ?area ?areaName ?wikidata
 WHERE {
-  ?stop a ex:BusStop ; geo:lat ?lat ; geo:long ?lon .
-  FILTER(datatype(?lat)=xsd:float && datatype(?lon)=xsd:float)
+  ?stop a ex:BusStop ;
+        rdfs:label ?stopName ;
+        ex:locatedInArea ?area .
+  
+  ?area a ex:LocalArea ;
+        rdfs:label ?areaName ;
+        owl:sameAs ?wikidata .
+  
+  FILTER(STRSTARTS(STR(?wikidata), "http://www.wikidata.org/entity/"))
 }
 LIMIT 20
-
-#################################################################
-# Q6 — List a sample of stops with their Wikidata links
-#################################################################
-SELECT ?stop ?name ?wd
-WHERE {
-  ?stop a ex:BusStop ; rdfs:label ?name ; owl:sameAs ?wd .
-  FILTER(STRSTARTS(STR(?wd), "http://www.wikidata.org/entity/"))
-}
-ORDER BY ?name
-LIMIT 20
-
-#################################################################
-# Q7 — Route/Trip coverage: trips per route (basic connectivity check)
-#################################################################
-SELECT ?route (COUNT(DISTINCT ?trip) AS ?trips)
-WHERE {
-  ?trip a gtfs:Trip ; gtfs:route ?route .
-}
-GROUP BY ?route
-ORDER BY DESC(?trips)
-LIMIT 20
-
-#################################################################
-# Q8 — StopTimes present for trips (should be > 0 for most trips)
-#################################################################
-SELECT ?trip (COUNT(?st) AS ?stopTimes)
-WHERE {
-  ?st a gtfs:StopTime ; gtfs:trip ?trip .
-}
-GROUP BY ?trip
-ORDER BY DESC(?stopTimes)
-LIMIT 20
-
-#################################################################
-# Q9 — Check URI naming strategy: every resource under /resource/
-#################################################################
-SELECT ?resource ?type
-WHERE {
-  ?resource a ?type .
-  FILTER(STRSTARTS(STR(?resource), "http://group06.linkeddata.es/resource/"))
-}
-LIMIT 50
-
-#################################################################
-# Q10 — Sample: join a stopTime -> stop that has a Wikidata link
-#################################################################
-SELECT ?st ?trip ?stop ?name ?wd ?arr ?seq
-WHERE {
-  ?st a gtfs:StopTime ;
-      gtfs:trip ?trip ;
-      gtfs:stop ?stop ;
-      gtfs:arrivalTime ?arr ;
-      gtfs:stopSequence ?seq .
-
-  ?stop a ex:BusStop ; rdfs:label ?name ; owl:sameAs ?wd .
-  FILTER(STRSTARTS(STR(?wd), "http://www.wikidata.org/entity/"))
-}
-ORDER BY ?trip ?seq
-LIMIT 25

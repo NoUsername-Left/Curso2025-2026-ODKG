@@ -4,7 +4,7 @@
 @prefix gtfs:  <http://vocab.gtfs.org/terms#> .
 @prefix geo:   <http://www.w3.org/2003/01/geo/wgs84_pos#> .
 @prefix schema: <http://schema.org/> .
-@prefix dbr:   <http://dbpedia.org/resource/> .
+@prefix wd:    <https://www.wikidata.org/entity/> .
 @prefix ex:    <http://group06.linkeddata.es/ontology/madridbus/> .
 @prefix area:  <http://group06.linkeddata.es/resource/area/> .
 @prefix route: <http://group06.linkeddata.es/resource/route/> .
@@ -18,13 +18,13 @@
 @prefix shapepoint: <http://group06.linkeddata.es/resource/shapepoint/> .
 
 #################################################################
-# LOCAL AREA (linked to DBpedia)
+# LOCAL AREA (linked to Wikidata)
 #################################################################
 
-area:aranjuez a ex:LocalArea ;
+area:par_8_09568 a ex:LocalArea ;
     rdfs:label "Aranjuez"@es ;
-    ex:areaCode "ARJ" ;
-    owl:sameAs dbr:Aranjuez ;
+    ex:areaCode "Q152867" ;
+    owl:sameAs wd:Q152867 ;
     ex:containsStop stop:par_8_09568 , stop:par_8_09572 .
 
 #################################################################
