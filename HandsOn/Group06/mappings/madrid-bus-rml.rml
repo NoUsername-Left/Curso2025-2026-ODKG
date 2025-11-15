@@ -108,6 +108,19 @@
             rml:reference "wheelchair_boarding" ;
             rr:datatype xsd:integer
         ]
+    ] ;
+    
+    # Link to LocalArea (ex:locatedInArea)
+    # Join condition: match stop_id between df_final-updated.csv and local_areas-updated.csv
+    rr:predicateObjectMap [
+        rr:predicate ex:locatedInArea ;
+        rr:objectMap [
+            rr:parentTriplesMap <#LocalAreaMap> ;
+            rr:joinCondition [
+                rr:child "stop_id" ;
+                rr:parent "stop_id"
+            ]
+        ]
     ] .
 
 #################################################################
@@ -242,6 +255,8 @@
 #################################################################
 # TRIPLES MAP 5: LOCAL AREAS
 # Source: local_areas-updated.csv
+# Note: Uses stop_id as identifier (each stop has its own area instance)
+#       area_code contains Wikidata Q-identifier (e.g., "Q152867")
 #################################################################
 
 <#LocalAreaMap>
@@ -251,7 +266,7 @@
     ] ;
     
     rr:subjectMap [
-        rr:template "http://group06.linkeddata.es/resource/area/{area_id}" ;
+        rr:template "http://group06.linkeddata.es/resource/area/{stop_id}" ;
         rr:class ex:LocalArea
     ] ;
     
@@ -263,7 +278,7 @@
         ]
     ] ;
     
-    # area_code
+    # area_code (Wikidata Q-identifier)
     rr:predicateObjectMap [
         rr:predicate ex:areaCode ;
         rr:objectMap [

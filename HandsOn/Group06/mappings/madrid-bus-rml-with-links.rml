@@ -1,3 +1,15 @@
+##################################################################
+# RML Mapping for Madrid Bus Network WITH Wikidata Links
+# Group 06 - Open Data and Knowledge Graphs
+#
+# DIFFERENCES FROM BASE MAPPING (madrid-bus-rml.rml):
+# 1. Added owl: prefix for owl:sameAs predicate
+# 2. LocalAreaMap reads from local_areas-with-links.csv (instead of local_areas-updated.csv)
+# 3. LocalAreaMap includes owl:sameAs predicate linking to Wikidata entities
+#
+# All other triples maps are identical to the base mapping.
+##################################################################
+
 @prefix owl:   <http://www.w3.org/2002/07/owl#> .
 @prefix rml:   <http://semweb.mmlab.be/ns/rml#> .
 @prefix rr:    <http://www.w3.org/ns/r2rml#> .
@@ -12,11 +24,12 @@
 @prefix res:   <http://group06.linkeddata.es/resource/> .
 
 #################################################################
-# TRIPLES MAP 1: BUS ROUTES (df_final-with-links.csv)
+# TRIPLES MAP 1: BUS ROUTES
+# Source: df_final-updated.csv (routes data)
 #################################################################
 <#BusRouteMap>
   rml:logicalSource [
-    rml:source "../data/processed/df_final-with-links.csv" ;
+    rml:source "../data/processed/df_final-updated.csv" ;
     rml:referenceFormulation ql:CSV
   ] ;
   rr:subjectMap [
@@ -41,11 +54,12 @@
   ] .
 
 #################################################################
-# TRIPLES MAP 2: BUS STOPS (df_final-with-links.csv) + owl:sameAs
+# TRIPLES MAP 2: BUS STOPS
+# Source: df_final-updated.csv (stops data)
 #################################################################
 <#BusStopMap>
   rml:logicalSource [
-    rml:source "../data/processed/df_final-with-links.csv" ;
+    rml:source "../data/processed/df_final-updated.csv" ;
     rml:referenceFormulation ql:CSV
   ] ;
   rr:subjectMap [
@@ -68,18 +82,25 @@
     rr:predicate gtfs:wheelchairBoarding ;
     rr:objectMap [ rml:reference "wheelchair_boarding" ; rr:datatype xsd:integer ]
   ] ;
-  # External link to Wikidata (IRI). Leave empty cells when missing.
+  # Link to LocalArea (join with local_areas-with-links.csv by stop_id)
   rr:predicateObjectMap [
-    rr:predicate owl:sameAs ;
-    rr:objectMap [ rml:reference "wikidata_link" ; rr:termType rr:IRI ]
+    rr:predicate ex:locatedInArea ;
+    rr:objectMap [
+      rr:parentTriplesMap <#LocalAreaMap> ;
+      rr:joinCondition [
+        rr:child "stop_id" ;
+        rr:parent "stop_id"
+      ]
+    ]
   ] .
 
 #################################################################
-# TRIPLES MAP 3: TRIPS (df_final-with-links.csv)
+# TRIPLES MAP 3: TRIPS
+# Source: df_final-updated.csv (trips data)
 #################################################################
 <#TripMap>
   rml:logicalSource [
-    rml:source "../data/processed/df_final-with-links.csv" ;
+    rml:source "../data/processed/df_final-updated.csv" ;
     rml:referenceFormulation ql:CSV
   ] ;
   rr:subjectMap [
@@ -112,11 +133,12 @@
   ] .
 
 #################################################################
-# TRIPLES MAP 4: STOP TIMES (df_final-with-links.csv)
+# TRIPLES MAP 4: STOP TIMES
+# Source: df_final-updated.csv (stop_times data)
 #################################################################
 <#StopTimeMap>
   rml:logicalSource [
-    rml:source "../data/processed/df_final-with-links.csv" ;
+    rml:source "../data/processed/df_final-updated.csv" ;
     rml:referenceFormulation ql:CSV
   ] ;
   rr:subjectMap [
@@ -145,15 +167,19 @@
   ] .
 
 #################################################################
-# TRIPLES MAP 5: LOCAL AREAS (local_areas-updated.csv)
+# TRIPLES MAP 5: LOCAL AREAS
+# Source: local_areas-with-links.csv
+# Note: Uses stop_id as identifier (each stop has its own area instance)
+#       area_code contains Wikidata Q-identifier (e.g., "Q152867")
+#       wikidata_link contains full Wikidata URI for owl:sameAs
 #################################################################
 <#LocalAreaMap>
   rml:logicalSource [
-    rml:source "../data/processed/local_areas-updated.csv" ;
+    rml:source "../data/processed/local_areas-with-links.csv" ;
     rml:referenceFormulation ql:CSV
   ] ;
   rr:subjectMap [
-    rr:template "http://group06.linkeddata.es/resource/area/{area_id}" ;
+    rr:template "http://group06.linkeddata.es/resource/area/{stop_id}" ;
     rr:class ex:LocalArea
   ] ;
   rr:predicateObjectMap [
@@ -163,13 +189,12 @@
   rr:predicateObjectMap [
     rr:predicate ex:areaCode ;
     rr:objectMap [ rml:reference "area_code" ]
+  ] ;
+  # owl:sameAs link to Wikidata entity
+  rr:predicateObjectMap [
+    rr:predicate owl:sameAs ;
+    rr:objectMap [ rml:reference "wikidata_link" ; rr:termType rr:IRI ]
   ] .
-
-# Optional: if local_areas-updated.csv has 'wikidata_link', enable owl:sameAs
-#  rr:predicateObjectMap [
-#    rr:predicate owl:sameAs ;
-#    rr:objectMap [ rml:reference "wikidata_link" ; rr:termType rr:IRI ]
-#  ] .
 
 #################################################################
 # TRIPLES MAP 6: SERVICES & CALENDAR (calendar-updated.csv)
