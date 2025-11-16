@@ -3774,6 +3774,19 @@
     "onError": "keep-original",
     "repeat": false,
     "repeatCount": 10,
-    "description": "Text transform on cells in column TipoInstalacion using expression grel:if(value == \"BibliotecasPublicas\", \"Library\",\nif(value == \"CentrosEspaciosDeporte\", \"SportsFacility\",\nif(value == \"ParquesJardines\", \"Park\",\nif(value == \"Universidades\", \"EducationalInstitution\",\nvalue))))"
+    "description": "Transforma el texto de las celdas en la columna TipoInstalacion usando la expresión grel:if(value == \"BibliotecasPublicas\", \"Library\",\nif(value == \"CentrosEspaciosDeporte\", \"SportsFacility\",\nif(value == \"ParquesJardines\", \"Park\",\nif(value == \"Universidades\", \"EducationalInstitution\",\nvalue))))"
+  },
+  {
+    "op": "core/text-transform",
+    "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+    },
+    "columnName": "LOCALIDAD-WIKI",
+    "expression": "grel:if(value == \"http://www.wikidata.org/entity/Q1753102\", \"https://www.wikidata.org/wiki/Q2807\", value)",
+    "onError": "keep-original",
+    "repeat": false,
+    "repeatCount": 10,
+    "description": "Transforma el texto de las celdas en la columna LOCALIDAD-WIKI usando la expresión grel:if(value == \"http://www.wikidata.org/entity/Q1753102\", \"https://www.wikidata.org/wiki/Q2807\", value)"
   }
 ]

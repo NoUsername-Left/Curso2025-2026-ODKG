@@ -5,7 +5,7 @@ from streamlit_folium import st_folium
 from folium.plugins import MarkerCluster
 import altair as alt
 
-from queries_v import (
+from queries import (
     get_facilities_by_type,
     get_neighbourhoods,
     get_facilities_in_neighbourhood,
@@ -83,7 +83,7 @@ with col1:
 
 # --------- COLUMNA DERECHA: BARRIOS 🏙️ ---------
 with col2:
-    st.markdown("### 🏙️ Filtros por Distrito / Barrio")
+    st.markdown("### 🏙️ Filtros por Barrio")
 
     nh_list = get_neighbourhoods()
     neighbourhood_names = [n[1] for n in nh_list]
@@ -133,13 +133,30 @@ if use_facility:
 
 #     df = pd.DataFrame(get_facilities_in_neighbourhood(nh_uri))
 
+# elif use_neighbourhood:
+
+#     df = pd.DataFrame(get_facilities_in_neighbourhood(nh_uri))
+    
+#     # 🆕 FIX: Añadir la columna 'neighbourhood' que falta en esta función
+#     if not df.empty:
+#         df['neighbourhood'] = selected_neighbourhood
+
+
+# Caso 2: solo barrio
 elif use_neighbourhood:
 
-    df = pd.DataFrame(get_facilities_in_neighbourhood(nh_uri))
+    df_raw = pd.DataFrame(get_facilities_in_neighbourhood(nh_uri))
     
-    # 🆕 FIX: Añadir la columna 'neighbourhood' que falta en esta función
-    if not df.empty:
+    if not df_raw.empty:
+        # 🆕 PASO 1: Eliminar duplicados por URI. Usamos keep='last'
+        # Esto intenta mantener la clase más específica si la consulta la devuelve al final.
+        df = df_raw.drop_duplicates(subset=['uri'], keep='last').reset_index(drop=True)
+
+        # 🆕 PASO 2: Añadir la columna 'neighbourhood' (el fix obligatorio)
         df['neighbourhood'] = selected_neighbourhood
+        
+    else:
+        df = pd.DataFrame() # Vacío si no hay resultados
 
 
 
@@ -323,27 +340,57 @@ with col2:
     with st.expander("🌐 Información Enriquecida de Wikidata (Detalle y Contexto)", expanded=True):
         
         # --- SUB-BLOQUE A: DATOS ESPECÍFICOS DE LA FACILITY (WD) ---
+        # if fac.get("uri"):
+        #     st.markdown("#### ℹ️ Datos Adicionales de la Instalación")
+            
+        #     website = fac.get("website")
+            
+        #     st.markdown(
+        #         f"""
+        #         <div style='border: 1px dashed #ced4da; padding: 10px; border-radius: 5px; margin-bottom: 20px;'>
+        #             <p style='margin: 0;'><strong>Etiqueta Wikidata:</strong> {fac.get('label') or '—'}</p>
+        #             <p style='margin: 0;'><strong>Dirección (WD):</strong> {fac.get('street_address') or '—'}</p>
+        #             <p style='margin: 0;'><strong>Código Postal (WD):</strong> {fac.get('postal_code') or '—'}</p>
+        #             <p style='margin: 0;'><strong>Web Oficial (WD):</strong> {f"<a href='{website}' target='_blank'>{website}</a>" if website else '—'}</p>
+        #             <p style='margin: 0;'><small><strong>URI Wikidata:</strong> [{fac['uri']}]({fac['uri']})</small></p>
+        #         </div>
+        #         """, unsafe_allow_html=True
+        #     )
+        # else:
+        #     st.info("No se encontró información enlazada de Wikidata para esta Facility.")
+
+
+        # --- SUB-BLOQUE A: DATOS ESPECÍFICOS DE LA FACILITY (WD) ---
         if fac.get("uri"):
-            st.markdown("#### ℹ️ Datos Adicionales de la Instalación")
-            
+            st.markdown("#### ℹ Datos Adicionales de la Instalación")
+        
             website = fac.get("website")
-            
-            st.markdown(
-                f"""
-                <div style='border: 1px dashed #ced4da; padding: 10px; border-radius: 5px; margin-bottom: 20px;'>
-                    <p style='margin: 0;'><strong>Etiqueta Wikidata:</strong> {fac.get('label') or '—'}</p>
-                    <p style='margin: 0;'><strong>Dirección (WD):</strong> {fac.get('street_address') or '—'}</p>
-                    <p style='margin: 0;'><strong>Código Postal (WD):</strong> {fac.get('postal_code') or '—'}</p>
-                    <p style='margin: 0;'><strong>Web Oficial (WD):</strong> {f"<a href='{website}' target='_blank'>{website}</a>" if website else '—'}</p>
-                    <p style='margin: 0;'><small><strong>URI Wikidata:</strong> [{fac['uri']}]({fac['uri']})</small></p>
-                </div>
-                """, unsafe_allow_html=True
-            )
+            img = fac.get("image")
+            inception = fac.get("inception") or "—"
+            part_of = fac.get("part_of") or []
+        
+            # Construimos el HTML
+            html = f"""
+            <div style='border: 1px dashed #ced4da; padding: 10px; border-radius: 5px; margin-bottom: 20px;'>
+                <p style='margin: 0;'><strong>Etiqueta Wikidata:</strong> {fac.get('label') or '—'}</p>
+                <p style='margin: 0;'><strong>Dirección (WD):</strong> {fac.get('street_address') or '—'}</p>
+                <p style='margin: 0;'><strong>Código Postal (WD):</strong> {fac.get('postal_code') or '—'}</p>
+                <p style='margin: 0;'><strong>Web Oficial (WD):</strong> {f"<a href='{website}' target='_blank'>{website}</a>" if website else '—'}</p>
+                <p style='margin: 0;'><strong>Año de creación:</strong> {inception}</p>
+                <p style='margin: 0;'><strong>Pertenece a:</strong> {", ".join(part_of) if part_of else '—'}</p>
+                <p style='margin: 0;'><small><strong>URI Wikidata:</strong> <a href='{fac["uri"]}' target='_blank'>{fac["uri"]}</a></small></p>
+            </div>
+            """
+        
+            st.markdown(html, unsafe_allow_html=True)
+        
+            # Imagen separada, fuera del bloque HTML
+            if img:
+                st.markdown("*Imagen (Wikidata):*")
+                st.image(img, width=250)
+        
         else:
-            st.info("No se encontró información enlazada de Wikidata para esta Facility.")
-
-
-
+            st.info("No se encontró información enlazada de Wikidata para esta Facility.")
 
 
 
@@ -374,7 +421,7 @@ with col1:
             for name, d in data.items():
                 lines = ", ".join(d["lines"]) if d["lines"] else "—"
                 stations = ", ".join(d["stations"]) if d["stations"] else "—"
-                html += f"<p style='margin: 0; padding-bottom: 5px;'>**{name}**</p>"
+                # html += f"<p style='margin: 0; padding-bottom: 5px;'>**{name}**</p>"
                 html += f"<p style='margin: 0 0 5px 0; font-size: 14px;'>Líneas: {lines}</p>"
                 if d['stations']:
                     html += f"<p style='margin: 0 0 5px 0; font-size: 14px;'>Estaciones: {stations}</p>"
