@@ -181,6 +181,114 @@ const CONSTRUCT_ALL = `
   WHERE { ?s ?p ?o }
 `;
 
+const CONSTRUCT_STATIC = `
+PREFIX sosa: <http://www.w3.org/ns/sosa/>
+PREFIX us:   <https://smartcity.linkeddata.es/lcc/ontology/urban-sensors#>
+PREFIX wgs:  <http://www.w3.org/2003/01/geo/wgs84_pos#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl:  <http://www.w3.org/2002/07/owl#>
+
+CONSTRUCT {
+  # Pedestrian sensors + FOI coords + closest microclimate
+  ?ps a us:PedestrianSensor ;
+      rdfs:label ?psLabel ;
+      us:locatedAt ?pFoi ;
+      us:closestMicroclimateSensor ?closestMicro .
+  ?pFoi rdfs:label ?pFoiLabel ;
+        wgs:lat ?pLat ;
+        wgs:long ?pLon .
+
+  # Microclimate sensors + FOI coords + closest pedestrian
+  ?ms a us:MicroclimateSensor ;
+      rdfs:label ?msLabel ;
+      us:locatedAt ?mFoi ;
+      us:closestPedestrianSensor ?closestPed .
+  ?mFoi rdfs:label ?mFoiLabel ;
+        wgs:lat ?mLat ;
+        wgs:long ?mLon .
+
+  # Sensor descriptions (para QIDs de Wikidata)
+  ?desc a us:SensorDescription ;
+        ?pd ?od .
+
+  # Todas las localizaciones conocidas (rescate general de FOIs)
+  ?anyFoi rdfs:label ?anyLabel ;
+          wgs:lat ?anyLat ;
+          wgs:long ?anyLon .
+
+  # Enlaces owl:sameAs (ej. Same_As_Wikidata_Country)
+  ?entity owl:sameAs ?wikidata .
+}
+WHERE {
+  {
+    ?ps a us:PedestrianSensor .
+    OPTIONAL { ?ps rdfs:label ?psLabel }
+    OPTIONAL { ?ps us:locatedAt ?pFoi .
+               OPTIONAL { ?pFoi rdfs:label ?pFoiLabel }
+               OPTIONAL { ?pFoi wgs:lat ?pLat }
+               OPTIONAL { ?pFoi wgs:long ?pLon } }
+    OPTIONAL { ?ps us:closestMicroclimateSensor ?closestMicro }
+  }
+  UNION
+  {
+    ?ms a us:MicroclimateSensor .
+    OPTIONAL { ?ms rdfs:label ?msLabel }
+    OPTIONAL { ?ms us:locatedAt ?mFoi .
+               OPTIONAL { ?mFoi rdfs:label ?mFoiLabel }
+               OPTIONAL { ?mFoi wgs:lat ?mLat }
+               OPTIONAL { ?mFoi wgs:long ?mLon } }
+    OPTIONAL { ?ms us:closestPedestrianSensor ?closestPed }
+  }
+  UNION
+  {
+    ?desc a us:SensorDescription ;
+          ?pd ?od .
+  }
+  UNION
+  {
+    {
+      ?anyFoi a sosa:FeatureOfInterest .
+    } UNION {
+      ?anyFoi a us:Location .
+    }
+    OPTIONAL { ?anyFoi rdfs:label ?anyLabel }
+    OPTIONAL { ?anyFoi wgs:lat ?anyLat }
+    OPTIONAL { ?anyFoi wgs:long ?anyLon }
+  }
+  UNION
+  {
+    # Captura cualquier recurso con owl:sameAs (ej. calles con QIDs de país)
+    ?entity owl:sameAs ?wikidata .
+  }
+}
+`;
+
+const METRIC_QUERY = `
+PREFIX sosa: <http://www.w3.org/ns/sosa/>
+PREFIX us:   <https://smartcity.linkeddata.es/lcc/ontology/urban-sensors#>
+SELECT DISTINCT ?prop WHERE {
+  ?s a us:MicroclimateSensor .
+  ?obs sosa:hasResult ?res . 
+  ?res sosa:observedProperty ?prop .
+}
+`;
+
+async function initMetrics(){
+  try {
+    const data = await runSparqlRaw(METRIC_QUERY, 'application/sparql-results+json');
+    for(const b of data.results.bindings){
+      const iri = b.prop.value;
+      if(!DB.microProps.has(iri)){
+        DB.microProps.set(iri, { iri, label: shortLabel(iri) });
+      }
+    }
+    refreshWeatherOptions();
+  } catch(e){
+    console.error("Error loading metrics", e);
+  }
+}
+
+
 // Ejecutar SPARQL y devolver texto o JSON según Accept
 async function runSparqlRaw(query, accept = 'application/sparql-results+json') {
   const res = await fetch(SPARQL_ENDPOINT, {
@@ -473,6 +581,7 @@ function buildFromPedSensorLocations(quads){
 
 /* ==== 2) PEDESTRIAN OBSERVATIONS ==== */
 function buildFromPedObservations(quads){
+  
   const madeBy   = P.sosa + 'madeBySensor';
   const atLoc    = P.sosa + 'hasFeatureOfInterest';
   const rt       = P.sosa + 'resultTime';
@@ -533,17 +642,11 @@ function buildFromPedObservations(quads){
       DB.pedObs.push(r);
     }
   }
+  //DB.pedObs = []
 }
 
 /* ==== 3) MICROCLIMATE SENSORS & OBS ==== */
 function buildFromMicroclimate(quads){
-  const madeBy   = P.sosa + 'madeBySensor';
-  const atLoc    = P.us + 'observedAtLocation';
-  const rt       = P.sosa + 'resultTime';
-  const hasRes   = P.sosa + 'hasResult';
-  const obsProp  = P.sosa + 'observedProperty';
-  const hasValue = P.sosa + 'hasSimpleResult';
-
   const types = new Map();
   for(const {s,p,o} of quads){
     if(p === P.rdf + 'type'){
@@ -552,11 +655,6 @@ function buildFromMicroclimate(quads){
       types.get(s).add(t);
     }
   }
-
-  const obs = new Map();
-  const res = new Map();
-  const getObs = iri => (obs.has(iri) ? obs.get(iri) : obs.set(iri,{iri,resultIRIs:[]}).get(iri));
-  const getRes = iri => (res.has(iri) ? res.get(iri) : res.set(iri,{}).get(iri));
 
   for(const {s,p,o} of quads){
     const v = objValue(o);
@@ -588,46 +686,6 @@ function buildFromMicroclimate(quads){
     }
     if(p === P.wgs + 'long'){
       const num = Number(v); if(!isNaN(num)) upsertFoi(s,{long:num});
-    }
-
-    if(p === madeBy){
-      getObs(s).sensorIRI = v;
-    } else if(p === atLoc){
-      getObs(s).foiIRI = v;
-    } else if(p === rt){
-      getObs(s).time = parseXSDDateTime(v);
-    } else if(p === hasRes){
-      getObs(s).resultIRIs.push(v);
-    }
-
-    if(p === obsProp){
-      getRes(s).propIri = v;
-    }
-    if(p === hasValue){
-      const num = Number(v);
-      getRes(s).value = isNaN(num) ? null : num;
-    }
-  }
-
-  for(const o of obs.values()){
-    if(!o.time) continue;
-    let foi = o.foiIRI;
-    const ms = o.sensorIRI && DB.microSensors.get(o.sensorIRI);
-    if(!foi && ms && ms.foi) foi = ms.foi;
-    if(!foi) continue;
-
-    const metrics = {};
-    for(const rid of o.resultIRIs){
-      const rr = res.get(rid);
-      if(rr && rr.propIri && rr.value != null){
-        metrics[rr.propIri] = rr.value;
-        if(!DB.microProps.has(rr.propIri)){
-          DB.microProps.set(rr.propIri,{ iri: rr.propIri, label: shortLabel(rr.propIri) });
-        }
-      }
-    }
-    if(Object.keys(metrics).length){
-      DB.microObs.push({ iri:o.iri, time:o.time, foiIRI:foi, metrics });
     }
   }
 }
@@ -746,7 +804,7 @@ function refreshSensorSelect(){
   if(DB.pedSensors.has(cur)) sel.value = cur;
 }
 
-function applyFilters(){
+async function applyFilters(){
   const f = document.getElementById('fromDate').value;
   const t = document.getElementById('toDate').value;
 
@@ -759,7 +817,95 @@ function applyFilters(){
   State.sensor = document.getElementById('sensorSel').value;
   State.metric = document.getElementById('weatherSel').value;
   State.selectedSensor = null;
-  aggregateAndRender();
+
+  document.getElementById('fileStatus').textContent = "⏳ Loading observations from GraphDB...";
+
+  const fromLex = f ? f + "T00:00:00" + DATA_TZ : null;
+  const toLex   = t ? t + "T23:59:59" + DATA_TZ : null;
+
+  const sensorClause = (State.sensor !== 'all')
+    ? `VALUES ?sensor { <${State.sensor}> }`
+    : '';
+
+  const timeFilter =
+    (fromLex ? `FILTER (?when >= "${fromLex}"^^xsd:dateTime)` : '') +
+    (toLex   ? ` FILTER (?when <= "${toLex}"^^xsd:dateTime)` : '');
+
+  const hourFilter = (State.hour !== 'all')
+    ? `FILTER (SUBSTR(STR(?when), 12, 2) = "${State.hour.slice(0,2)}")`
+    : '';
+
+  const microBlock = (State.metric !== 'none') ? `
+    UNION {
+      ?microObs us:observedAtLocation ?microFoi ;
+                sosa:resultTime ?when ;
+                sosa:hasResult ?res .
+      ?res sosa:observedProperty ?prop ;
+           sosa:hasSimpleResult ?val .
+      VALUES ?prop { <${State.metric}> }
+    }` : '';
+
+  const query = `
+PREFIX sosa: <${P.sosa}>
+PREFIX us:   <${P.us}>
+PREFIX xsd:  <http://www.w3.org/2001/XMLSchema#>
+SELECT ?obs ?sensor ?foi ?when ?count ?microObs ?microFoi ?prop ?val WHERE {
+  {
+    ?obs sosa:madeBySensor ?sensor ;
+         sosa:hasFeatureOfInterest ?foi ;
+         sosa:resultTime ?when ;
+         sosa:hasSimpleResult ?count ;
+         sosa:observedProperty us:pedestrianCount .
+  }
+  ${microBlock}
+  ${sensorClause}
+  ${timeFilter}
+  ${hourFilter}
+}`;
+
+  try {
+    const data = await runSparqlRaw(query, 'application/sparql-results+json');
+
+    // 🔄 Reiniciamos arrays de observaciones
+    DB.pedObs = [];
+    DB.microObs = [];
+    // ⚠️ No borramos DB.microProps aquí
+
+    for(const b of data.results.bindings){
+      // Peatones
+      if(b.count){
+        DB.pedObs.push({
+          iri: b.obs.value,
+          sensorIRI: b.sensor.value,
+          foiIRI: b.foi.value,
+          time: parseXSDDateTime(b.when.value),
+          total: Number(b.count.value)
+        });
+      }
+      // Microclima
+      if(b.val){
+        DB.microObs.push({
+          iri: b.microObs.value,
+          foiIRI: b.microFoi.value,
+          time: parseXSDDateTime(b.when.value),
+          metrics: { [b.prop.value]: Number(b.val.value) }
+        });
+        if(!DB.microProps.has(b.prop.value)){
+          DB.microProps.set(b.prop.value, { iri: b.prop.value, label: shortLabel(b.prop.value) });
+        }
+      }
+    }
+  
+    refreshWeatherOptions();
+
+    document.getElementById('fileStatus').textContent =
+      `✔ Loaded ${DB.pedObs.length} pedestrian obs and ${DB.microObs.length} micro obs.`;
+
+    aggregateAndRender();
+  } catch(e){
+    console.error("SPARQL error", e);
+    document.getElementById('fileStatus').textContent = '❌ SPARQL error: ' + e;
+  }
 }
 
 function asRouteLabel(s){
@@ -1244,13 +1390,14 @@ async function loadAllFromGraphDB() {
     DB.wikidataSubjects.clear();
     DB.foiWikidata.clear();
 
-    const ttlText = await runSparqlRaw(CONSTRUCT_ALL, 'text/turtle');
+    const ttlText = await runSparqlRaw(CONSTRUCT_STATIC, 'text/turtle');
     const quads = await parseTTL(ttlText);
 
-    collectSensorDescriptionQIDs(quads);
-    buildFromPedSensorLocations(quads);
+    collectSensorDescriptionQIDs(quads);   // Wikidata links
+    buildFromPedSensorLocations(quads);   // Peatones + FOIs
     buildFromPedObservations(quads);
-    buildFromMicroclimate(quads);
+    buildFromMicroclimate(quads);         // Microclimate sensors + métricas
+    await initMetrics();
 
     refreshSensorSelect();
     refreshWeatherOptions();
@@ -1287,7 +1434,6 @@ weatherSel.addEventListener('change', () => {
 (function(){
   fromDate.value = '2024-12-01';
   toDate.value   = '2024-12-31';
-  applyFilters();
 })();
 
 // Cargar datos desde GraphDB cuando se carga la página

@@ -3,7 +3,7 @@ import requests
 
 app = Flask(__name__)
 
-GRAPHDB_ENDPOINT = "http://localhost:7200/repositories/urban-sensors"
+GRAPHDB_ENDPOINT = "http://127.0.0.1:7200/repositories/urban-sensors"
 
 @app.route("/sparql", methods=["POST", "OPTIONS"])
 def sparql():
