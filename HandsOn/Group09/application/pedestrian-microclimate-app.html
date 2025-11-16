@@ -363,7 +363,6 @@ const DB = {
 const State = {
   range: [null,null],
   hour: 'all',
-  sensor: 'all',
   selectedSensor: null,
   metric: 'none',
   tramLoaded: false
@@ -521,9 +520,13 @@ function buildFromPedSensorLocations(quads){
     const tset = types.get(s) || new Set();
     const val = objValue(o);
     const isPedSensor =
-      tset.has(P.us + 'PedestrianSensor') ||
-      tset.has(P.us + 'PedestrianCounter') ||
-      sensorHints.has(s);
+      (
+        tset.has(P.us + 'PedestrianSensor') ||
+        tset.has(P.us + 'PedestrianCounter') ||
+        sensorHints.has(s)
+      )
+      && !tset.has(P.us + 'MicroclimateSensor');
+
     const isLocation =
       tset.has(P.us + 'Location') ||
       tset.has(P.sosa + 'FeatureOfInterest') ||
@@ -791,22 +794,46 @@ function avgMetricForSensor(sensorIRI, propIri){
 /* ==== UI HELPERS ==== */
 function refreshSensorSelect(){
   const sel = document.getElementById('sensorSel');
-  const cur = sel.value;
+  const prev = sel.value || 'all';
   sel.innerHTML = '<option value="all">All</option>';
+
   [...DB.pedSensors.entries()]
-    .sort((a,b)=>(a[1].label||a[0]).localeCompare(b[1].label||b[0]))
-    .forEach(([iri,s])=>{
+    .filter(([iri, s]) => {
+      // Deben tener FOI con coordenadas
+      const foi = s.foi && DB.fois.get(s.foi);
+      const hasLocation =
+        !!foi &&
+        Number.isFinite(foi.lat) &&
+        Number.isFinite(foi.long);
+
+      if (!hasLocation) return false;
+
+      // Deben estar asociados a algún microclimate
+      const hasMicro =
+        !!s.closestMicroCode ||
+        (foi && foi.microCodes && foi.microCodes.size > 0);
+
+      return hasMicro;
+    })
+    .sort((a, b) => (a[1].label || a[0]).localeCompare(b[1].label || b[0]))
+    .forEach(([iri, s]) => {
       const o = document.createElement('option');
       o.value = iri;
       o.textContent = s.label || iri.split('/').pop();
       sel.appendChild(o);
     });
-  if(DB.pedSensors.has(cur)) sel.value = cur;
+
+  const hasPrev = Array.from(sel.options).some(o => o.value === prev);
+  sel.value = hasPrev ? prev : 'all';
 }
+
+
 
 async function applyFilters(){
   const f = document.getElementById('fromDate').value;
   const t = document.getElementById('toDate').value;
+  const sensorValue = document.getElementById('sensorSel').value;
+  const metricValue = document.getElementById('weatherSel').value;
 
   State.range = [
     f ? new Date(f + 'T00:00:00' + DATA_TZ) : null,
@@ -814,18 +841,16 @@ async function applyFilters(){
   ];
 
   State.hour   = document.getElementById('hourSel').value;
-  State.sensor = document.getElementById('sensorSel').value;
-  State.metric = document.getElementById('weatherSel').value;
-  State.selectedSensor = null;
+  State.metric = metricValue;
 
-  document.getElementById('fileStatus').textContent = "⏳ Loading observations from GraphDB...";
+  // ✅ si hay un sensor elegido en el combo, lo mantenemos como “foco”
+  State.selectedSensor = (sensorValue === 'all') ? null : sensorValue;
+
+  document.getElementById('fileStatus').textContent =
+    "⏳ Loading observations from GraphDB...";
 
   const fromLex = f ? f + "T00:00:00" + DATA_TZ : null;
   const toLex   = t ? t + "T23:59:59" + DATA_TZ : null;
-
-  const sensorClause = (State.sensor !== 'all')
-    ? `VALUES ?sensor { <${State.sensor}> }`
-    : '';
 
   const timeFilter =
     (fromLex ? `FILTER (?when >= "${fromLex}"^^xsd:dateTime)` : '') +
@@ -846,22 +871,21 @@ async function applyFilters(){
     }` : '';
 
   const query = `
-PREFIX sosa: <${P.sosa}>
-PREFIX us:   <${P.us}>
-PREFIX xsd:  <http://www.w3.org/2001/XMLSchema#>
-SELECT ?obs ?sensor ?foi ?when ?count ?microObs ?microFoi ?prop ?val WHERE {
-  {
-    ?obs sosa:madeBySensor ?sensor ;
-         sosa:hasFeatureOfInterest ?foi ;
-         sosa:resultTime ?when ;
-         sosa:hasSimpleResult ?count ;
-         sosa:observedProperty us:pedestrianCount .
-  }
-  ${microBlock}
-  ${sensorClause}
-  ${timeFilter}
-  ${hourFilter}
-}`;
+  PREFIX sosa: <${P.sosa}>
+  PREFIX us:   <${P.us}>
+  PREFIX xsd:  <http://www.w3.org/2001/XMLSchema#>
+  SELECT ?obs ?sensor ?foi ?when ?count ?microObs ?microFoi ?prop ?val WHERE {
+    {
+      ?obs sosa:madeBySensor ?sensor ;
+          sosa:hasFeatureOfInterest ?foi ;
+          sosa:resultTime ?when ;
+          sosa:hasSimpleResult ?count ;
+          sosa:observedProperty us:pedestrianCount .
+    }
+    ${microBlock}
+    ${timeFilter}
+    ${hourFilter}
+  }`;
 
   try {
     const data = await runSparqlRaw(query, 'application/sparql-results+json');
@@ -897,6 +921,7 @@ SELECT ?obs ?sensor ?foi ?when ?count ?microObs ?microFoi ?prop ?val WHERE {
     }
   
     refreshWeatherOptions();
+    refreshSensorSelect();
 
     document.getElementById('fileStatus').textContent =
       `✔ Loaded ${DB.pedObs.length} pedestrian obs and ${DB.microObs.length} micro obs.`;
@@ -1004,7 +1029,6 @@ SELECT ?item ?itemLabel ?coord ?line ?lineLabel WHERE {
 function aggregateAndRender(){
   const [from,to] = State.range;
   const h = State.hour;
-  const sensorFilter = State.sensor;
   const metric = State.metric;
 
   const inRange = d => (!from || d>=from) && (!to || d<=to);
@@ -1014,11 +1038,13 @@ function aggregateAndRender(){
     return dataLocalHour(d) === targetHour;
   };
 
+  // ✅ siempre todas las obs en rango/horario
   const filtered = DB.pedObs.filter(o =>
-    o.time && inRange(o.time) && hm(o.time) &&
-    (!o.sensorIRI || sensorFilter==='all' || o.sensorIRI===sensorFilter)
+    o.time && inRange(o.time) && hm(o.time)
   );
-  const scope = State.selectedSensor || (sensorFilter!=='all' ? sensorFilter : null);
+
+  // ✅ el foco es solo el sensor seleccionado
+  const scope = State.selectedSensor;
 
   const bySensor = new Map();
   for(const o of filtered){
@@ -1032,7 +1058,10 @@ function aggregateAndRender(){
   const bounds = [];
 
   // PEDESTRIAN MARKERS
-  for(const [iri,sum] of bySensor){
+  for (const [iri, sum] of bySensor) {
+    // 🔹 If a sensor is selected, only show that one
+    if (scope && iri !== scope) continue;
+
     const s = DB.pedSensors.get(iri);
     if(!s || !s.foi || !DB.fois.get(s.foi)) continue;
     const foi = DB.fois.get(s.foi);
@@ -1047,6 +1076,7 @@ function aggregateAndRender(){
       weight:1,
       fillOpacity:0.75
     }).addTo(pedLayer);
+
 
     let tip = (s.label || iri.split('/').pop()) + '<br/>Pedestrians: '+fmt(sum);
     if(metric !== 'none' && DB.microObs.length && DB.microProps.has(metric)){
@@ -1190,7 +1220,6 @@ function aggregateAndRender(){
 
       marker.bindPopup(fullHtml, { className: 'tram-pop', autoPan: false, closeButton: true });
       marker.on('mouseover', () => marker.openPopup());
-      marker.on('mouseout',  () => marker.closePopup());
 
       tramBounds.push([t.lat, t.lon]);
     }
@@ -1206,7 +1235,7 @@ function aggregateAndRender(){
   avgStat.textContent = fmt(avg);
   const sensorStatLabel = document.getElementById('sensorStatLabel');
 
-  const currentIRI = State.selectedSensor || (State.sensor !== 'all' ? State.sensor : null);
+  const currentIRI = State.selectedSensor;
   if (currentIRI) {
     const s = DB.pedSensors.get(currentIRI) || {};
     const name = s.label || currentIRI.split('/').pop();
@@ -1225,16 +1254,21 @@ function aggregateAndRender(){
   // SENSOR RANK LIST
   const list = document.getElementById('sensorList');
   list.innerHTML = '';
-  [...bySensor.entries()]
-    .sort((a,b)=>b[1]-a[1])
-    .forEach(([iri,sum])=>{
-      const s = DB.pedSensors.get(iri)||{};
-      const row = document.createElement('div');
-      row.className='row';
-      row.innerHTML = `<span>${s.label || iri.split('/').pop()}</span><b>${fmt(sum)}</b>`;
-      row.onclick=()=>selectSensor(iri);
-      list.appendChild(row);
-    });
+
+  // 🔹 If a sensor is selected, only show that one in the ranking
+  const entries = [...bySensor.entries()]
+    .filter(([iri]) => !scope || iri === scope)
+    .sort((a, b) => b[1] - a[1]);
+
+  entries.forEach(([iri, sum]) => {
+    const s = DB.pedSensors.get(iri) || {};
+    const row = document.createElement('div');
+    row.className = 'row';
+    row.innerHTML = `<span>${s.label || iri.split('/').pop()}</span><b>${fmt(sum)}</b>`;
+    row.onclick = () => selectSensor(iri);
+    list.appendChild(row);
+  });
+
 
   // PEDESTRIAN TREND
   const pedGrouped = new Map();
@@ -1320,9 +1354,10 @@ function aggregateAndRender(){
     updateDetailBox(State.selectedSensor, bySensor.get(State.selectedSensor)||0);
   } else {
     detailBox.innerHTML =
-      'Select a pedestrian sensor to see its pedestrians & linked microclimate; ' +
-      'with "All" sensors, charts show network-wide behaviour.';
+    'Choose a date range, hour and (optionally) a metric, then click a pedestrian marker ' +
+    'on the map or pick one in the selector to see its details and linked microclimate.';
   }
+
 }
 
 /* ==== DETAIL BOX ==== */
@@ -1423,11 +1458,9 @@ applyBtn.addEventListener('click', applyFilters);
 wikidataBtn.addEventListener('click', loadWikidataTramStops);
 sensorSel.addEventListener('change', e => {
   State.selectedSensor = e.target.value === 'all' ? null : e.target.value;
-  aggregateAndRender();
 });
 weatherSel.addEventListener('change', () => {
   State.metric = weatherSel.value;
-  aggregateAndRender();
 });
 
 /* Default filter: Dec 2024 */
