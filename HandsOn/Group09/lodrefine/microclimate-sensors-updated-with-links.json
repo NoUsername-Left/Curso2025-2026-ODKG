@@ -1,5 +1,10 @@
 [
   {
+    "op": "core/column-removal",
+    "columnName": "PM25",
+    "description": "Eliminar columna PM25"
+  },
+  {
     "op": "core/recon",
     "engineConfig": {
       "facets": [],
@@ -750,19 +755,6 @@
     "description": "Crear la columna RC_Sensor_Description en el índice 4 basada en la columna Sensor_Description usando la expresión grel:if(isNonBlank(cell.recon.match.id),\n \"http://www.wikidata.org/entity/\" + cell.recon.match.id,\n \"\"\n)"
   },
   {
-    "op": "core/column-addition",
-    "engineConfig": {
-      "facets": [],
-      "mode": "row-based"
-    },
-    "baseColumnName": "City",
-    "expression": "grel:if(isNonBlank(cell.recon.match.id),\n \"http://www.wikidata.org/entity/\" + cell.recon.match.id,\n \"\"\n)",
-    "onError": "set-to-blank",
-    "newColumnName": "RC_City",
-    "columnInsertIndex": 24,
-    "description": "Crear la columna RC_City en el índice 24 basada en la columna City usando la expresión grel:if(isNonBlank(cell.recon.match.id),\n \"http://www.wikidata.org/entity/\" + cell.recon.match.id,\n \"\"\n)"
-  },
-  {
     "op": "core/recon",
     "engineConfig": {
       "facets": [],
@@ -786,63 +778,6 @@
     "description": "Reconcile cells in column Country to type Q6256"
   },
   {
-    "op": "core/column-addition",
-    "engineConfig": {
-      "facets": [],
-      "mode": "row-based"
-    },
-    "baseColumnName": "Country",
-    "expression": "grel:if(isNonBlank(cell.recon.match.id),\n \"http://www.wikidata.org/entity/\" + cell.recon.match.id,\n \"\"\n)",
-    "onError": "set-to-blank",
-    "newColumnName": "RC_Country",
-    "columnInsertIndex": 26,
-    "description": "Crear la columna RC_Country en el índice 26 basada en la columna Country usando la expresión grel:if(isNonBlank(cell.recon.match.id),\n \"http://www.wikidata.org/entity/\" + cell.recon.match.id,\n \"\"\n)"
-  },
-  {
-    "op": "core/recon",
-    "engineConfig": {
-      "facets": [],
-      "mode": "row-based"
-    },
-    "columnName": "Address",
-    "config": {
-      "mode": "standard-service",
-      "service": "https://wikidata.reconci.link/en/api",
-      "identifierSpace": "http://www.wikidata.org/entity/",
-      "schemaSpace": "http://www.wikidata.org/prop/direct/",
-      "autoMatch": true,
-      "batchSize": 10,
-      "columnDetails": [],
-      "limit": 0
-    },
-    "description": "Reconcile cells in column Address to type null"
-  },
-  {
-    "op": "core/column-removal",
-    "columnName": "MinimumWindDirection",
-    "description": "Eliminar columna MinimumWindDirection"
-  },
-  {
-    "op": "core/column-removal",
-    "columnName": "MaximumWindDirection",
-    "description": "Eliminar columna MaximumWindDirection"
-  },
-  {
-    "op": "core/column-removal",
-    "columnName": "MinimumWindSpeed",
-    "description": "Eliminar columna MinimumWindSpeed"
-  },
-  {
-    "op": "core/column-removal",
-    "columnName": "GustWindSpeed",
-    "description": "Eliminar columna GustWindSpeed"
-  },
-  {
-    "op": "core/column-removal",
-    "columnName": "PM25",
-    "description": "Eliminar columna PM25"
-  },
-  {
     "op": "core/column-rename",
     "oldColumnName": "RC_Sensor_Description",
     "newColumnName": "Same_As_Wikidata_Sensor_Description",
@@ -855,15 +790,71 @@
     "description": "Renombra la columna RC_Street a Same_As_Wikidata_Street"
   },
   {
-    "op": "core/column-rename",
-    "oldColumnName": "RC_City",
+    "op": "core/column-addition",
+    "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+    },
+    "baseColumnName": "City",
+    "expression": "grel:if(isNonBlank(cell.recon.match.id),\n  \"http://www.wikidata.org/entity/\" + cell.recon.match.id,\n  \"\"\n)",
+    "onError": "set-to-blank",
     "newColumnName": "Same_As_Wikidata_City",
-    "description": "Renombra la columna RC_City a Same_As_Wikidata_City"
+    "columnInsertIndex": 18,
+    "description": "Crear la columna Same_As_Wikidata_City en el índice 18 basada en la columna City usando la expresión grel:if(isNonBlank(cell.recon.match.id),\n  \"http://www.wikidata.org/entity/\" + cell.recon.match.id,\n  \"\"\n)"
   },
   {
-    "op": "core/column-rename",
-    "oldColumnName": "RC_Country",
+    "op": "core/column-addition",
+    "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+    },
+    "baseColumnName": "Country",
+    "expression": "grel:if(isNonBlank(cell.recon.match.id),\n  \"http://www.wikidata.org/entity/\" + cell.recon.match.id,\n  \"\"\n)",
+    "onError": "set-to-blank",
     "newColumnName": "Same_As_Wikidata_Country",
-    "description": "Renombra la columna RC_Country a Same_As_Wikidata_Country"
+    "columnInsertIndex": 20,
+    "description": "Crear la columna Same_As_Wikidata_Country en el índice 20 basada en la columna Country usando la expresión grel:if(isNonBlank(cell.recon.match.id),\n  \"http://www.wikidata.org/entity/\" + cell.recon.match.id,\n  \"\"\n)"
+  },
+  {
+    "op": "core/column-move",
+    "columnName": "Same_As_Wikidata_Street",
+    "index": 21,
+    "description": "Mueve la columna Same_As_Wikidata_Street a la posición 21"
+  },
+  {
+    "op": "core/column-move",
+    "columnName": "Same_As_Wikidata_Street",
+    "index": 20,
+    "description": "Mueve la columna Same_As_Wikidata_Street a la posición 20"
+  },
+  {
+    "op": "core/column-move",
+    "columnName": "Same_As_Wikidata_Street",
+    "index": 19,
+    "description": "Mueve la columna Same_As_Wikidata_Street a la posición 19"
+  },
+  {
+    "op": "core/column-move",
+    "columnName": "Same_As_Wikidata_Street",
+    "index": 18,
+    "description": "Mueve la columna Same_As_Wikidata_Street a la posición 18"
+  },
+  {
+    "op": "core/column-move",
+    "columnName": "Same_As_Wikidata_Street",
+    "index": 17,
+    "description": "Mueve la columna Same_As_Wikidata_Street a la posición 17"
+  },
+  {
+    "op": "core/column-move",
+    "columnName": "Same_As_Wikidata_Street",
+    "index": 16,
+    "description": "Mueve la columna Same_As_Wikidata_Street a la posición 16"
+  },
+  {
+    "op": "core/column-move",
+    "columnName": "Same_As_Wikidata_Street",
+    "index": 15,
+    "description": "Mueve la columna Same_As_Wikidata_Street a la posición 15"
   }
 ]
