@@ -38,6 +38,23 @@ lude:academicYear a owl:DatatypeProperty ;
     rdfs:label "academic year" ;
     rdfs:range xsd:string .
 
+rdfs:label a owl:DatatypeProperty ;
+    rdfs:label "label" ;
+    rdfs:domain [
+        a owl:Class ;
+        owl:unionOf (
+            lude:AutonomousCommunity
+            lude:Degree
+            lude:Faculty
+            lude:KnowledgeArea
+            lude:Municipality
+            lude:Province
+            lude:University
+            lude:academicLevel 
+        )
+    ] ;
+    rdfs:range xsd:string .
+
 lude:acronym a owl:DatatypeProperty ;
     rdfs:label "acronym" ;
     rdfs:domain lude:University ;
@@ -62,7 +79,7 @@ lude:anecaAssessmentReportDate a owl:DatatypeProperty ;
 
 lude:basicTrainingCredits a owl:DatatypeProperty ;
     rdfs:label "basic training credits" ;
-    rdfs:range xsd:integer .
+    rdfs:range xsd:decimal .
 
 lude:campus a owl:DatatypeProperty ;
     rdfs:label "campus" ;
@@ -101,7 +118,7 @@ lude:deliveredAt a owl:ObjectProperty ;
 
 lude:ectsCredits a owl:DatatypeProperty ;
     rdfs:label "ects credits" ;
-    rdfs:range xsd:integer .
+    rdfs:range xsd:decimal .
 
 lude:email a owl:DatatypeProperty ;
     rdfs:label "email" ;
@@ -126,7 +143,7 @@ lude:hasKnowledgeArea a owl:ObjectProperty ;
 lude:hasAcademicLevel a owl:ObjectProperty ;
     rdfs:label "has academic level" ;
     rdfs:domain lude:Degree ;
-    rdfs:range lude:academicLevel .
+    rdfs:range lude:AcademicLevel .
 
 lude:id a owl:DatatypeProperty ;
     rdfs:label "id" ;
@@ -141,7 +158,7 @@ lude:id a owl:DatatypeProperty ;
             lude:Municipality
             lude:Province
             lude:University
-            lude:academicLevel
+            lude:AcademicLevel
         )
     ] ;
     rdfs:range xsd:string .
@@ -171,7 +188,7 @@ lude:newStudentsPosts a owl:DatatypeProperty ;
 
 lude:offeredCredits a owl:DatatypeProperty ;
     rdfs:label "offered credits" ;
-    rdfs:range xsd:integer .
+    rdfs:range xsd:decimal .
 
 lude:offers a owl:ObjectProperty ;
     rdfs:label "offers" ;
@@ -191,7 +208,7 @@ lude:partOfProvince a owl:ObjectProperty ;
 lude:postalCode a owl:DatatypeProperty ;
     rdfs:label "postal code" ;
     rdfs:domain lude:Address ;
-    rdfs:range xsd:string .
+    rdfs:range xsd:integer .
 
 lude:publicationYear a owl:DatatypeProperty ;
     rdfs:label "publication year" ;
@@ -208,8 +225,6 @@ owl:sameAs a owl:ObjectProperty ;
         lude:Province
         lude:University
         lude:Degree
-        lude:KnowledgeArea
-        lude:academicLevel
         )
     ] ;
     rdfs:range rdfs:Resource .
@@ -256,7 +271,7 @@ rdfs:Resource a owl:Class ;
 lude:KnowledgeArea a owl:Class ;
     rdfs:label "Knowledge Area" .
 
-lude:academicLevel a owl:Class;
+lude:AcademicLevel a owl:Class;
     rdfs:label "academic Level";
     rdfs:range xsd:string .
 
