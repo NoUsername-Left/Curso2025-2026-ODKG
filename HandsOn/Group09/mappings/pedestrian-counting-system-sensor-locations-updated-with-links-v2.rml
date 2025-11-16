@@ -16,7 +16,7 @@
 
 <#PedestrianSensorSource>
     a rml:LogicalSource ;
-    rml:source "../csv/pedestrian-counting-system-sensor-locations-updated-with-links.csv" ;
+    rml:source "../csv/pedestrian-counting-system-sensor-locations-enriched-updated-with-links-final-v2.csv" ;
     rml:referenceFormulation ql:CSV .
 
 <#PedestrianObservationSource>
