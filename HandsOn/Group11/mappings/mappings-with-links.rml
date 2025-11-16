@@ -198,14 +198,14 @@ map:map_calendar_000 rml:logicalSource map:source_008 ;
 		rr:predicate ont:startDate ;
 		rr:objectMap [
 			rml:reference "start_date" ;
-			rr:datatype xsd:string
+			rr:datatype xsd:date
 		]
 	] ;
 	rr:predicateObjectMap [
 		rr:predicate ont:endDate ;
 		rr:objectMap [
 			rml:reference "end_date" ;
-			rr:datatype xsd:string
+			rr:datatype xsd:date
 		]
 	] .
 
@@ -276,14 +276,14 @@ map:map_stop_000 rml:logicalSource map:source_005 ;
 		rr:predicate geo:lat ;
 		rr:objectMap [
 			rml:reference "stop_lat" ;
-			rr:datatype xsd:decimal
+			rr:datatype xsd:float
 		]
 	] ;
 	rr:predicateObjectMap [
 		rr:predicate geo:long ;
 		rr:objectMap [
 			rml:reference "stop_lon" ;
-			rr:datatype xsd:decimal
+			rr:datatype xsd:float
 		]
 	] ;
 	rr:predicateObjectMap [
