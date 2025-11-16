@@ -1,0 +1,19 @@
+
+// aicher la liste des villes 
+SELECT ?city ?name
+WHERE {
+  ?city <http://schema.org/name> ?name .
+}
+LIMIT 50
+
+// aicher la liste des URL wikidata pour chaque ville 
+
+
+// On a supprimé les environs 50 municipalitées de notre base qui n'existaient pas dans wikidata. Cette requête ne renvoie donc normalement rien et toutes les entrées ont un lien vers wikidata. 
+SELECT ?city ?name
+WHERE {
+  ?city <http://schema.org/name> ?name .
+  FILTER NOT EXISTS {
+    ?city <http://www.w3.org/2002/07/owl#sameAs> ?wikidataURI .
+  }
+}
