@@ -29,7 +29,7 @@ def _qid_from_uri(uri: str | None) -> str | None:
     """Extrae el QID (Q1234) de un URI de Wikidata."""
     if not uri:
         return None
-    if "wikidata.org/entity/" not in uri:
+    if "wikidata.org" not in uri:
         return None
     return uri.rsplit("/", 1)[-1]
 
@@ -190,6 +190,63 @@ def _wd_population(ent: dict | None) -> dict | None:
         return None
     return {"value": best_amount, "year": best_year}
 
+
+
+
+# ===============================================================
+# NUEVAS funciones auxiliares para extraer propiedades adicionales
+# ===============================================================
+
+def _wd_image(ent: dict | None) -> str | None:
+    """Devuelve una URL directa a la imagen (P18) desde Wikimedia Commons."""
+    for c in _wd_claims(ent, "P18"):
+        dv = c.get("mainsnak", {}).get("datavalue")
+        if not dv:
+            continue
+        filename = dv.get("value")
+        if filename:
+            # URL pública directa
+            from urllib.parse import quote
+            return "https://commons.wikimedia.org/wiki/Special:FilePath/" + quote(filename)
+    return None
+
+
+def _wd_inception(ent: dict | None) -> int | None:
+    """Devuelve el año de 'inception' (P571) si existe."""
+    for c in _wd_claims(ent, "P571"):
+        dv = c.get("mainsnak", {}).get("datavalue")
+        if not dv or dv.get("type") != "time":
+            continue
+        time_str = dv.get("value", {}).get("time")  # "+1975-01-01T00:00:00Z"
+        if time_str and len(time_str) >= 5:
+            try:
+                return int(time_str[1:5])
+            except Exception:
+                return None
+    return None
+
+
+def _wd_part_of(ent: dict | None, pid: str, lang="es") -> list[str]:
+    """
+    Similar a _wd_entity_list(), pero lo dejamos explícito para 'part of' 
+    Devuelve etiquetas humanas de las entidades que aparezcan en P361 
+    """
+    out = []
+    for c in _wd_claims(ent, "P361"):
+        dv = c.get("mainsnak", {}).get("datavalue")
+        if not dv or dv.get("type") != "wikibase-entityid":
+            continue
+        qid = dv.get("value", {}).get("id")
+        if not qid:
+            continue
+        ent2 = fetch_wikidata_entity(qid)
+        label = _wd_label(ent2, lang=lang) or qid
+        out.append(label)
+    return list(dict.fromkeys(out))  # quita duplicados manteniendo orden
+
+
+
+
 #NUEVO: FUNCION PRINCIPAL QUE OBTIENE DATOS DE WIKIDATA
 def get_linked_wiki_info(facility_uri: str, lang: str = "es") -> dict:
     """
@@ -212,6 +269,9 @@ def get_linked_wiki_info(facility_uri: str, lang: str = "es") -> dict:
           - street address (P6375)
           - postal code (P281)
           - official website (P856)
+          - image (P18)
+          - foundation date (P571)
+          - part of (P361)
     """
     g = get_graph()
     q = f"""
@@ -228,7 +288,7 @@ def get_linked_wiki_info(facility_uri: str, lang: str = "es") -> dict:
     WHERE {{
       OPTIONAL {{
         <{facility_uri}> owl:sameAs ?facWiki .
-        FILTER(CONTAINS(STR(?facWiki), "wikidata.org/entity/"))
+        FILTER(CONTAINS(STR(?facWiki), "wikidata.org"))
       }}
 
       OPTIONAL {{
@@ -236,7 +296,7 @@ def get_linked_wiki_info(facility_uri: str, lang: str = "es") -> dict:
         OPTIONAL {{ ?nh schema:name ?nhName . }}
         OPTIONAL {{
           ?nh owl:sameAs ?nhWiki .
-          FILTER(CONTAINS(STR(?nhWiki), "wikidata.org/entity/"))
+          FILTER(CONTAINS(STR(?nhWiki), "wikidata.org"))
         }}
 
         OPTIONAL {{
@@ -244,7 +304,7 @@ def get_linked_wiki_info(facility_uri: str, lang: str = "es") -> dict:
           OPTIONAL {{ ?dist schema:name ?distName . }}
           OPTIONAL {{
             ?dist owl:sameAs ?distWiki .
-            FILTER(CONTAINS(STR(?distWiki), "wikidata.org/entity/"))
+            FILTER(CONTAINS(STR(?distWiki), "wikidata.org"))
           }}
 
           OPTIONAL {{
@@ -252,7 +312,7 @@ def get_linked_wiki_info(facility_uri: str, lang: str = "es") -> dict:
             OPTIONAL {{ ?mun schema:name ?munName . }}
             OPTIONAL {{
               ?mun owl:sameAs ?munWiki .
-              FILTER(CONTAINS(STR(?munWiki), "wikidata.org/entity/"))
+              FILTER(CONTAINS(STR(?munWiki), "wikidata.org"))
             }}
           }}
         }}
@@ -295,6 +355,9 @@ def get_linked_wiki_info(facility_uri: str, lang: str = "es") -> dict:
             "phone": None,
             "email": None,
             "website": None,
+            "image": None,        
+            "inception": None,    
+            "part_of": []  
         }
 
         qid = _qid_from_uri(uri)
@@ -335,6 +398,9 @@ def get_linked_wiki_info(facility_uri: str, lang: str = "es") -> dict:
                 info["phone"] = _wd_string_value(ent, "P1329")
                 info["email"] = _wd_string_value(ent, "P968")
                 info["website"] = _wd_string_value(ent, "P856")
+                info["image"] = _wd_image(ent)             
+                info["inception"] = _wd_inception(ent)  
+                info["part_of"] = _wd_part_of(ent, "P361")   
                 #print(f"DEBUG WD:   street={info['street_address']}")
                 #print(f"DEBUG WD:   postal={info['postal_code']}")
                 #print(f"DEBUG WD:   phone={info['phone']}")
