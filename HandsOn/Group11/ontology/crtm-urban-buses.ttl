@@ -346,7 +346,7 @@ schema:telephone a owl:DatatypeProperty ;
   rdfs:range xsd:string .
 
 geo:lat a owl:DatatypeProperty ;
-  rdfs:range xsd:decimal .
+  rdfs:range xsd:float .
 
 geo:long a owl:DatatypeProperty ;
-  rdfs:range xsd:decimal .
+  rdfs:range xsd:float .
