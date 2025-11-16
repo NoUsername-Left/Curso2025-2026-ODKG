@@ -2,63 +2,236 @@ import streamlit as st
 import pandas as pd
 import folium
 from streamlit_folium import st_folium
+from folium.plugins import MarkerCluster
+import altair as alt
 
-from queries import (
+from queries_v import (
     get_facilities_by_type,
     get_neighbourhoods,
     get_facilities_in_neighbourhood,
     get_districts,
     get_neighbourhoods_in_district,
+    get_facilities_by_type_and_neighbourhood,
+    get_facilities_by_types,
     get_nearby_transport,
+    get_linked_wiki_info,
     FACILITY_CLASS_MAP,
     FACILITY_MAIN_TYPES,
     FACILITY_SUBTYPES_BY_MAIN,
     ALL_FACILITY_TYPES,
 )
 
-st.set_page_config(page_title="Smart City Facilities", layout="wide")
-st.title("Smart City Facilities Explorer")
 
-# --- Sidebar ---
-mode = st.sidebar.radio("Modo de exploración", ["Por tipo de facility", "Por localizacion"])
 
-if mode == "Por tipo de facility":
-    # --- Primer selector: clase principal (opcional) ---
-    main_choice = st.sidebar.selectbox(
-        "Tipo principal de facility (opcional)",
+
+st.set_page_config(page_title="Smart City Facilities", page_icon="../logo.png",layout="wide")
+
+# ✅ Cabecera con logo + título
+col1, col2 = st.columns([0.2, 0.8])
+with col1:
+    st.image("../logo.png", use_container_width=True)  
+with col2:
+    st.markdown("""
+        <div style='padding-top:10px;'>
+            <h1 style='color:#003366; font-size:42px; margin-bottom:0;'>Bienvenido a Madrid: Explora sus instalaciones inteligentes</h1>
+            <h3 style='color:#551; font-size:25px; margin-bottom:0;'>Aquí podrás descubrir toda la información sobre los espacios y servicios de la ciudad. ¿Qué quieres explorar hoy? 🔍</h3>
+        </div>
+    """, unsafe_allow_html=True)
+
+
+
+# --- FILTRADO COMBINADO POR DEFECTO (SIN SIDEBAR, MULTI-FACILITY) ---
+
+df = pd.DataFrame()
+
+# Layout central dividido
+col1, col2 = st.columns(2)
+
+# --------- COLUMNA IZQUIERDA: FACILITIES 🏗️ ---------
+with col1:
+    st.markdown("### 🏗️ Filtros por Facility")
+
+    # Tipo principal
+    main_choice = st.selectbox(
+        "Tipo principal de facility",
         ["Ninguno"] + FACILITY_MAIN_TYPES,
         index=0,
     )
 
-    # --- Segundo selector: tipo concreto ---
-    if main_choice == "Ninguno":
-        # No se filtra por clase principal: mostramos todas las clases posibles
-        type_options = ALL_FACILITY_TYPES
-    else:
-        # Mostramos solo las subclases (y/o el tipo genérico) de esa clase principal
-        type_options = FACILITY_SUBTYPES_BY_MAIN.get(main_choice, [])
+    # Subtipos disponibles
+    type_options = ALL_FACILITY_TYPES if main_choice == "Ninguno" else FACILITY_SUBTYPES_BY_MAIN.get(main_choice, [])
 
     if not type_options:
         st.warning("No hay subtipos configurados para este tipo de facility.")
         st.stop()
 
-    choice = st.sidebar.selectbox("Subtipo concreto de facility", type_options, index=0)
+    # MULTISELECCIÓN DE FACILITIES
+    selected_types = st.multiselect(
+        "Subtipos de facility (puedes elegir varios)",
+        type_options,
+        default=[]
+    )
 
-    st.subheader(f"Instalaciones – {choice}")
+    # --- NUEVA LÓGICA: si hay tipo principal y no se selecciona subclase, usar todas ---
+    if main_choice != "Ninguno" and not selected_types:
+        selected_types = type_options  # selecciona automáticamente todas las subclases
 
-    # La consulta sigue igual, pero ahora siempre con el tipo concreto elegido
-    data = get_facilities_by_type(choice)
-    df = pd.DataFrame(data)
-    st.caption(f"{len(df)} resultados")
+
+
+
+
+
+# --------- COLUMNA DERECHA: BARRIOS 🏙️ ---------
+with col2:
+    st.markdown("### 🏙️ Filtros por Distrito / Barrio")
+
+    nh_list = get_neighbourhoods()
+    neighbourhood_names = [n[1] for n in nh_list]
+
+    selected_neighbourhood = st.selectbox(
+        "Selecciona barrio",
+        ["Todos"] + neighbourhood_names,
+        index=0
+    )
+
+
+# --------- LÓGICA DE FILTRADO (MULTI-FACILITY) ---------
+
+use_facility = len(selected_types) > 0
+use_neighbourhood = selected_neighbourhood != "Todos"
+
+nh_uri = None
+if use_neighbourhood:
+    nh_uri = [uri for uri, name in nh_list if name == selected_neighbourhood][0]
+
+frames = []
+
+# Caso 1: facilities seleccionadas
+if use_facility:
+
+    for t in selected_types:
+
+        if use_neighbourhood:
+            # facility + barrio
+            partial = pd.DataFrame(get_facilities_by_type_and_neighbourhood(t, nh_uri))
+        else:
+            # solo facilities
+            partial = pd.DataFrame(get_facilities_by_type(t))
+
+        if not partial.empty:
+            frames.append(partial)
+
+    if frames:
+        df = pd.concat(frames, ignore_index=True).drop_duplicates(subset=["uri"]).reset_index(drop=True)
+    else:
+        df = pd.DataFrame()
+
+
+
+# Caso 2: solo barrio
+# elif use_neighbourhood:
+
+#     df = pd.DataFrame(get_facilities_in_neighbourhood(nh_uri))
+
+elif use_neighbourhood:
+
+    df = pd.DataFrame(get_facilities_in_neighbourhood(nh_uri))
+    
+    # 🆕 FIX: Añadir la columna 'neighbourhood' que falta en esta función
     if not df.empty:
-        # Tabla compacta
-        st.dataframe(
-            df[["name","class","neighbourhood","district","municipality","telephone","email","uri"]],
-            use_container_width=True,
-            hide_index=True,
+        df['neighbourhood'] = selected_neighbourhood
+
+
+
+# Caso 3: ningún filtro → TODO (sin get_all_facilities)
+else:
+
+    frames = []
+    for t in ALL_FACILITY_TYPES:
+        try:
+            part = pd.DataFrame(get_facilities_by_type(t))
+            if not part.empty:
+                frames.append(part)
+        except:
+            continue
+
+    if frames:
+        df = pd.concat(frames, ignore_index=True).drop_duplicates(subset=["uri"]).reset_index(drop=True)
+    else:
+        df = pd.DataFrame()
+
+# --------- TÍTULO DEL RESULTADO ---------
+
+fac_str = ", ".join(selected_types) if selected_types else "todas las facilities"
+zone_str = selected_neighbourhood if use_neighbourhood else "todas las zonas"
+
+st.subheader(f"Resultados – {fac_str} en {zone_str}")
+
+
+
+
+
+
+
+col1, col2 = st.columns(2)
+
+with col1:
+
+    # --- Mostrar resultados si hay dataframe ---
+    if not df.empty:
+        st.caption(f"{len(df)} resultados")
+        
+        # 🆕 AÑADIR SELECTOR DE VISTA
+        view_mode = st.radio(
+            "Seleccionar vista",
+            ["Tabla de Datos", "Resumen por Tipo"],
+            horizontal=True,
+            index=0,
         )
 
-        # --- Mapa ---
+        if view_mode == "Tabla de Datos":
+            # ➡️ VISTA DE TABLA ORIGINAL
+            st.dataframe(
+                df[["name","class","neighbourhood","district","municipality","telephone","email","uri"]],
+                use_container_width=True,
+                hide_index=True
+            )
+        
+        elif view_mode == "Resumen por Tipo":
+            # ➡️ VISTA DE RESUMEN
+            st.subheader("📊 Resumen de Facilities por Tipo")
+
+            # Contar el número de facilities por su 'class'
+            class_counts = df["class"].value_counts().reset_index()
+            class_counts.columns = ["Tipo de Facility", "Nº de Resultados"]
+            
+            # Mostrar tabla de resumen
+            st.dataframe(class_counts, use_container_width=True, hide_index=True)
+            
+            # Opcional: Mostrar un gráfico de barras (usando el gráfico nativo de Streamlit)
+            # st.bar_chart(class_counts.set_index("Tipo de Facility"), color="#C8DFF6")
+            
+            chart = alt.Chart(class_counts).mark_bar().encode(   
+            x=alt.X('Tipo de Facility', axis=alt.Axis(labelAngle=0,title='Tipo de Facility')),y=alt.Y('Nº de Resultados', title='Nº de Resultados'),color=alt.value("#C8DFF6")).properties(title="Distribución de Facilities por Tipo" ).interactive()
+            st.altair_chart(chart, use_container_width=True)
+            
+    else:
+        st.info("No se han encontrado instalaciones que coincidan con los filtros seleccionados. Intenta cambiar los criterios de búsqueda.")
+
+
+with col2:
+    # --- Mapa ---
+        if df.empty:
+            st.warning("No existen instalaciones que coincidan con los filtros seleccionados.")
+            st.stop()
+
+        if not {"lat", "long"}.issubset(df.columns):
+            st.warning("Los datos filtrados no contienen coordenadas para mostrar en el mapa.")
+            st.stop()
+
+        # Si pasa las validaciones, ahora sí podemos hacer dropna
+        map_df = df.dropna(subset=["lat","long"]).copy()
+
         map_df = df.dropna(subset=["lat","long"]).copy()
         if not map_df.empty:
             m = folium.Map(location=[40.4168, -3.7038], zoom_start=11, tiles="cartodbpositron")
@@ -77,140 +250,199 @@ if mode == "Por tipo de facility":
                     [row["lat"], row["long"]],
                     popup=folium.Popup(html, max_width=300),
                     tooltip=row["name"],
-                    icon=folium.Icon(color="blue", icon="info-sign"),
+                    icon=folium.Icon(color="blue", icon="info-sign")
                 ).add_to(m)
-            st_map = st_folium(m, height=520, width=None)
-
-        # --- Detalle de una facility ---
-        st.divider()
-        st.subheader("Detalle y transporte cercano")
-        if not df.empty:
-            pick = st.selectbox("Selecciona una facility", df["name"].tolist())
-            if pick:
-                sel = df[df["name"] == pick].iloc[0]
-                st.markdown(f"**URI:** {sel['uri']}")
-                st.markdown(f"**Tipo:** {sel['class']}")
-                st.markdown(f"**Distrito/Municipio:** {sel.get('district','-')} / {sel.get('municipality','-')}")
-                st.markdown(f"**Tel:** {sel.get('telephone','-')}  |  **Email:** {sel.get('email','-')}")
-
-                # Obtener los transportes cercanos
-                tr = get_nearby_transport(sel["uri"])
-
-                # Mostrar transporte en columnas
-                #cols = st.columns(3)
-                #cols[0].markdown("**Metro:**<br>" + ("<br>".join(tr["Subway"]) or "—"), unsafe_allow_html=True)
-                #cols[1].markdown("**Bus:**<br>" + ("<br>".join(tr["Bus"]) or "—"), unsafe_allow_html=True)
-                #cols[2].markdown("**Cercanías:**<br>" + ("<br>".join(tr["Train"]) or "—"), unsafe_allow_html=True)
-                cols = st.columns(3)
-
-                ### METRO
-                if tr["Subway"]:
-                    metro_html = "<div style='font-size:16px;'>"
-                    metro_html += "<h3 style='margin-bottom:5px;'>🚇 Metro</h3>"
-                    for name, data in tr["Subway"].items():
-                        lines = ", ".join(data["lines"]) if data["lines"] else "—"
-                        stations = ", ".join(data["stations"]) if data["stations"] else "—"
-                        metro_html += f"<p><b>Líneas:</b> {lines}<br><b>Estaciones:</b> {stations}</p>"
-                    metro_html += "</div>"
-                else:
-                    metro_html = "<h3>🚇 Metro</h3><p>—</p>"
-
-                cols[0].markdown(metro_html, unsafe_allow_html=True)
-
-                ### BUS
-                if tr["Bus"]:
-                    bus_html = "<div style='font-size:16px;'>"
-                    bus_html += "<h3 style='margin-bottom:5px;'>🚌 Bus</h3>"
-                    for name, data in tr["Bus"].items():
-                        lines = ", ".join(data["lines"]) if data["lines"] else "—"
-                        bus_html += f"<p><b>Líneas:</b> {lines}</p>"
-                    bus_html += "</div>"
-                else:
-                    bus_html = "<h3>🚌 Bus</h3><p>—</p>"
-
-                cols[1].markdown(bus_html, unsafe_allow_html=True)
-
-                ### TREN
-                if tr["Train"]:
-                    train_html = "<div style='font-size:16px;'>"
-                    train_html += "<h3 style='margin-bottom:5px;'>🚆 Cercanías</h3>"
-                    for name, data in tr["Train"].items():
-                        lines = ", ".join(data["lines"]) if data["lines"] else "—"
-                        stations = ", ".join(data["stations"]) if data["stations"] else "—"
-                        train_html += f"<p><b>Líneas:</b> {lines}<br><b>Estaciones:</b> {stations}</p>"
-                    train_html += "</div>"
-                else:
-                    train_html = "<h3>🚆 Cercanías</h3><p>—</p>"
-
-                cols[2].markdown(train_html, unsafe_allow_html=True)
+            st_folium(m, height=600, width=None)
 
 
-else:
-    st.subheader("Explorar por localización")
 
-    # --- Filtro por distrito ---
-    district_list = get_districts()  # Obtener lista de distritos
-    district_names = [d for _,d in district_list]
-    district_choice = st.sidebar.selectbox("Selecciona distrito (opcional)", ["Ninguno"] + district_names, index=0)
 
-    # Si se selecciona un distrito, filtrar barrios dentro de ese distrito
-    if district_choice != "Ninguno":
-        # Obtener barrios dentro del distrito
-        district_uri = [d[0] for d in district_list if d[1] == district_choice][0]
 
-        nh_list = get_neighbourhoods_in_district(district_uri)
-        neighbourhood_names = [n[1] for n in nh_list]
-        neighbourhood_choice = st.sidebar.selectbox("Selecciona barrio", neighbourhood_names, index=0)
-        nh_uri = [n[0] for n in nh_list if n[1] == neighbourhood_choice][0]
-        st.caption(f"Seleccionado: {district_choice} - {neighbourhood_choice}")
-    else:
-        # Si no hay distrito, mostrar todos los barrios
-        nh_list = get_neighbourhoods()
-        neighbourhood_names = [n[1] for n in nh_list]
-        neighbourhood_choice = st.sidebar.selectbox("Selecciona barrio", neighbourhood_names, index=0)
-        nh_uri = [n[0] for n in nh_list if n[1] == neighbourhood_choice][0]
 
-    # Obtener y mostrar facilities
-    st.caption(f"Facilities en {neighbourhood_choice}")
-    facilities = get_facilities_in_neighbourhood(nh_uri)
-    df = pd.DataFrame(facilities)
-    st.caption(f"{len(df)} facilities dentro de {neighbourhood_choice}")
-    if not df.empty:
-        st.dataframe(df[["name", "class", "district", "municipality", "telephone", "email", "uri"]],
-                     use_container_width=True, hide_index=True)
 
-        map_df = df.dropna(subset=["lat", "long"]).copy()
-        if not map_df.empty:
-            m = folium.Map(location=[40.4168, -3.7038], zoom_start=12, tiles="cartodbpositron")
-            for _, row in map_df.iterrows():
-                html = f"""
-                <b>{row['name']}</b><br/>
-                <i>{row.get('class','Facility')}</i><br/>
-                Distrito: {row.get('district','-')}<br/>
-                Municipio: {row.get('municipality','-')}<br/>
-                Tel: {row.get('telephone','-')}<br/>
-                Email: {row.get('email','-')}<br/>
-                <small>{row['uri']}</small>
-                """
-                folium.Marker(
-                    [row["lat"], row["long"]],
-                    popup=folium.Popup(html, max_width=300),
-                    tooltip=row["name"],
-                    icon=folium.Icon(color="green", icon="ok-sign"),
-                ).add_to(m)
-            st_folium(m, height=520, width=None)
 
-    # Detalle + transporte
-    st.divider()
-    st.subheader("Detalle y transporte cercano")
-    if not df.empty:
-        pick = st.selectbox("Selecciona una facility", df["name"].tolist())
-        if pick:
-            sel = df[df["name"] == pick].iloc[0]
-            st.markdown(f"**URI:** {sel['uri']}")
-            st.markdown(f"**Tipo:** {sel['class']}")
-            st.markdown(f"**Distrito/Municipio:** {sel.get('district','-')} / {sel.get('municipality','-')}")
-            st.markdown(f"**Tel:** {sel.get('telephone','-')}  |  **Email:** {sel.get('email','-')}")
 
-            # Obtener los transportes cercanos
-            tr = get_nearby_transport(sel["uri"])
+
+# -------------------------------------------------
+# --- Detalle + de la facility, nuestros + wikidata
+# -------------------------------------------------
+
+st.divider()
+st.subheader("Detalle y transporte cercano")
+# 💡 FIX: Usamos una key única para evitar el error StreamlitDuplicateElementId
+pick = st.selectbox("Selecciona una facility", df["name"].tolist(), key="facility_selector")
+
+col1, col2 = st.columns(2)
+
+with col1:
+    
+    if pick:
+        sel = df[df["name"] == pick].iloc[0]
+        
+        # 1. OBTENER WIKIDATA DE INMEDIATO (para usarlo más tarde)
+        wiki = get_linked_wiki_info(sel["uri"], lang="es")
+        fac = wiki.get("facility", {}) or {} # Datos enriquecidos de la Facility
+        
+        # --- FUNCIÓN AUXILIAR DE POBLACIÓN (Se mantiene) ---
+        def format_population(info: dict) -> str:
+            pop = info.get("population")
+            if not pop:
+                return "—"
+            val = pop.get("value")
+            if val is None:
+                return "—"
+            try:
+                val_int = int(val)
+                val_str = f"{val_int:,}".replace(",", ".")
+            except Exception:
+                val_str = str(val)
+            year = pop.get("year")
+            if year:
+                return f"{val_str} (año {year})"
+            return val_str
+        # --------------------------------------------------
+
+        # 🆕 BLOQUE 1: INFORMACIÓN BÁSICA (LOCAL)
+        st.markdown("#### 📝 Información Básica de Contacto y Ubicación")
+        st.markdown(
+            f"""
+            <div style='background-color: #f0f2f6; border-left: 5px solid #003366; padding: 15px; border-radius: 5px; margin-bottom: 20px;'>
+                <h4 style='color:#003366; margin-top:0;'>{sel['name']}</h4>
+                <p style='margin:0;'><strong>Tipo:</strong> {sel['class']}</p>
+                <p style='margin:0;'><strong>Barrio:</strong> {sel.get('neighbourhood','—')} | <strong>Distrito:</strong> {sel.get('district','—')}</p>
+                <p style='margin:0;'><strong>Teléfono:</strong> {sel.get('telephone','—')} | <strong>Email:</strong> {sel.get('email','—')}</p>
+                <p style='margin:0;'><small><strong>URI Local:</strong> {sel['uri']}</small></p>
+            </div>
+            """, unsafe_allow_html=True
+        )
+    
+
+with col2:
+
+
+    with st.expander("🌐 Información Enriquecida de Wikidata (Detalle y Contexto)", expanded=True):
+        
+        # --- SUB-BLOQUE A: DATOS ESPECÍFICOS DE LA FACILITY (WD) ---
+        if fac.get("uri"):
+            st.markdown("#### ℹ️ Datos Adicionales de la Instalación")
+            
+            website = fac.get("website")
+            
+            st.markdown(
+                f"""
+                <div style='border: 1px dashed #ced4da; padding: 10px; border-radius: 5px; margin-bottom: 20px;'>
+                    <p style='margin: 0;'><strong>Etiqueta Wikidata:</strong> {fac.get('label') or '—'}</p>
+                    <p style='margin: 0;'><strong>Dirección (WD):</strong> {fac.get('street_address') or '—'}</p>
+                    <p style='margin: 0;'><strong>Código Postal (WD):</strong> {fac.get('postal_code') or '—'}</p>
+                    <p style='margin: 0;'><strong>Web Oficial (WD):</strong> {f"<a href='{website}' target='_blank'>{website}</a>" if website else '—'}</p>
+                    <p style='margin: 0;'><small><strong>URI Wikidata:</strong> [{fac['uri']}]({fac['uri']})</small></p>
+                </div>
+                """, unsafe_allow_html=True
+            )
+        else:
+            st.info("No se encontró información enlazada de Wikidata para esta Facility.")
+
+
+
+
+
+
+
+
+
+
+
+# -------------------------------------------------
+# BLOQUE 2: TRANSPORTE CERCANO (Se mantiene el formato card)
+# -------------------------------------------------
+st.divider()
+
+
+col1, col2 = st.columns(2)
+
+with col1:
+
+    tr = get_nearby_transport(sel["uri"])
+    st.markdown("#### 🔗 Conexiones de Transporte")
+
+    # NOTE: Definición de format_transport_info (asegúrate de que esté en el ámbito)
+    def format_transport_info(icon, title, data):
+        html = f"<div style='border: 1px solid #ddd; padding: 10px; border-radius: 5px; height: 100%;'>"
+        html += f"<h4 style='margin-top:0; color:#003366;'>{icon} {title}</h4>"
+        
+        if data:
+            for name, d in data.items():
+                lines = ", ".join(d["lines"]) if d["lines"] else "—"
+                stations = ", ".join(d["stations"]) if d["stations"] else "—"
+                html += f"<p style='margin: 0; padding-bottom: 5px;'>**{name}**</p>"
+                html += f"<p style='margin: 0 0 5px 0; font-size: 14px;'>Líneas: {lines}</p>"
+                if d['stations']:
+                    html += f"<p style='margin: 0 0 5px 0; font-size: 14px;'>Estaciones: {stations}</p>"
+        else:
+            html += f"<p style='color: #6c757d;'>No hay datos de {title.lower()} cercanos.</p>"
+
+        html += "</div>"
+        return html
+
+    cols = st.columns(3)
+    cols[0].markdown(format_transport_info("🚇", "Metro", tr["Subway"]), unsafe_allow_html=True)
+    cols[1].markdown(format_transport_info("🚌", "Bus", tr["Bus"]), unsafe_allow_html=True)
+    cols[2].markdown(format_transport_info("🚆", "Cercanías", tr["Train"]), unsafe_allow_html=True)
+
+
+
+    
+with col2:
+
+# --- SUB-BLOQUE B: DATOS GEOGRÁFICOS ENRIQUECIDOS (WD) ---
+    st.markdown("#### 🏛️ Contexto Geográfico y Gubernamental")
+
+    col_w1, col_w2 = st.columns(2)
+
+    # --- MUNICIPIO + BARRIO (Columna 1) ---
+    with col_w1:
+        
+        # --- MUNICIPIO ---
+        mun = wiki.get("municipality", {}) or {}
+        mun_label = mun.get("label") or sel.get("municipality") or "—"
+        st.markdown(f"##### Municipio de {mun_label}")
+        
+        if mun.get("uri"):
+            st.markdown(f"[[Wikidata]({mun['uri']})]")
+
+        st.markdown(f"* **Población:** {format_population(mun)}")
+        st.markdown(f"* **Jefatura:** {', '.join(mun.get('head', [])) or '—'} (Cargo: {', '.join(mun.get('office', [])) or '—'})")
+        st.markdown(f"* **Órgano Ejecutivo:** {', '.join(mun.get('executive_body', [])) or '—'}")
+
+        st.markdown("---")
+
+        # --- BARRIO ---
+        nh = wiki.get("neighbourhood", {}) or {}
+        nh_label = nh.get("label") or sel.get("neighbourhood") or "—"
+        st.markdown(f"##### Barrio de {nh_label}")
+        
+        if nh.get("uri"):
+            st.markdown(f"[[Wikidata]({nh['uri']})]")
+
+        st.markdown(f"* **Población:** {format_population(nh)}")
+        borders = nh.get("borders") or []
+        borders_str = ", ".join(borders) if borders else "—"
+        st.markdown(f"* **Limita con:** {borders_str}")
+
+    # --- DISTRITO (Columna 2) ---
+    with col_w2:
+        
+        dist = wiki.get("district", {}) or {}
+        dist_label = dist.get("label") or sel.get("district") or "—"
+        st.markdown(f"##### Distrito de {dist_label}")
+
+        if dist.get("uri"):
+            st.markdown(f"[[Wikidata]({dist['uri']})]")
+            
+        st.markdown(f"* **Población:** {format_population(dist)}")
+        st.markdown(f"* **Jefatura:** {', '.join(dist.get('head', [])) or '—'} (Cargo: {', '.join(dist.get('office', [])) or '—'})")
+        st.markdown(f"* **Órgano Ejecutivo:** {', '.join(dist.get('executive_body', [])) or '—'}")
+
+
+
+
