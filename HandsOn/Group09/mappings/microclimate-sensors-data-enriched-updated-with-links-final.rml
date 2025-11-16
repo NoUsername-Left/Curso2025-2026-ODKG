@@ -17,7 +17,7 @@
 
 <#MicroclimateSource>
     a rml:LogicalSource ;
-    rml:source "../csv/microclimate-sensors-data-enriched-updated-with-links.csv" ;
+    rml:source "../csv/microclimate-sensors-updated-with-links.csv" ;
     rml:referenceFormulation ql:CSV .
 
 #################################################################
