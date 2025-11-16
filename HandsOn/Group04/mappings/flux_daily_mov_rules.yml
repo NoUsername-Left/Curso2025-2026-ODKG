@@ -40,11 +40,11 @@ mappings:
       - p: ex:hasOrigin
         o:
           mapping: LocationMap
-          join: [id_origin, id]
+          join: [origin_name, id]
       - p: ex:hasDestination
         o:
           mapping: LocationMap
-          join: [id_destination, id]
+          join: [destination_name, id]
       - p: ex:hasOriginActivity
         o:
           mapping: ActivityMap
@@ -69,16 +69,16 @@ mappings:
 
   # --- 3. Location Mapping ---
   # We only need ONE map for locations. YARRRML is smart enough
-  # to handle being joined from 'id_origin' and 'id_destination'.
+  # to handle being joined from 'origin_name' and 'destination_name'.
   LocationMap:
     sources:
       - csv_data
     # We define a 'placeholder' variable 'id' that can be filled
-    # by either 'id_origin' or 'id_destination' from the join.
+    # by either 'origin_name' or 'destination_name' from the join.
     subject: data:location_$(id)
     po:
-      - [a, ex:Location]
-      - [ex:locationId, $(id)]
+      - [a, schema:City]
+      - [schema:name, $(id)]
 
   # --- 4. Activity Mapping ---
   # Same logic as locations. One map for all activities.

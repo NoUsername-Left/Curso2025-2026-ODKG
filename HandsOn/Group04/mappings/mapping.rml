@@ -15,7 +15,7 @@
 
 # --- 1. Data Source Definition ---
 <#LogicalSource_CSV>
-    rml:source "../csv/flux_sample_updated.csv";
+    rml:source "../csv/flux_daily_mov_updated.csv";
     rml:referenceFormulation ql:CSV.
 
 # --- 2. Main Mapping: The Mobility Observation ---
@@ -79,7 +79,7 @@
     rr:predicateObjectMap [
         rr:predicate ex:hasOrigin;
         rr:objectMap [ 
-            rr:template "data:location_{id_origin}" 
+            rr:template "data:location_{origin_name}" 
         ]
     ];
 
@@ -87,7 +87,7 @@
     rr:predicateObjectMap [
         rr:predicate ex:hasDestination;
         rr:objectMap [ 
-            rr:template "data:location_{id_destination}" 
+            rr:template "data:location_{destination_name}" 
         ]
     ];
 
@@ -138,23 +138,27 @@
 <#LocationOriginMap>
     rml:logicalSource <#LogicalSource_CSV>;
     rr:subjectMap [
-        rr:template "data:location_{id_origin}";
-        rr:class ex:Location
+        rr:template "data:location_{origin_name}";
+        rr:class schema:City
     ];
     rr:predicateObjectMap [
-        rr:predicate ex:locationId;
-        rr:objectMap [ rml:reference "id_origin" ]
+        rr:predicate schema:name;
+        rr:objectMap [ 
+            rml:reference "origin_name" 
+        ]
     ].
 
 <#LocationDestinationMap>
     rml:logicalSource <#LogicalSource_CSV>;
-    rr:subjectMap [
-        rr:template "data:location_{id_destination}";
-        rr:class ex:Location
+rr:subjectMap [
+        rr:template "data:location_{destination_name}";
+        rr:class schema:City
     ];
     rr:predicateObjectMap [
-        rr:predicate ex:locationId;
-        rr:objectMap [ rml:reference "id_destination" ]
+        rr:predicate schema:name;
+        rr:objectMap [ 
+            rml:reference "destination_name" 
+        ]
     ].
 
 # --- 5. Activity Mapping ---
