@@ -8,18 +8,26 @@ import MarkerPopup from './MarkerPopup'; // <-- 1. IMPORTAR EL NUEVO COMPONENTE
 // --- Iconos personalizados (bikeIcon y barIcon) ---
 // (Tu código de iconos va aquí, no lo borres)
 const bikeIcon = new L.Icon({
-  iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+  // 👇 Esto le dice al navegador que busque "bike.jpg" en la misma carpeta
+  iconUrl: './../../public/bike.png',
   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
+  
+  // --- IMPORTANTE ---
+  // He ajustado los tamaños para que se parezcan a tu imagen
+  iconSize: [35, 35],   // [ancho, alto] (ajusta esto al tamaño real)
+  iconAnchor: [17, 35], // Punto del icono que corresponde a la ubicación
   popupAnchor: [1, -34],
   shadowSize: [41, 41]
 });
+
 const barIcon = new L.Icon({
-  iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-orange.png',
+  // 👇 Esto le dice al navegador que busque "beer.png" en la misma carpeta
+  iconUrl: './../../public/beer.svg',
   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
+  
+  // Ajusta estos valores también
+  iconSize: [25, 41],   
+  iconAnchor: [12, 41], 
   popupAnchor: [1, -34],
   shadowSize: [41, 41]
 });
