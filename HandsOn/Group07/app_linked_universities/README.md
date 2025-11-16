@@ -78,6 +78,20 @@ Server will run at:
 http://localhost:5000
 ```
 
+### ⚠️ Windows Users - Important Fix for SPARQL Filters
+If you are running this project on Windows, Python f-strings may fail when building the SPARQL query due to escaping rules.
+
+To fix this, replace the filter lines starting around line 341 of app.py with the following Windows-safe version:
+
+```
+        {f'FILTER(CONTAINS(LCASE(?acLabel), "{ac}"))' if ac else ''}
+        {f'FILTER(CONTAINS(LCASE(?uniLabel), "{uni}"))' if uni else ''}
+        {f'FILTER(CONTAINS(LCASE(?areaLabel), "{area}"))' if area else ''}
+        {f'FILTER(CONTAINS(LCASE(?provLabel), "{prov}"))' if prov else ''}
+        {f'FILTER(CONTAINS(LCASE(?munLabel), "{mun}"))' if mun else ''}
+        {f'FILTER(CONTAINS(LCASE(?levelLabel), "{level}"))' if level else ''}
+```
+
 ---
 
 # 💻 3. Frontend Setup
@@ -87,6 +101,23 @@ Open the index.html file using Live Server in VSCode and it will be running in t
 ```bash
 http://localhost:5500
 ```
+### ⚠️ Troubleshooting: Connection Errors
+
+If you experience connection errors between the frontend and backend, you can test the backend directly by visiting:
+
+```http://127.0.0.1:5000/instances?class=University```
+
+If the browser returns an error such as:
+
+```Param.postParse2() missing 1 required positional argument: 'tokenList'```
+
+or any similar “missing tokenlist” message:
+
+1) Stop the backend server
+2) Wait a few seconds
+3) Start the server again
+4) After starting it, wait 5–10 seconds before issuing any query
+
 
 # 🙌 Contributors
 
