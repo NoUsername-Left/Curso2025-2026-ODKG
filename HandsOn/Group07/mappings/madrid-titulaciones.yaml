@@ -16,7 +16,7 @@ mappings:
       - [rdfs:label, $(Degree)]
       - [lude:academicYear, $(Academic Year), xsd:string]
       - [lude:code, $(Code), xsd:string]
-      - [lude:ectsCredits, $(ectsCredits), xsd:integer]
+      - [lude:ectsCredits, $(ectsCredits), xsd:decimal]
       - [lude:teachingModality, $(teachingModality), xsd:string]
       - [lude:language, $(Language), xsd:string]
       - p: lude:hasAcademicLevel

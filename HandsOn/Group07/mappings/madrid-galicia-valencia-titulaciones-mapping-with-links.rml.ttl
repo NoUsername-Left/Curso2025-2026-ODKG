@@ -175,7 +175,7 @@
 		rr:objectMap [
 			a rr:ObjectMap;
 			rml:reference "ectsCredits";
-			rr:datatype xsd:integer
+			rr:datatype xsd:decimal
 		];
 	];
 	rr:predicateObjectMap [
