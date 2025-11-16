@@ -664,7 +664,7 @@ mappings:
               parameters:
                 - [str1, $(AddressID)]
                 - [str2, $(AddressID)]
-      - p: lude:offer
+      - p: lude:offers
         o: 
           - mapping: NavarraDegreeMappingUNLP
             condition:
@@ -1255,7 +1255,7 @@ mappings:
       - [owl:sameAs, $(same_as_wikidata_university)~iri]
       - p: lude:offers
         o:
-          mapping: DegreeCastillaLeonMappingLL
+          mapping: DegreeCantabriaMappingCL
           condition:
             function: equal
             parameters:
@@ -1342,6 +1342,14 @@ mappings:
       - [lude:telephone, $(Phone)]
       - [lude:publicationYear, $(Year of Publication)]
       - [owl:sameAs, $(same_as_wikidata_university)~iri]
+      - p: lude:offers
+        o:
+          mapping: DegreeCastillaLeonMappingLL
+          condition:
+            function: equal
+            parameters:
+              - [str1, $(UniversityID)]         # aus Degree-CSV
+              - [str2, $(UniversityID)]         # aus Faculty-CSV (ggf. anpassen)
 
   DegreeCastillaLaManchaMappingML:
     sources:
@@ -1437,12 +1445,13 @@ mappings:
       - [owl:sameAs, $(same_as_wikidata_university)~iri]
       - p: lude:offers
         o:
-          mapping: DegreeIslasBalearesMapping
+          mapping: DegreeCastillaLaManchaMappingML
           condition:
             function: equal
             parameters:
               - [str1, $(UniversityID)]
               - [str2, $(UniversityID)]
+
 
   DegreeIslasBalearesMapping:
     sources:
@@ -1509,3 +1518,11 @@ mappings:
       - [lude:telephone, $(Phone)]
       - [lude:publicationYear, $(Year of Publication)]
       - [owl:sameAs, $(same_as_wikidata_university)~iri]
+      - p: lude:offers
+        o:
+          mapping: DegreeIslasBalearesMapping
+          condition:
+            function: equal
+            parameters:
+              - [str1, $(UniversityID)]
+              - [str2, $(UniversityID)]

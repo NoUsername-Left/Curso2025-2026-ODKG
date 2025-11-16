@@ -1,5 +1,5 @@
-@prefix id: <http://spanishuniversities.data.es/lude/resource/>.
-@prefix lude: <http://spanishuniversities.data.es/lude/ontology#>.
+@prefix id: <https://spanishuniversitites.data/id/lude/>.
+@prefix lude: <https://spanishuniversitites.data/ontology/lude#>.
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#>.
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
@@ -19,7 +19,7 @@
 @base <http://example.com/ns#>.
 
 
-<UniversityMapping_0> a rr:TriplesMap;
+<UniversityMappingUNLP_0> a rr:TriplesMap;
 
 	rml:logicalSource [
 		a rml:LogicalSource;
@@ -29,7 +29,7 @@
 	];
 	rr:subjectMap [
 		a rr:SubjectMap;
-		rr:template "http://spanishuniversities.data.es/lude/resource/University/{UniversityID}";
+		rr:template "https://spanishuniversitites.data/id/lude/University/{UniversityID}";
 	];
 	rr:predicateObjectMap [
 		rr:predicateMap [
@@ -158,7 +158,7 @@
 		];
 		rr:objectMap [
 			a rr:RefObjectMap;
-			rr:parentTriplesMap <AddressMapping_0>;
+			rr:parentTriplesMap <AddressMappingUNLP_0>;
 			rr:joinCondition [
 				rr:child "AddressID";
 				rr:parent "AddressID";
@@ -168,11 +168,11 @@
 	rr:predicateObjectMap [
 		rr:predicateMap [
 			a rr:PredicateMap;
-			rr:constant lude:offer;
+			rr:constant lude:offers;
 		];
 		rr:objectMap [
 			a rr:RefObjectMap;
-			rr:parentTriplesMap <NavarraDegreeMapping_0>;
+			rr:parentTriplesMap <NavarraDegreeMappingUNLP_0>;
 			rr:joinCondition [
 				rr:child "UniversityID";
 				rr:parent "UniversityID";
@@ -180,7 +180,7 @@
 		];
 		rr:objectMap [
 			a rr:RefObjectMap;
-			rr:parentTriplesMap <LaRiojaDegreeMapping_0>;
+			rr:parentTriplesMap <LaRiojaDegreeMappingUNLP_0>;
 			rr:joinCondition [
 				rr:child "UniversityID";
 				rr:parent "UniversityID";
@@ -188,7 +188,7 @@
 		];
 		rr:objectMap [
 			a rr:RefObjectMap;
-			rr:parentTriplesMap <PaisVascoDegreeMapping_0>;
+			rr:parentTriplesMap <PaisVascoDegreeMappingUNLP_0>;
 			rr:joinCondition [
 				rr:child "UniversityID";
 				rr:parent "UniversityID";
@@ -197,7 +197,7 @@
 	].
 
 
-<GeoMapping_0> a rr:TriplesMap;
+<GeoMappingUNLP_0> a rr:TriplesMap;
 
 	rml:logicalSource [
 		a rml:LogicalSource;
@@ -207,7 +207,7 @@
 	];
 	rr:subjectMap [
 		a rr:SubjectMap;
-		rr:template "http://spanishuniversities.data.es/lude/resource/University/{UniversityID}";
+		rr:template "https://spanishuniversitites.data/id/lude/University/{UniversityID}";
 	];
 	rr:predicateObjectMap [
 		rr:predicateMap [
@@ -233,7 +233,7 @@
 	].
 
 
-<AddressMapping_0> a rr:TriplesMap;
+<AddressMappingUNLP_0> a rr:TriplesMap;
 
 	rml:logicalSource [
 		a rml:LogicalSource;
@@ -243,7 +243,7 @@
 	];
 	rr:subjectMap [
 		a rr:SubjectMap;
-		rr:template "http://spanishuniversities.data.es/lude/resource/Address/{AddressID}";
+		rr:template "https://spanishuniversitites.data/id/lude/Address/{AddressID}";
 	];
 	rr:predicateObjectMap [
 		rr:predicateMap [
@@ -284,7 +284,7 @@
 		];
 		rr:objectMap [
 			a rr:RefObjectMap;
-			rr:parentTriplesMap <MunicipalityMapping_0>;
+			rr:parentTriplesMap <MunicipalityMappingUNLP_0>;
 			rr:joinCondition [
 				rr:child "MunicipalityID";
 				rr:parent "MunicipalityID";
@@ -293,7 +293,7 @@
 	].
 
 
-<MunicipalityMapping_0> a rr:TriplesMap;
+<MunicipalityMappingUNLP_0> a rr:TriplesMap;
 
 	rml:logicalSource [
 		a rml:LogicalSource;
@@ -303,7 +303,7 @@
 	];
 	rr:subjectMap [
 		a rr:SubjectMap;
-		rr:template "http://spanishuniversities.data.es/lude/resource/Municipality/{MunicipalityID}";
+		rr:template "https://spanishuniversitites.data/id/lude/Municipality/{MunicipalityID}";
 	];
 	rr:predicateObjectMap [
 		rr:predicateMap [
@@ -344,7 +344,7 @@
 		];
 		rr:objectMap [
 			a rr:RefObjectMap;
-			rr:parentTriplesMap <ProvinceMapping_0>;
+			rr:parentTriplesMap <ProvinceMappingUNLP_0>;
 			rr:joinCondition [
 				rr:child "ProvinceID";
 				rr:parent "ProvinceID";
@@ -353,7 +353,7 @@
 	].
 
 
-<ProvinceMapping_0> a rr:TriplesMap;
+<ProvinceMappingUNLP_0> a rr:TriplesMap;
 
 	rml:logicalSource [
 		a rml:LogicalSource;
@@ -363,7 +363,7 @@
 	];
 	rr:subjectMap [
 		a rr:SubjectMap;
-		rr:template "http://spanishuniversities.data.es/lude/resource/Province/{ProvinceID}";
+		rr:template "https://spanishuniversitites.data/id/lude/Province/{ProvinceID}";
 	];
 	rr:predicateObjectMap [
 		rr:predicateMap [
@@ -404,7 +404,7 @@
 		];
 		rr:objectMap [
 			a rr:RefObjectMap;
-			rr:parentTriplesMap <AutonomousCommunityMapping_0>;
+			rr:parentTriplesMap <AutonomousCommunityMappingUNLP_0>;
 			rr:joinCondition [
 				rr:child "AutonomousCommunityID";
 				rr:parent "AutonomousCommunityID";
@@ -413,7 +413,7 @@
 	].
 
 
-<AutonomousCommunityMapping_0> a rr:TriplesMap;
+<AutonomousCommunityMappingUNLP_0> a rr:TriplesMap;
 
 	rml:logicalSource [
 		a rml:LogicalSource;
@@ -423,7 +423,7 @@
 	];
 	rr:subjectMap [
 		a rr:SubjectMap;
-		rr:template "http://spanishuniversities.data.es/lude/resource/AutonomousCommunity/{AutonomousCommunityID}";
+		rr:template "https://spanishuniversitites.data/id/lude/AutonomousCommunity/{AutonomousCommunityID}";
 	];
 	rr:predicateObjectMap [
 		rr:predicateMap [
@@ -459,7 +459,7 @@
 	].
 
 
-<KnowledgeAreaMapping_0> a rr:TriplesMap;
+<KnowledgeAreaMappingUNLP_0> a rr:TriplesMap;
 
 	rml:logicalSource [
 		a rml:LogicalSource;
@@ -469,7 +469,7 @@
 	];
 	rr:subjectMap [
 		a rr:SubjectMap;
-		rr:template "http://spanishuniversities.data.es/lude/resource/KnowledgeArea/{id}";
+		rr:template "https://spanishuniversitites.data/id/lude/KnowledgeArea/{id}";
 	];
 	rr:predicateObjectMap [
 		rr:predicateMap [
@@ -505,7 +505,7 @@
 	].
 
 
-<AcademicLevelMapping_0> a rr:TriplesMap;
+<AcademicLevelMappingUNLP_0> a rr:TriplesMap;
 
 	rml:logicalSource [
 		a rml:LogicalSource;
@@ -515,7 +515,7 @@
 	];
 	rr:subjectMap [
 		a rr:SubjectMap;
-		rr:template "http://spanishuniversities.data.es/lude/resource/AcademicLevel/{AcademicLevelID}";
+		rr:template "https://spanishuniversitites.data/id/lude/AcademicLevel/{AcademicLevelID}";
 	];
 	rr:predicateObjectMap [
 		rr:predicateMap [
@@ -551,7 +551,7 @@
 	].
 
 
-<NavarraDegreeMapping_0> a rr:TriplesMap;
+<NavarraDegreeMappingUNLP_0> a rr:TriplesMap;
 
 	rml:logicalSource [
 		a rml:LogicalSource;
@@ -561,7 +561,7 @@
 	];
 	rr:subjectMap [
 		a rr:SubjectMap;
-		rr:template "http://spanishuniversities.data.es/lude/resource/Degree/{DegreeID}";
+		rr:template "https://spanishuniversitites.data/id/lude/Degree/{DegreeID}";
 	];
 	rr:predicateObjectMap [
 		rr:predicateMap [
@@ -624,7 +624,7 @@
 		];
 		rr:objectMap [
 			a rr:RefObjectMap;
-			rr:parentTriplesMap <KnowledgeAreaMapping_0>;
+			rr:parentTriplesMap <KnowledgeAreaMappingUNLP_0>;
 			rr:joinCondition [
 				rr:child "AmbitID";
 				rr:parent "id";
@@ -638,7 +638,7 @@
 		];
 		rr:objectMap [
 			a rr:RefObjectMap;
-			rr:parentTriplesMap <AcademicLevelMapping_0>;
+			rr:parentTriplesMap <AcademicLevelMappingUNLP_0>;
 			rr:joinCondition [
 				rr:child "AcademicLevelID";
 				rr:parent "AcademicLevelID";
@@ -647,7 +647,7 @@
 	].
 
 
-<LaRiojaDegreeMapping_0> a rr:TriplesMap;
+<LaRiojaDegreeMappingUNLP_0> a rr:TriplesMap;
 
 	rml:logicalSource [
 		a rml:LogicalSource;
@@ -657,7 +657,7 @@
 	];
 	rr:subjectMap [
 		a rr:SubjectMap;
-		rr:template "http://spanishuniversities.data.es/lude/resource/Degree/{DegreeID}";
+		rr:template "https://spanishuniversitites.data/id/lude/Degree/{DegreeID}";
 	];
 	rr:predicateObjectMap [
 		rr:predicateMap [
@@ -720,7 +720,7 @@
 		];
 		rr:objectMap [
 			a rr:RefObjectMap;
-			rr:parentTriplesMap <KnowledgeAreaMapping_0>;
+			rr:parentTriplesMap <KnowledgeAreaMappingUNLP_0>;
 			rr:joinCondition [
 				rr:child "AmbitID";
 				rr:parent "id";
@@ -734,7 +734,7 @@
 		];
 		rr:objectMap [
 			a rr:RefObjectMap;
-			rr:parentTriplesMap <AcademicLevelMapping_0>;
+			rr:parentTriplesMap <AcademicLevelMappingUNLP_0>;
 			rr:joinCondition [
 				rr:child "AcademicLevelID";
 				rr:parent "AcademicLevelID";
@@ -743,7 +743,7 @@
 	].
 
 
-<PaisVascoDegreeMapping_0> a rr:TriplesMap;
+<PaisVascoDegreeMappingUNLP_0> a rr:TriplesMap;
 
 	rml:logicalSource [
 		a rml:LogicalSource;
@@ -753,7 +753,7 @@
 	];
 	rr:subjectMap [
 		a rr:SubjectMap;
-		rr:template "http://spanishuniversities.data.es/lude/resource/Degree/{DegreeID}";
+		rr:template "https://spanishuniversitites.data/id/lude/Degree/{DegreeID}";
 	];
 	rr:predicateObjectMap [
 		rr:predicateMap [
@@ -816,7 +816,7 @@
 		];
 		rr:objectMap [
 			a rr:RefObjectMap;
-			rr:parentTriplesMap <KnowledgeAreaMapping_0>;
+			rr:parentTriplesMap <KnowledgeAreaMappingUNLP_0>;
 			rr:joinCondition [
 				rr:child "AmbitID";
 				rr:parent "id";
@@ -830,7 +830,7 @@
 		];
 		rr:objectMap [
 			a rr:RefObjectMap;
-			rr:parentTriplesMap <AcademicLevelMapping_0>;
+			rr:parentTriplesMap <AcademicLevelMappingUNLP_0>;
 			rr:joinCondition [
 				rr:child "AcademicLevelID";
 				rr:parent "AcademicLevelID";

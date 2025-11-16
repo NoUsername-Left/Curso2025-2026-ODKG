@@ -33,14 +33,6 @@ mappings:
             parameters:
               - [str1, $(AmbitID)]           # aus Degree-CSV
               - [str2, $(id)]           # aus KnowledgeArea-CSV (ggf. anpassen)
-      - p: lude:offers
-        o:
-          mapping: UniversityMapping
-          condition:
-            function: equal
-            parameters:
-              - [str1, $(UniversityID)]
-              - [str2, $(UniversityID)]
 
 
   AcademicLevelMapping:
@@ -81,3 +73,11 @@ mappings:
       - [lude:telephone, $(Phone)]
       - [lude:publicationYear, $(Year of Publication)]
       - [owl:sameAs, $(same_as_wikidata_university)~iri]
+      - p: lude:offers
+        o:
+          mapping: DegreeIslasBalearesMapping
+          condition:
+            function: equal
+            parameters:
+              - [str1, $(UniversityID)]
+              - [str2, $(UniversityID)]
