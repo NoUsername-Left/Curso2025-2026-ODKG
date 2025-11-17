@@ -41,62 +41,54 @@ WHERE {
 
 # ======================================================================
 # QUERY 4 — GET THE IMAGE FROM WIKIDATA
-# Test that linking via owl:sameAs enables external Wikidata queries.
-# Example shown for Q1647758.
+# Check if the service can join wikidata (if this don't work, the problem is the configuration of the service or a proxy or firewall problem)
 # ======================================================================
-PREFIX wd: <https://www.wikidata.org/entity/>
-PREFIX wdt: <https://www.wikidata.org/prop/direct/>
+PREFIX wd: <http://www.wikidata.org/entity/>
+PREFIX wdt: <http://www.wikidata.org/prop/direct/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 
-SELECT ?image
+SELECT ?city ?cityLabel ?image
 WHERE {
-  SERVICE <https://query.wikidata.org/sparql> {
-    wd:Q1647758 wdt:P18 ?image .
-  }
-}
+    SERVICE <https://query.wikidata.org/sparql> {
+        ?city wdt:P31 wd:Q515 ;
+              wdt:P17 wd:Q29 . 
 
+        ?city rdfs:label ?cityLabel .
+
+        OPTIONAL { ?city wdt:P18 ?image }
+    }
+}
+LIMIT 10
 
 # =====================================================================================
-# QUERY 5 — LOCATION + POPULATION MALE/FEMALE FROM WIKIDATA
+# QUERY 5 — LOCATION + IMAGE FROM WIKIDATA
 # Demonstrate real-world data enrichment using Wikidata.
 #
 # What this query retrieves:
 #   - Coordinates of the city (wdt:P625)
-#   - Male population (wdt:P1082 with qualifier pq:P21 = man)
-#   - Female population (wdt:P1082 with qualifier pq:P21 = woman)
-#
-# (Many cities do not have male/female population breakdown in Wikidata).
+#   - image of the city (wdt:P18)
 # =====================================================================================
-PREFIX wd: <https://www.wikidata.org/entity/>
-PREFIX wdt: <https://www.wikidata.org/prop/direct/>
-PREFIX p: <https://www.wikidata.org/prop/>
-PREFIX pq: <https://www.wikidata.org/prop/qualifier/>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX wd: <http://www.wikidata.org/entity/>
+PREFIX wdt: <http://www.wikidata.org/prop/direct/>
+PREFIX schema: <http://schema.org/>
 
-SELECT
-    ?coords
-    ?men
-    ?women
-    ?populationDate
+SELECT ?name ?population ?wikidata ?image ?malePopulation ?femalePopulation ?coord
 WHERE {
+  {
+    SELECT ?city ?name ?population ?wikidata
+    WHERE {
+      ?city schema:name ?name .
+      ?city schema:population ?population .
+      ?city owl:sameAs ?wikidata .
+    }
+    LIMIT 20
+  }
+
   SERVICE <https://query.wikidata.org/sparql> {
-
-    # --- Coordinates ---
-    OPTIONAL {
-      wd:Q1647758 wdt:P625 ?coords .
-    }
-
-    # --- Male population ---
-    OPTIONAL {
-      wd:Q1647758 p:P1082 ?popStatementMen .
-      ?popStatementMen pq:P21 wd:Q6581072 .    # male
-      ?popStatementMen wdt:P1082 ?men .
-      OPTIONAL { ?popStatementMen pq:P585 ?populationDate }
-    }
-
-    # --- Female population ---
-    OPTIONAL {
-      wd:Q1647758 p:P1082 ?popStatementWomen .
-      ?popStatementWomen pq:P21 wd:Q6581097 .  # female
-      ?popStatementWomen wdt:P1082 ?women .
-    }
+    OPTIONAL { ?wikidata wdt:P18 ?image . }
+    OPTIONAL { ?wikidata wdt:P625 ?coord . }
   }
 }
+LIMIT 20
+
