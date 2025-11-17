@@ -11,3 +11,4 @@ tzdata
 lightrdf
 certifi
 morph-kgc
+SPARQLWrapper
