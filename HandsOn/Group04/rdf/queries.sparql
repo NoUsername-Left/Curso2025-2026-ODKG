@@ -23,7 +23,7 @@ WHERE {
     UNION
     { ?demo a ex:DemographicGroup }
     UNION
-    { ?loc a ex:Location }
+    { ?loc a schema:City }
     UNION
     { ?act a ex:Activity }
 }
@@ -34,8 +34,7 @@ WHERE {
 # correctly connected to an observation?
 #
 # This selects 10 observations and "jumps" across their links 
-# to get the properties of the related entities. If this returns 
-# results, your blank-node-to-entity mapping worked!
+# to get the properties of the related entities.
 # -----------------------------------------------------------------
 SELECT ?date ?trips ?age ?gender ?originLocationID ?originActivityType
 WHERE {
@@ -49,7 +48,7 @@ WHERE {
     ?demo schema:gender ?gender ;
           ex:ageRange ?age .
     
-    ?originLoc ex:locationId ?originLocationID .
+    ?originLoc schema:name ?originLocationID .
     ?originAct ex:activityType ?originActivityType .
 }
 LIMIT 10
@@ -74,16 +73,16 @@ WHERE {
 
 # -----------------------------------------------------------------
 # QUERY 4: DE-DUPLICATION VERIFICATION (LOCATIONS)
-# Purpose: Was only ONE entity created for location "28079", 
+# Purpose: Was only ONE entity created for location "Madrid", 
 # even though it appears in many CSV rows?
 #
 # If this returns 1 row with an `observationCount` > 1, de-duplication worked!
 # -----------------------------------------------------------------
 SELECT ?location ?locationID (COUNT(?obs) AS ?observationCount)
 WHERE {
-    # Find the Location entity with ID "28079"
-    ?location a ex:Location ;
-              ex:locationId "28079" .
+    # Find the Location entity with Location "Madrid"
+    ?location a schema:City ;
+              schema:name "Madrid" .
     
     # Find all observations that have it as an ORIGIN
     # (We could also search for it as a destination using ex:hasDestination)
@@ -103,6 +102,45 @@ WHERE {
          
     ?obs ex:hasDestinationActivity ?act .
 }
+
+SELECT ?cityName (SUM(?trips) AS ?totalTrips)
+WHERE {
+  # Filter by exact date and hour
+  ?obs dcterms:date "2025-06-02"^^xsd:date .
+  
+  # Get the trips and the destionation city
+  ?obs ex:numberOfTrips ?trips .
+  ?obs ex:hasDestination ?city .
+  
+  # Get the city's name
+  ?city schema:name ?cityName .
+}
+GROUP BY ?cityName
+ORDER BY DESC(?totalTrips)
+LIMIT 20
+
+
+SELECT ?originName ?destinationName (SUM(?trips) AS ?totalFlow)
+WHERE {
+  # Filter by the date range
+  ?obs dcterms:date ?date .
+  FILTER(?date >= "2025-06-02"^^xsd:date && ?date <= "2025-06-08"^^xsd:date)
+
+  # Get the trips and the cities
+  ?obs ex:numberOfTrips ?trips .
+  ?obs ex:hasOrigin ?originCity .
+  ?obs ex:hasDestination ?destinationCity .
+  
+  # Get the names
+  ?originCity schema:name ?originName .
+  ?destinationCity schema:name ?destinationName .
+  
+  # Filter out internal trips (if not relevant)
+  FILTER(?originName != ?destinationName) 
+}
+GROUP BY ?originName ?destinationName
+ORDER BY DESC(?totalFlow)
+LIMIT 20
 
 # ZONES
 # ---
