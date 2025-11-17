@@ -65,16 +65,51 @@ python3 -m morph_kgc configuration.ini
 Output: `rdf/madrid-bus-data-with-links.nt` (~5GB)
 
 ### 5. Validate with SPARQL Queries
-```bash
-# Base dataset validation
-python scripts/query_runner.py
 
-# Wikidata links validation
-python scripts/query_runner.py --links
+For quick validation and testing, we provide a **curated 100k-triple sample** that includes all entity types (LocalAreas, BusStops, Routes, Trips, StopTimes) and Wikidata links. This sample is specifically designed to return meaningful results for all verification queries.
+
+**Using the sample dataset (recommended for testing):**
+```bash
+cd scripts
+source .venv/bin/activate
+
+# Validate with Wikidata links (100k sample)
+python query_runner.py \
+  --rdf ../rdf/madrid-bus-data-with-links-sample-100k.ttl \
+  --sparql ../rdf/queries-with-links.sparql
 ```
 
-Both commands:
-- Load RDF file using LightRDF streaming (handles 5GB+ files)
-- Compare CSV vs RDF statistics
-- Execute relevant SPARQL queries
-- Validate owl:sameAs links for Wikidata integration
+**Using the full dataset (if generated):**
+```bash
+# Base dataset validation (5GB)
+python query_runner.py
+
+# Wikidata links validation (5GB)
+python query_runner.py --links
+```
+
+The query runner:
+- Loads RDF data using `rdflib.Graph`
+- Executes SPARQL queries to verify data integrity
+- Validates entity counts and relationships
+- Checks owl:sameAs links for Wikidata integration
+
+---
+
+## Application Capability 
+
+The `app-capability.py` script demonstrates how the quiz application could leverage RDF/Linked Data to retrieve contextual information:
+
+```bash
+cd scripts
+source .venv/bin/activate
+python app-capability.py
+```
+
+It queries the local RDF graph to find a bus stop's area, extracts the Wikidata Q-identifier from `owl:sameAs`, queries Wikidata's SPARQL endpoint for structured data, and fetches Wikipedia article text for quiz generation. 
+
+---
+
+## Production Deployment with Full RDF Dataset
+
+For production use with the full 5GB dataset, we could **deploy a triple store** (e.g., Apache Jena Fuseki, Virtuoso, or GraphDB) and load the RDF data into it. The application can then query the SPARQL endpoint via HTTP without loading the entire dataset into memory.
