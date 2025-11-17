@@ -4,7 +4,6 @@
 @prefix dcterms: <http://purl.org/dc/terms/> .
 @prefix gtfs: <http://vocab.gtfs.org/terms#> .
 @prefix geo:  <http://www.w3.org/2003/01/geo/wgs84_pos#> .
-@prefix dbo:  <http://dbpedia.org/ontology/> .
 @prefix schema: <http://schema.org/> .
 @prefix ex:   <http://group06.linkeddata.es/ontology/madridbus/> .
 
@@ -42,7 +41,7 @@ ex:BusStop a owl:Class ;
 
 ex:LocalArea a owl:Class ;
     rdfs:label "Local Area"@en ;
-    rdfs:subClassOf schema:Place , dbo:Place ;
+    rdfs:subClassOf schema:Place ;
     rdfs:comment "A named geographic area in Madrid (neighborhood, district, landmark zone) that contains one or more bus stops. Instances are linked to corresponding Wikidata resources via owl:sameAs to enable retrieval of cultural, historical, and touristic information."@en ;
     owl:disjointWith ex:BusRoute , ex:BusStop .
 

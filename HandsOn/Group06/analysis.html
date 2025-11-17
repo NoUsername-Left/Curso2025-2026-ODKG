@@ -270,7 +270,6 @@ Ontology terms:  http://group06.linkeddata.es/ontology/
       <tr><td>GTFS Vocabulary</td><td><code>gtfs:</code></td><td><code>Route</code>, <code>Stop</code>, <code>Trip</code>, <code>StopTime</code>, <code>Service</code>, <code>CalendarRule</code>, <code>Shape</code>, <code>ShapePoint</code>, <code>shortName</code>, <code>arrivalTime</code>, etc.</td></tr>
       <tr><td>WGS84 Geo</td><td><code>geo:</code></td><td><code>lat</code>, <code>long</code></td></tr>
       <tr><td>Schema.org</td><td><code>schema:</code></td><td><code>Place</code> (superclass for LocalArea), <code>startDate</code>, <code>endDate</code></td></tr>
-      <tr><td>DBpedia Ontology</td><td><code>dbo:</code></td><td><code>Place</code> (structural superclass for <code>ex:LocalArea</code>; instances still link to Wikidata)</td></tr>
       <tr><td>Dublin Core</td><td><code>dcterms:</code></td><td><code>title</code>, <code>creator</code>, <code>created</code>, <code>license</code>, <code>source</code></td></tr>
       <tr><td>OWL</td><td><code>owl:</code></td><td><code>Ontology</code>, <code>Class</code>, <code>ObjectProperty</code>, <code>sameAs</code>, <code>inverseOf</code>, <code>disjointWith</code></td></tr>
     </tbody>
@@ -304,13 +303,13 @@ Ontology terms:  http://group06.linkeddata.es/ontology/
   <table class="small">
     <thead><tr><th>Property</th><th>Value</th></tr></thead>
     <tbody>
-      <tr><td><code>rdfs:subClassOf</code></td><td><code>schema:Place</code>, <code>dbo:Place</code></td></tr>
+      <tr><td><code>rdfs:subClassOf</code></td><td><code>schema:Place</code>,
       <tr><td><code>owl:disjointWith</code></td><td><code>ex:BusRoute</code>, <code>ex:BusStop</code></td></tr>
     </tbody>
   </table>
 
   <h4>ex:areaCode (Datatype Property)</h4>
-  <p class="small">A short alphanumeric code identifying the local area (e.g., 'ARJ' for Aranjuez, 'CHB' for Chamberí). Used for compact area identification in the application.</p>
+  <p class="small">Wikidata Q-identifier for the local area. This code enables semantic linking and allows applications to retrieve additional information from Wikidata about the area.</p>
   <table class="small">
     <thead><tr><th>Property</th><th>Value</th></tr></thead>
     <tbody>
@@ -360,7 +359,6 @@ Ontology terms:  http://group06.linkeddata.es/ontology/
       <tr><td><code>gtfs:</code></td><td><code>http://vocab.gtfs.org/terms#</code></td><td>GTFS vocabulary (imported)</td></tr>
       <tr><td><code>geo:</code></td><td><code>http://www.w3.org/2003/01/geo/wgs84_pos#</code></td><td>WGS84 coordinates</td></tr>
       <tr><td><code>schema:</code></td><td><code>http://schema.org/</code></td><td>Schema.org vocabulary</td></tr>
-      <tr><td><code>dbo:</code></td><td><code>http://dbpedia.org/ontology/</code></td><td>DBpedia ontology (structural superclass for places)</td></tr>
       <tr><td><code>wd:</code></td><td><code>https://www.wikidata.org/entity/</code></td><td>Wikidata resources referenced via <code>owl:sameAs</code></td></tr>
       <tr><td><code>dcterms:</code></td><td><code>http://purl.org/dc/terms/</code></td><td>Dublin Core metadata</td></tr>
       <tr><td><code>owl:</code></td><td><code>http://www.w3.org/2002/07/owl#</code></td><td>OWL constructs</td></tr>
