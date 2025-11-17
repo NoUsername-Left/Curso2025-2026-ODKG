@@ -10,5 +10,6 @@ six
 tzdata
 lightrdf
 certifi
+rdflib
 morph-kgc
 SPARQLWrapper

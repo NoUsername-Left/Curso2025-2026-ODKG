@@ -66,3 +66,22 @@ WHERE {
   FILTER(STRSTARTS(STR(?wikidata), "http://www.wikidata.org/entity/"))
 }
 LIMIT 20
+
+# ========================================================================
+# QUERY 6: Get complete context for a specific bus stop (app use case)
+# ========================================================================
+# This query retrieves all information needed for the quiz application
+# when a user is at a specific bus stop (e.g., par_8_09765)
+SELECT ?stopName ?areaName ?areaCode ?wikidata
+WHERE {
+  <http://group06.linkeddata.es/resource/stop/par_8_09765> a ex:BusStop ;
+                       rdfs:label ?stopName ;
+                       ex:locatedInArea ?area .
+  
+  ?area a ex:LocalArea ;
+        rdfs:label ?areaName ;
+        ex:areaCode ?areaCode ;
+        owl:sameAs ?wikidata .
+  
+  FILTER(STRSTARTS(STR(?wikidata), "http://www.wikidata.org/entity/"))
+}
