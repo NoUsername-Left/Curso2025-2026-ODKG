@@ -16,7 +16,7 @@
 
 ## Generate Full Dataset Locally
 
-**Note:** This repository contains only sample data (500 rows). The full RDF datasets are ~5GB each and cannot be versioned in Git. To reproduce the complete datasets:
+**Note:** This repository contains only sample data. The full RDF datasets are ~5GB each and cannot be versioned in Git. To reproduce the complete datasets:
 
 ### 1. Download Raw Data
 Download GTFS data from [Mobility Database](https://mobilitydatabase.org/feeds/gtfs/mdb-2820) and extract the `.txt` files into:
