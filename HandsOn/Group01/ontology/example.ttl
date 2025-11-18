@@ -1,0 +1,19 @@
+@prefix sc: <http://smartcity.linkeddata.es/lcc/ontology#> .
+@prefix ex: <http://smartcity.linkeddata.es/lcc/resource/> .
+@prefix schema: <https://schema.org/> .
+@prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+# Tripletas
+
+ex:biblioteca_AntonioMingote a sc:Facility ;
+    schema:name "Biblioteca Pública Antonio Mingote(Latina)"@es ;
+    sc:accessibility "1"^^xsd:integer ;
+    schema:postalCode "28044"^^xsd:integer ;
+    geo:lat "40.37944179159940"^^xsd:decimal ;
+    geo:long "-3.7694389972002400"^^xsd:decimal ;
+    sc:hasNearby ex:transporte_JustaFreire .
+
+ex:transporte_JustaFreire a sc:PublicTransport ;
+    schema:name "Maestra Justa Freire - Polideportivo Aluche"@es ;
+    sc:hasLines "5"^^xsd:integer .

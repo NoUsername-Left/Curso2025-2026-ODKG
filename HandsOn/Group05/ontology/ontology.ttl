@@ -1,0 +1,66 @@
+@prefix ns: <http://example.org/ns#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+
+# Classes
+ns:Address rdf:type owl:Class .
+ns:Bike_Station rdf:type owl:Class .
+ns:Trip rdf:type owl:Class .
+ns:Bike rdf:type owl:Class .
+
+# Data Properties
+ns:hasAddress_name rdf:type owl:DatatypeProperty ;
+    rdfs:domain ns:Address ;
+    rdfs:range xsd:string .
+
+ns:hasStation_name rdf:type owl:DatatypeProperty ;
+    rdfs:domain ns:Bike_Station ;
+    rdfs:range xsd:string .
+
+ns:hasCoord_x rdf:type owl:DatatypeProperty ;
+    rdfs:domain ns:Bike_Station ;
+    rdfs:range xsd:float .
+
+ns:hasCoord_y rdf:type owl:DatatypeProperty ;
+    rdfs:domain ns:Bike_Station ;
+    rdfs:range xsd:float .
+
+ns:hasCapacity rdf:type owl:DatatypeProperty ;
+    rdfs:domain ns:Bike_Station ;
+    rdfs:range xsd:int .
+
+ns:hasDuration rdf:type owl:DatatypeProperty ;
+    rdfs:domain ns:Trip ;
+    rdfs:range xsd:float .
+
+ns:hasUnLock_date rdf:type owl:DatatypeProperty ;
+    rdfs:domain ns:Trip ;
+    rdfs:range xsd:date .
+
+ns:hasLock_date rdf:type owl:DatatypeProperty ;
+    rdfs:domain ns:Trip ;
+    rdfs:range xsd:date .
+
+# Object Properties
+ns:hasAddress rdf:type owl:ObjectProperty ;
+    rdfs:domain ns:Bike_Station ;
+    rdfs:range ns:Address .
+
+ns:hasLockStation rdf:type owl:ObjectProperty ;
+    rdfs:domain ns:Trip ;
+    rdfs:range ns:Bike_Station .
+
+ns:hasUnLockStation rdf:type owl:ObjectProperty ;
+    rdfs:domain ns:Trip ;
+    rdfs:range ns:Bike_Station .
+
+ns:hasBike rdf:type owl:ObjectProperty ;
+    rdfs:domain ns:Trip ;
+    rdfs:range ns:Bike .
+
+# Wikidata reference
+ns:sameAs rdf:type owl:ObjectProperty ;
+    rdfs:domain ns:Address ;
+    rdfs:range rdfs:Resource .
