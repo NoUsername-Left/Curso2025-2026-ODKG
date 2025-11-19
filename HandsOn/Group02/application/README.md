@@ -183,10 +183,6 @@ The Express backend can be configured with the following environment variables:
 | `GRAPHDB_CACHE_TTL_MS` | Milliseconds to cache successful GraphDB responses in memory | `300000` |
 | `VITE_API_BASE_URL` | (Frontend) override for the REST base path | `/api` |
 
-> Tip: the backend tests do **not** require GraphDB—they mock the SPARQL responses so you can validate that the REST API still transforms the data expected by the frontend even when you cannot reach a real triple store.
-
-Set these before running `npm run server` if your GraphDB instance lives elsewhere. The cache reduces load on GraphDB by memoizing each SPARQL response for the configured TTL—tune `GRAPHDB_CACHE_TTL_MS` (or set it to `0` to disable caching) if you need fresher data or longer-lived responses in production.
-
 ## Acknowledgments
 
 - Madrid Open Data portals for datasets
